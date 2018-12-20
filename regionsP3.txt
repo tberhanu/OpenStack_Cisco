@@ -1,0 +1,3 @@
+RtpRegion https://cloud-rtp-1.cisco.com:5000/v3
+RcdnRegion https://cloud-rcdn-1.cisco.com:5000/v3
+AllnRegion https://cloud-alln-1.cisco.com:5000/v3
