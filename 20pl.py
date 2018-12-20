@@ -1,6 +1,7 @@
 import subprocess, os
 import sys
 
+
 my_env = os.environ.copy()
 my_env["OS_USERNAME"] = "csbauditor.gen"
 #my_env["OS_AUTH_URL"] = "https://cloud-rcdn-1.cisco.com:5000/v3"
