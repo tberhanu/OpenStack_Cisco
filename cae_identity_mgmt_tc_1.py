@@ -32,7 +32,7 @@ class Automate:
             #:param url: holds the url of project """
 
             self.project_name = project_name
-            self.filename = 'roles.txt'
+            self.filename = 'cae_roles.txt'
             self.url=url
 
         def create_connection(self):
