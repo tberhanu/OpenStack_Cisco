@@ -21,6 +21,9 @@ import logging as LOG
 from prettytable import PrettyTable
 import dateutil.parser
 import datetime
+import os
+
+from os import environ as env
 
 requests.packages.urllib3.disable_warnings()
 LOG.getLogger().setLevel(LOG.INFO)
@@ -38,6 +41,9 @@ class Automate:
         def create_connection(self):
             """ #:Method to create connection with client """
             try:
+                #if env["DEBUG_VALUE"] == 1:
+                 #   print("load_config(path): Pulling Config from %s filei => %s" % url)
+
                 self.k8s_client = config.new_client_from_config()
                 self.dyn_client = DynamicClient(self.k8s_client)
             except Exception as e:
@@ -112,7 +118,8 @@ class Automate:
                     self.rolebinding_untrusted[project]= proj_role_bind_untrusted.copy() if bool(proj_role_bind_untrusted) else None
                 self.users_with_untrusted_roles = [item for sublist in self.users_with_untrusted_roles if sublist for item in sublist]
                 project_app = self.get_app_project_mapping()
-                if not self.rolebinding_untrusted:
+                #print(self.rolebinding_untrusted)
+                if not self.rolebinding_untrusted[self.project_name]:
                     print('Pass')
                     return
                 for project in self.rolebinding_untrusted:
