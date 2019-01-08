@@ -3,3 +3,6 @@ project-admin
 sdaas_edit
 system:deployer
 view
+admin
+system:image-builder
+system:image-puller
