@@ -26,7 +26,9 @@ env_variables = {
     "BREAKOUT_HOUR": "10",   # 1000 hrs.
     "AWS_REGION": "us-east-1",
     "ENV_TYPE": "",
-    "COUNT_OF_SQS_READ_MSG": "10"
+    "COUNT_OF_SQS_READ_MSG": "1",
+    "WAIT_TIME_FOR_NEXT_POLL": "60",
+    "DEBUG_FLAG": "0"
 }
 
 if __name__ == "__main__":
