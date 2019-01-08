@@ -1,8 +1,8 @@
-basic-user
-project-admin
-sdaas_edit
-system:deployer
 view
 admin
-system:image-builder
+sdaas_edit
+basic-user
+project-admin
+system:deployer
 system:image-puller
+system:image-builder
