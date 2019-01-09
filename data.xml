@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<data>
+<region>
+	<regionname>RTP</regionname>
+	<regionurl>https://cloud-rtp-1.cisco.com:5000/v3</regionurl>
+</region>
+<region>
+	<regionname>RCDN</regionname>
+	<regionurl>https://cloud-rcdn-1.cisco.com:5000/v3</regionurl>
+</region>
+<region>
+	<regionname>ALLN</regionname>
+	<regionurl>https://cloud-alln-1.cisco.com:5000/v3</regionurl>
+</region>
+</data>
