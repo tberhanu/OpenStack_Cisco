@@ -1,9 +1,9 @@
-#!/opt/app-root/bin/python
+!/opt/app-root/bin/python
 
 """
 ---------------------------- csb_auditor.py ------------------------------
-Description: This python script is to:
-             a. decrypt the requried encrypted file(s)
+Description: This python script is to
+			 a. decrypt the requried encrypted file(s)
              b. clone git repo
              c. create connection handle to SQS Queue
              d. read messages from SQS Queue created for CNT-CSB
@@ -12,16 +12,15 @@ Description: This python script is to:
              g. consolidate results from each audit test-script per team
              h. post the result to kinesis
              i. delete message from SQS Queue
-             
 
 Dependencies:
     csb_credentials.py.enc
     env_variables.py
     kube_config.enc
 
-Author: Amardeep Kumar <amardkum@cisco.com>; January 8th, 2019
+Author: Amardeep Kumar <amardkum@cisco.com>; December 19th, 2018
 
-Copyright (c) 2019 Cisco Systems.
+Copyright (c) 2018 Cisco Systems.
 All rights reserved.
 --------------------------------------------------------------------------
 """
@@ -42,34 +41,30 @@ from Crypto.Cipher import AES
 from env_variables import env_variables
 from general_util import add_result_to_stream, updateScanRecord, send_result_complete
 from importlib import import_module
-
-
 def decrypt_file(key, in_filename):
     """
     Decrypts a file using AES(CBC mode) with the given key.
     :param key: key to be used for decryption
     :param in_filename: name of encrypted file
-    :return: generated decrypted file and return TRUE/FALSE
-    """
+    :return: generated decrypted file and return TRUE/FALSE    """
     out_filename = os.path.splitext(in_filename)[0]
-    chunk_size = 64*1024
-    try:
+    chunk_size = 64*1024    try:
         print("LOG: Decrypt %s file" % in_filename)
-            with open(in_filename, 'rb') as infile:
-                orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
-                iv = infile.read(16)
-                decryptor = AES.new(key, AES.MODE_CBC, iv)
-                try:
-                    with open(out_filename, 'wb') as outfile:
-                        while True:
-                            chunk = infile.read(chunk_size)
-                            if len(chunk) == 0:
-                                break
-                            outfile.write(decryptor.decrypt(chunk))
+        with open(in_filename, 'rb') as infile:
+            orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
+            iv = infile.read(16)
+            decryptor = AES.new(key, AES.MODE_CBC, iv)
+            try:
+                with open(out_filename, 'wb') as outfile:
+                    while True:
+                        chunk = infile.read(chunk_size)
+                        if len(chunk) == 0:
+                            break
+                        outfile.write(decryptor.decrypt(chunk))
 
-                        outfile.truncate(orig_size)
-                except IOError:
-                    print("ERROR: Failed to create the decrypted file %s" % out_filename)
+                    outfile.truncate(orig_size)
+            except IOError:
+                print("ERROR: Failed to create the decrypted file %s" % out_filename)
     except IOError:
         print("ERROR: File %s was not accessible" % in_filename)
 
@@ -125,13 +120,14 @@ def read_message_from_sqs(sqsclient):
                 if response.get("Messages", None):
                     break
                 else:
-                    print("INFO: Attempt to read message from SQS didn't get any.")
-                    print("INFO: Waiting for %s secs. before re-polling SQS Queue" % os.environ["WAIT_TIME_FOR_NEXT_POLL"])
-                    time.sleep(int(os.environ["WAIT_TIME_FOR_NEXT_POLL"]))
+                   print("INFO: Attempt to read message from SQS didn't get any.")
+                   print("INFO: Waiting for %s secs. before re-polling SQS Queue" % os.environ["WAIT_TIME_FOR_NEXT_POLL"])
+                   time.sleep(int(os.environ["WAIT_TIME_FOR_NEXT_POLL"]))
             except botocore.exceptions.ClientError as sqs_rec_msg_err:
                 print("ERROR: Issue observed while reading messages from SQS Queue: %s" % str(sqs_rec_msg_err))
                 response = None
                 break
+
     except Exception as read_err:
         print("ERROR: Issue observed while reading messages from SQS - %s" % str(read_err))
 
@@ -213,41 +209,47 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
     :return: None
     """
     print("LOG: Execute individual Audit test-scripts per team: %s" % team_name)
-    """ Update the scan record with \"InProgress\" Status """
-    # updateScanRecord(team_name.split(":")[0], scan_id, team_id, test_id, "InProgress")
+    region = os.environ["SQS_URL"].split(".")[1]
+    session = boto3.session.Session(aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"], region_name=region)
+
 
     audit_test_list = test_id.split(",")
     results = dict()
-    seq_nums_list = []
     for tc in audit_test_list:
         """ Translating TC name to fetch the respective audit script name """
         audit_tc_script = tc.replace("-", "_").lower()
         print("LOG: Script under execution - %s" % audit_tc_script)
+        """ Update the scan record with \"InProgress\" Status """
+        updateScanRecord(session, team_id.split(":")[0], scan_id, team_id, tc, "InProgress")
+
+        seq_nums_list = []
         if os.path.isfile(audit_tc_script + ".py"):
             tc_script = import_module(audit_tc_script)
             audit_time = int(time.time()) * 1000
+            counter = 0
             try:
                 results[audit_tc_script] = tc_script.main(url, team_name)
                 params_list = []
-                # params = {
-                #             "scanid": scan_id,
-                #             "testid": tc,
-                #             "name": item['name'],
-                #             "teamid": str(team_id),
-                #             "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, item['id']),
-                #             "createdAt": audit_time,
-                #             "updatedAt": audit_time,
-                #             "instanceid": item['id'],
-                #             "resourceName": item['id'],
-                #             "complianceStatus": results[audit_tc_script],
-                #           }
-                # params_list.append(params.copy())
+                params = {
+                             "scanid": scan_id,
+                             "testid": tc,
+                             "teamid": str(team_id),
+                             #"teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc),
+                             "teamid-testid": "{}-{}".format(str(team_id), tc),
+                             "createdAt": audit_time,
+                             "updatedAt": audit_time,
+                             #"resourceName": item['id'],
+                             "complianceStatus": results[audit_tc_script],
+                           }
+                params_list.append(params.copy())
 
-                # while sys.getsizeof(json.dumps(params_list)) >= 900000:
-                #     print("LOG: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
-           #     stream_info = add_result_to_stream(team_name.split(":")[0], str(team_id), tc, params_list)
-                #     seq_nums_list.append(stream_info)
+                print(params_list)
+                while sys.getsizeof(json.dumps(params_list)) >= 900000:
+                    print("LOG: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
+                    stream_info = add_result_to_stream(session, team_name.split(":")[0], str(team_id), tc, params_list)
+                    seq_nums_list.append(stream_info)
 
+                send_result_complete(session, team_id.split(":")[0], scan_id, team_id, tc, seq_nums_list)
             except Exception as e:
                 print("ERROR: Failed read the result from execution => %s" % str(e))
         else:
@@ -255,7 +257,6 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
             raise Exception("ERROR: Required Test-Script is not available")
     print("LOG: Execution result for Team: %s \n%s" % (team_name, results))
 
-    # send_result_complete(team_name.split(":")[0], scan_id, team_id, test_id, "ResultComplete", seq_nums_list)
 
     delete_msg_from_sqs(receipt_handle)
 
@@ -282,7 +283,7 @@ if __name__ == '__main__':
     key = "1329ebbc1b9646b890202384beaef2ec"
 
     """ Decrypt the kube config file """
-    if decrypt_file(key, "kube_config.enc"):
+    if decrypt_file(key, "kube-config.enc"):
         print("INFO: Successfully decrypted Kube Config file")
     else:
         raise Exception("ERROR: Failed to decrypt \"kube_config.enc\" file")
@@ -319,7 +320,4 @@ if __name__ == '__main__':
     os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
     os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
     print("INFO: Delete decrypted kube_config file")
-    os.remove(os.path.expanduser("~") + "/" + "kube_config")
-
-#    """ Exit Gracefully """
-#    # API call for the container to exit gracefully
+    os.remove(os.path.expanduser("~") + "/" + "kube-config")
