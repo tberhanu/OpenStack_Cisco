@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/app-root/bin/python
 
 """
 --------------------------- general_util.py ---------------------------
@@ -13,18 +13,17 @@ All rights reserved.
 """
 
 import boto3
-import botocore
 import datetime
 import time
 import os
 import sys
+import uuid
 import json
 import decimal
-
 from datetime import date
 
 
-def add_result_to_stream(platform, teamid, testid, params_list):
+def add_result_to_stream(session, platform, teamid, testid, params_list):
     """
     Function add_result_data_stream to ResultStream<platform suffix e.g. CAE, P3>
         params_list is a list of dictionary the pattern params below
@@ -47,7 +46,7 @@ def add_result_to_stream(platform, teamid, testid, params_list):
     There are other restriction as dynamoDB key can not have null value
 
     os.environ['ENV_TYPE'] should return blank for production as "".
-
+    :param session: connection handle towards AWS
     :param platform:
     :param teamid:
     :param testid:
@@ -56,9 +55,9 @@ def add_result_to_stream(platform, teamid, testid, params_list):
     """
     sortKey = "{}-{}".format(teamid, testid)
     """
-    Validate size and params_list for keys pertaining to Results DB and raise exception if not.
+	  Validate size and params_list for keys pertaining to Results DB and raise exception if not
     Kinesis stream record limit is 1 MiB
-    """
+	  """
     if sys.getsizeof(json.dumps(params_list)) > 1000000:
         raise Exception("CSBError: params_list exceeds the allowed size of 1 MB")
     for params in params_list:
@@ -68,59 +67,64 @@ def add_result_to_stream(platform, teamid, testid, params_list):
             raise Exception("CSBError: params_list contains params with missing sort key for resultDB")
 
     """
-    Not having region name will make the service fail when there is no default region in config file
-    Since this is a common code CSB deployment region us-east-1 is used not impacting any audit-tests
+	  Not having region name will make the service fail when there is no default region in config file
+    Since this is a common code CSB deployment region us-east-1 is used not impacting any audittests
+	  """
+    kinesis_client = session.client('kinesis', region_name='us-east-1')
+	  try:
+		    response = kinesis_client.put_record(
+					#StreamName=os.environ['ENV_TYPE']+"ResultStream"+platform,
+					StreamName="dev"+"ResultStream"+platform,
+					Data= json.dumps(params_list, cls=CustomEncoder),
+					PartitionKey=sortKey
+		    )
+	  except Exception as add_result_err:
+        print("ERROR: Record posting on Kinesis Stream failed due to %s" % str(add_result_err))	
+		
     """
-    kinesis_client = boto3.client('kinesis', region_name='us-east-1')
-    try:
-        response = kinesis_client.put_record(
-                                                StreamName=os.environ['ENV_TYPE']+"ResultStream"+platform,
-                                                Data=json.dumps(params_list, cls=CustomEncoder),
-                                                PartitionKey=sortKey
-                                            )
-    except Exception as add_result_err:
-        print("ERROR: Record posting on Kinesis Stream failed due to %s" % str(add_result_err))
-
-    """ sequence number and shard id to validate later in results stream lambda """
-    stream_info = {"shard_id": response['ShardId'], "seq_num": response["SequenceNumber"]}
+	  sequence number and shard id to validate later in results stream lambda
+	  """
+    stream_info = {"shard_id":response['ShardId'], "seq_num":response["SequenceNumber"]}
     return stream_info
 
 
-def updateScanRecord(platform, scanid, teamid, testid, status):
-    """
+def updateScanRecord(session, platform, scanid, teamid, testid, status):
+	  """
     update scan records
-
+    :param session: connection handle towards AWS
     :param platform: name of platform
     :param scanid: scanid received while reading SQS message
     :param teamid: teamid received while reading SQS message
     :param testid: testid received while reading SQS message
-    :param status:
-    :return:
+    :param status: Inprogress|PASS|FAIL
+    :return: None
     """
+
     timeStamp = int(time.time() * 1000)
     sortKey = "{}-{}".format(teamid, testid)
-    kinesis_client = boto3.client('kinesis')
+    kinesis_client = session.client('kinesis')
     value = {
-            "id": scanid,
-            "scanStatus": status,
-            "teamid": teamid,
-            "teamid-testid": sortKey,
-            "updatedAt": timeStamp
+              "id": scanid,
+              "scanStatus": status,
+              "teamid": teamid,
+              "teamid-testid": sortKey,
+              "updatedAt": timeStamp
             }
     try:
-        response = kinesis_client.put_record(
-                                                StreamName=os.environ['ENV_TYPE']+"ScanStream"+platform,
-                                                Data= json.dumps(value, cls=CustomEncoder),
-                                                PartitionKey=sortKey
-                                            )
-    except Exception as update_record_err:
-        print("ERROR: Record posting on Kinesis Stream failed due to %s" % str(update_record_err))
-
+		    response = kinesis_client.put_record(
+										#StreamName=os.environ['ENV_TYPE']+"ScanStream"+platform,
+										StreamName="dev"+"ScanStream"+platform,
+										Data= json.dumps(value,cls=CustomEncoder),
+										PartitionKey=sortKey
+		    )
+	  except Exception as update_record_err:
+        print("ERROR: Record posting on Kinesis Stream failed due to %s" % str(update_record_err))	
+        
     return response
 
 
-def send_result_complete(platform, scanid, teamid, testid, seq_nums_list):
-    """
+def send_result_complete(session, platform, scanid, teamid, testid, seq_nums_list):
+  	"""
     The function send_result_complete needs to be called only once for a testid i.e. the testid main audit test
     to send status to ScanStream with list of sequence numbers and shard id for results data
     ****example code how it can be called *******************************
@@ -130,6 +134,7 @@ def send_result_complete(platform, scanid, teamid, testid, seq_nums_list):
     seq_nums_list.append(stream_info)
     send_result_complete(platform, scanid, teamid, testid, "ResultComplete", seq_nums_list)
     **** end of example code *****************
+    :param session: connection handle towards AWS
     :param platform:
     :param scanid:
     :param teamid:
@@ -139,27 +144,27 @@ def send_result_complete(platform, scanid, teamid, testid, seq_nums_list):
     """
     sortKey = "{}-{}".format(teamid, testid)
     timeStamp = int(time.time() * 1000)
-    kinesis_client = boto3.client('kinesis')
+    kinesis_client = session.client('kinesis')
     value = {
-            "id": scanid,
-            "scanStatus": "ResultComplete",
-            "teamid": teamid,
-            "teamid-testid": sortKey,
-            "seq_list":seq_nums_list,
-            "updatedAt": timeStamp
+              "id": scanid,
+              "scanStatus": "ResultComplete",
+              "teamid": teamid,
+              "teamid-testid": sortKey,
+              "seq_list":seq_nums_list,
+              "updatedAt": timeStamp
             }
-    try:
-        response = kinesis_client.put_record(
-            StreamName=os.environ['ENV_TYPE']+"ScanStream"+platform,
-            Data= json.dumps(value, cls=CustomEncoder),
-            PartitionKey=sortKey
-        )
-    except Exception as send_result_err:
+	  try:
+		    response = kinesis_client.put_record(
+										#StreamName=os.environ['ENV_TYPE']+"ScanStream"+platform,
+										StreamName="dev"+"ScanStream"+platform,
+										Data= json.dumps(value, cls=CustomEncoder),
+										PartitionKey=sortKey
+		    )
+	  except Exception as send_result_err:
         print("ERROR: Record posting on Kinesis Stream failed due to %s" % str(send_result_err))
 
     return response
-
-
+	
 class CustomEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
