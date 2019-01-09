@@ -1,4 +1,4 @@
-!/opt/app-root/bin/python
+#!/opt/app-root/bin/python
 
 """
 ---------------------------- csb_auditor.py ------------------------------
@@ -41,14 +41,19 @@ from Crypto.Cipher import AES
 from env_variables import env_variables
 from general_util import add_result_to_stream, updateScanRecord, send_result_complete
 from importlib import import_module
+
+
+
 def decrypt_file(key, in_filename):
     """
     Decrypts a file using AES(CBC mode) with the given key.
     :param key: key to be used for decryption
     :param in_filename: name of encrypted file
-    :return: generated decrypted file and return TRUE/FALSE    """
+    :return: generated decrypted file and return TRUE/FALSE
+    """
     out_filename = os.path.splitext(in_filename)[0]
-    chunk_size = 64*1024    try:
+    chunk_size = 64*1024
+    try:
         print("LOG: Decrypt %s file" % in_filename)
         with open(in_filename, 'rb') as infile:
             orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
@@ -69,8 +74,10 @@ def decrypt_file(key, in_filename):
         print("ERROR: File %s was not accessible" % in_filename)
 
     if os.path.isfile(out_filename):
+        print("LOG: Decrypted File is available for use")
         return True
     else:
+        print("ERROR: Decrypted File is not available for use")
         return False
 
 
@@ -238,7 +245,7 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
                              "teamid-testid": "{}-{}".format(str(team_id), tc),
                              "createdAt": audit_time,
                              "updatedAt": audit_time,
-                             #"resourceName": item['id'],
+#                             "resourceName": item['id'],
                              "complianceStatus": results[audit_tc_script],
                            }
                 params_list.append(params.copy())
@@ -268,6 +275,7 @@ def delete_msg_from_sqs(receipt_handle):
     """
     print("LOG: Delete message from SQS")
     try:
+        sqsclient = sqs_client_handle()
         response = sqsclient.delete_message(
                                              QueueUrl=os.environ["SQS_URL"],
                                              ReceiptHandle=receipt_handle
@@ -276,8 +284,7 @@ def delete_msg_from_sqs(receipt_handle):
         print("ERROR: Failed to delete the message from SQS Queue: %s" % str(del_err))
 
 
-if __name__ == '__main__':
-
+def main():
     """ Key to decrypt the encrypted files required for CSB Audit """
     #key = os.environ["KEY"]
     key = "1329ebbc1b9646b890202384beaef2ec"
@@ -321,3 +328,7 @@ if __name__ == '__main__':
     os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
     print("INFO: Delete decrypted kube_config file")
     os.remove(os.path.expanduser("~") + "/" + "kube-config")
+
+
+if __name__ == '__main__':
+    main()
