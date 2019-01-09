@@ -44,8 +44,27 @@ class Automate:
                 #if env["DEBUG_VALUE"] == 1:
                  #   print("load_config(path): Pulling Config from %s filei => %s" % url)
 
-                self.k8s_client = config.new_client_from_config()
-                self.dyn_client = DynamicClient(self.k8s_client)
+
+                if url is not None:
+                    url_split = url.strip().split('.')
+                    string = str(url_split[0])
+                    string_split = string.strip().split('-')
+                    region_name = str(string_split[2].strip())
+                    #path = '/home/centos/amar/working_kube_config_010719'
+                    path = '/home/centos/.kube/config'
+                    if region_name is not None:
+                        if region_name == "rtp":
+                            path = '/home/centos/sanjeev/sanjeev_conf/config_rtp'
+                        elif region_name == "rcdn":
+                            path = '/home/centos/sanjeev/sanjeev_conf/conf_rcdn'
+                        elif region_name == 'alln':
+                            path = '/home/centos/sanjeev/sanjeev_conf/config_alln'
+                            #print('alln region ', path)
+                        else:
+                            print("No region found")
+                            exit()
+                k8s_client = config.new_client_from_config(path)
+                self.dyn_client = DynamicClient(k8s_client)
             except Exception as e:
                 print("Error: Fail to retrieve the user roles with error: %s" %str(e))
 
@@ -67,6 +86,7 @@ class Automate:
                 self.project_name_id_mapping = {}
                 self.project_list = []
                 v1_projects = self.dyn_client.resources.get(api_version='project.openshift.io/v1', kind='Project')
+                print("Amar: %s" % v1_projects)
                 self.projects = v1_projects.get()
 
                 for project in self.projects.items:
@@ -77,6 +97,10 @@ class Automate:
                         self.project_list = [self.project_name]
                     else:
                         print("project %s is not present" % self.project_name)
+                        data = []
+                        data.append(["null", self.project_name, "null", "null", "null", "null", "null"])
+                        df = pd.DataFrame(data,columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
+                        df.to_csv('output.csv')
                         exit()
             except Exception as e:
                 print("Error: Fail to retrieve the user roles with error: %s" %str(e))
@@ -118,7 +142,6 @@ class Automate:
                     self.rolebinding_untrusted[project]= proj_role_bind_untrusted.copy() if bool(proj_role_bind_untrusted) else None
                 self.users_with_untrusted_roles = [item for sublist in self.users_with_untrusted_roles if sublist for item in sublist]
                 project_app = self.get_app_project_mapping()
-                #print(self.rolebinding_untrusted)
                 if not self.rolebinding_untrusted[self.project_name]:
                     print('Pass')
                     return
@@ -131,6 +154,7 @@ class Automate:
                             diff = ("%s Days %s Hours %s Mins" % (diff.days, diff.seconds//3600, (diff.seconds//60)%60))
                             if project in project_app:
                                     if self.rolebinding_untrusted[project][role]['usernames'] is not None:
+                                        print("Amar: %s" % self.rolebinding_untrusted[project][role]['usernames'])
                                         for user in range(len(self.rolebinding_untrusted[project][role]['usernames'])):
                                             data.append([self.project_name_id_mapping[project], project, project_app[project]['app_id'], project_app[project]['app_name'], role, self.rolebinding_untrusted[project][role]['usernames'][user], diff])
                                     else:
@@ -142,8 +166,34 @@ class Automate:
                                 else:
                                     data.append([self.project_name_id_mapping[project], project, "None", "None", role, "None", diff])
                 df = pd.DataFrame(data,columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
-                df.to_csv('output.csv')
+                df.to_csv('output.csv',index=False)
                 print('Fail')
+                data_all = []
+                for project in self.rolebinding_all:
+                    if self.rolebinding_all[project] is not None:
+                        for role in self.rolebinding_all[project]:
+                            dt = dateutil.parser.parse(self.rolebinding_all[project][role]['timecreated'])
+                            dt = dt.replace(tzinfo=None)
+                            diff = datetime.datetime.now() - dt
+                            diff = ("%s Days %s Hours %s Mins" % (diff.days, diff.seconds//3600, (diff.seconds//60)%60))
+                            if project in project_app:
+                                    if self.rolebinding_all[project][role]['usernames'] is not None:
+                                        print("Amar: %s" % self.rolebinding_all[project][role]['usernames'])
+                                        for user in range(len(self.rolebinding_all[project][role]['usernames'])):
+                                            data_all.append([self.project_name_id_mapping[project], project, project_app[project]['app_id'], project_app[project]['app_name'], role, self.rolebinding_all[project][role]['usernames'][user], diff])
+                                    else:
+                                        data_all.append([self.project_name_id_mapping[project], project, project_app[project]['app_id'], project_app[project]['app_name'], role, "None", diff])
+                            else:
+                                if self.rolebinding_all[project][role]['usernames'] is not None:
+                                    for user in range(len(self.rolebinding_all[project][role]['usernames'])):
+                                        data_all.append([self.project_name_id_mapping[project], project, "None", "None", role, self.rolebinding_all[project][role]['usernames'][user], diff])
+                                else:
+                                    data_all.append([self.project_name_id_mapping[project], project, "None", "None", role, "None", diff])
+                df = pd.DataFrame(data_all,columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
+                df.to_csv('metadata.csv',index=False)
+
+
+
             except Exception as e:
                 print("Error: Fail to retrieve the user roles with error: %s" %str(e))
 
@@ -174,7 +224,7 @@ class Automate:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate the images listed in OpenShift Project...")
-    parser.add_argument("-u", "--auth_url", help="OpenShift Domain URL", action="store", dest="url")
+    parser.add_argument("-u", "--auth_url", help="OpenShift Domain URL",required=True,action="store", dest="url")
     parser.add_argument("-t", "--team_id", help="Project/Tenant ID", action="store", dest="team")
 
     args = parser.parse_args()
