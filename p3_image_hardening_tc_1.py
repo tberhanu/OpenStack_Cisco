@@ -7,7 +7,7 @@ Description: This python script is to list all the images in the tenant account 
             visibility status of the images used in the servers and the unused images contain
             in the tenant account.
 
-Author: Devaraj Acharya <devaacha@cisco.com>; January 6th, 2018
+Author: Devaraj Acharya <devaacha@cisco.com>; January 9th, 2018
 
 Copyright (c) 2019 Cisco Systems.
 All rights reserved.
@@ -26,8 +26,7 @@ from os import environ as env
 def list_images(conn):
     """
     This main method is to list all the images in the openstack project
-    :param conn: connectivity to P3 platform
-    :return: PASS or FAIL
+    :param conn: connectivity to the P3 platform
     """
     try:
         images = {}
@@ -44,10 +43,10 @@ def list_images(conn):
 def list_servers(conn, images, project_name, os_auth_url):
     """
     This main method is to list the servers in the openstack project along with the details of server
-    and the associated image detail.
-    :conn: connectivity to the platform
+    and the associated image.
+    :conn: connectivity to the P3 platform
     :param os_auth_url: OpenStack's Horizon URL
-    :images: list_images
+    :images: list_images(conn)
     :param project_name: Project name
     """
     try:
@@ -89,16 +88,18 @@ def list_servers(conn, images, project_name, os_auth_url):
 def list_private_servers(servers):
     """
     This method is to list the servers with the unsecured images and their details.
-    :param servers: list_servers
+    :param servers: list_servers(conn, images, project_name, os_auth_url)
     :return: PASS or FAIL    
     """
     try:    
-        flag = "Fail"
+        flag1 = "Fail"
         private_servers = []
         for server in servers:
             if (server['unsecured'] == True):
                 private_servers.append(server)
                 flag = "Fail"
+            else:
+                flag = "Pass"
         with open('private_servers.csv','w') as file:
             file.writelines(json.dumps(private_servers))
             file.writelines('\n ')
@@ -108,8 +109,7 @@ def list_private_servers(servers):
         else:
             print "VM test: FAIL(Unsecured image is used in VM)"
         #print(json.dumps(private_servers, sort_keys=False, indent=2))
-        return private_servers
-        return flag
+        return private_servers, flag1
     except IOError as e:
         print("ERROR: Failed to retrieve private servers list with error => %s" % str(e))
     except Exception as err:
@@ -166,7 +166,7 @@ def list_unused_private_images(unused_images):
     :return: PASS or FAIL    
     """
     try:
-        flag = "Fail"
+        flag2 = "Fail"
         unused_private_images = []
         for image in unused_images:
             if (image['visibility'] != 'public'):
@@ -184,8 +184,7 @@ def list_unused_private_images(unused_images):
             print "unused private images test: PASS(There is no unused unsecured images)"
         else:
             print "unused private images test: FAIL(There is unused unsecured images)"
-        return unused_private_images
-        return flag   
+        return unused_private_images, flag2 
     except IOError as e:
         print("ERROR: Failed to retrieve unused private image list with error => %s" % str(e))
     except Exception as err:
@@ -212,7 +211,7 @@ def list_all_images(conn, project_name, os_auth_url):
                 "image_name": out['name'], 
                 "visibility": out['visibility'], "status": out['status']
             })
-        with open('image_detail.txt','w') as file:
+        with open('image_detail.csv','w') as file:
             file.writelines(json.dumps(all_images_list))
             file.writelines('\n ')
             file.close()
@@ -229,7 +228,7 @@ def unsecured_images_list(all_images_list):
     :return: PASS or FAIL
     """
     try:
-        flag = "Fail"
+        flag3 = "Fail"
         all_unsecured_images = []
         for image in all_images_list:
             if (image['visibility'] != 'public'):
@@ -240,18 +239,15 @@ def unsecured_images_list(all_images_list):
             else:
                 flag = "Pass"
 
-        with open('unsecured_images_list.txt','w') as file:
+        with open('unsecured_images_list.csv','w') as file:
             file.writelines(json.dumps(all_unsecured_images))
             file.writelines('\n ')
             file.close()
-        
-
         if len(all_unsecured_images) == 0:
             print "All images test: PASS(Tenant has no unsecured images)"
         else:
             print "All images test: FAIL(Tenant has unsecured images)"
-        return all_unsecured_images
-        return flag
+        return all_unsecured_images, flag3
     except IOError as e:
         print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
     except Exception as err:
@@ -277,11 +273,11 @@ def main(os_auth_url, project_name):
     
     images = list_images(conn)
     servers = list_servers(conn, images, project_name, os_auth_url)
-    private_servers = list_private_servers(servers)
+    private_servers, flag1 = list_private_servers(servers)
     unused_images = list_unused_images(conn, images, servers, project_name, os_auth_url)
-    unused_private_images = list_unused_private_images(unused_images)
+    unused_private_images, flag2 = list_unused_private_images(unused_images)
     all_images_list = list_all_images(conn, project_name, os_auth_url)
-    all_unsecured_images = unsecured_images_list(all_images_list)
+    all_unsecured_images, flag3 = unsecured_images_list(all_images_list)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate the images listed in OpenStack Project...")
