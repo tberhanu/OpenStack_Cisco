@@ -17,7 +17,7 @@ env_variables = {
     "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE.fifo",
     "SQS_MSG_VISIBILITY_TIMEOUT": "60",
     "CSB_CNT_REPO": "https://wwwin-github.cisco.com/CiscoIT-CSB/CiscoIT-CSB",
-    "CLONED_REPO_DIR": os.path.expanduser("~") + "/" + "csb_cnt_repo/",
+    "CLONED_REPO_DIR": os.path.expanduser("~") + "/",
     "OS_INTERFACE": "public",
     "OS_IDENTITY_API_VERSION": "3",
     "OS_PROJECT_DOMAIN_NAME": "cisco",
