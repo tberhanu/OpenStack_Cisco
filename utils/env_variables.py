@@ -25,10 +25,12 @@ env_variables = {
     "MAX_LIMIT_OF_SPAWNED_CONTAINER": "20",
     "BREAKOUT_HOUR": "10",   # 1000 hrs.
     "AWS_REGION": "us-east-1",
-    "ENV_TYPE": "",
+    "AWS_ENV_TYPE": "dev",
     "COUNT_OF_SQS_READ_MSG": "1",
     "WAIT_TIME_FOR_NEXT_POLL": "60",
-    "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "300"
+    "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "300",
+    "MPROC_TIMEOUT": "120",
+    "GIT_BRANCH_TO_USE": "csb_dev"  
 }
 
 if __name__ == "__main__":
