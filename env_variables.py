@@ -15,7 +15,7 @@ import os
 
 env_variables = {
     "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE.fifo",
-    "SQS_MSG_VISIBILITY_TIMEOUT": "600",
+    "SQS_MSG_VISIBILITY_TIMEOUT": "60",
     "CSB_CNT_REPO": "https://wwwin-github.cisco.com/CiscoIT-CSB/CiscoIT-CSB",
     "CLONED_REPO_DIR": os.path.expanduser("~") + "/" + "csb_cnt_repo/",
     "OS_INTERFACE": "public",
@@ -28,7 +28,7 @@ env_variables = {
     "ENV_TYPE": "",
     "COUNT_OF_SQS_READ_MSG": "1",
     "WAIT_TIME_FOR_NEXT_POLL": "60",
-    "DEBUG_FLAG": "0"
+    "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "300"
 }
 
 if __name__ == "__main__":
