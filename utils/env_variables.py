@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/app-root/bin/python
 
 """
 ------------------------------- env_variables.py ------------------------------
