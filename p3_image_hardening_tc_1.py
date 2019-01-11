@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/app-root/bin/python
 
 """
 --------------------------p3_image_hardening_tc_1.py-------------------------
