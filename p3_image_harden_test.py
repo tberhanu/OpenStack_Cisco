@@ -135,39 +135,36 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
     :param os_auth_url: OpenStack's Horizon URL
     :param project_name: Project name
     """
-    try:
-        unused_images = []
-        all_image_ids = []
-        used_image_ids = []
-        unused_image_ids = []
-        for image in conn.image.images():
-            all_image_ids.append(image['id'])
-        for server in servers:
-            used_image_ids.append(server[4])
-        unused_image_ids = set(all_image_ids).difference(set(used_image_ids))
-        for unused_image_id in unused_image_ids:
-            image = images[unused_image_id]
-            unused_images.append([
-                    server[1],
-                    image['owner_id'],
-                    project_name,
-                    os_auth_url,
-                    image['id'],
-                    image['name'],
-                    image['visibility'],
-                    unused_image_ids != None,
-                    image['direct_url'],
-                    image['updated_at']
-            ])
-        df = pd.DataFrame(unused_images, columns=["Tenant Id", "Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_ago"])
-        df.to_csv('unused_imges_list.csv',index=False)
+    
+    unused_images = []
+    all_image_ids = []
+    used_image_ids = []
+    unused_image_ids = {}
+    for image in conn.image.images():
+        all_image_ids.append(image['id'])
+    for server in servers:
+        used_image_ids.append(server[4])
+    unused_image_ids = set(all_image_ids).difference(set(used_image_ids))
+    for unused_image_id in unused_image_ids:
+        image = images[unused_image_id]
+        unused_images.append([
+                server[1],
+                image['owner_id'],
+                project_name,
+                os_auth_url,
+                image['id'],
+                image['name'],
+                image['visibility'],
+                unused_image_ids != None,
+                image['direct_url'],
+                image['updated_at']
+        ])
+    df = pd.DataFrame(unused_images, columns=["Tenant Id", "Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_ago"])
+    df.to_csv('unused_imges_list.csv',index=False)
 
-        #print(json.dumps(unused_images, sort_keys=False, indent=2))
-        return unused_images
-    except IOError as e:
-        print("ERROR: Failed to retrieve unused image list with error => %s" % str(e))
-    except Exception as err:
-        print("ERROR: Failed to retrieve list of unused images due to %s" % str(err))
+    #print(json.dumps(unused_images, sort_keys=False, indent=2))
+    return unused_images
+
 
 def list_unused_private_images(unused_images):
     """
@@ -256,6 +253,17 @@ def unsecured_images_list(all_images_list):
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
 
+def summary_of_test(project_name, all_images_list, all_unsecured_images, servers, private_servers, unused_images, unused_private_images):
+    summary = []
+    print("\n##########################Summary of audit test#############################")
+    print("Project name of audit test: %s" % project_name)
+    print("Total no of images found: %s" % len(all_images_list))
+    print("Total no of unsecured images found: %s" % len(all_unsecured_images))
+    print("Total no of servers in tenant account: %s" % len(servers))
+    print("Total no of servers using private images: %s" % len(private_servers))
+    print("Total no of unused image in tenant accout: %s" % len(unused_images))
+    print("Total no of unused private image in tenant accout: %s" % len(unused_private_images))
+    return summary
 
 def main(os_auth_url, project_name):
     """
@@ -287,7 +295,9 @@ def main(os_auth_url, project_name):
     all_images_list = list_all_images(conn, project_name, os_auth_url)
     if all_images_list:
         all_unsecured_images, flag3 = unsecured_images_list(all_images_list)
-        return flag3
+    summary_of_test(project_name, all_images_list, all_unsecured_images, servers, private_servers, unused_images, unused_private_images)  
+    return flag3
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate the images listed in OpenStack Project...")
@@ -297,3 +307,4 @@ if __name__ == "__main__":
     url = args.url
     p_name = args.team
     main(url, p_name)
+
