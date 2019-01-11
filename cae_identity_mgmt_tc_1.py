@@ -323,7 +323,7 @@ def main(p_name, path_url, scan_id, team_id):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Validate the images listed in OpenShift Project...")
+    parser = argparse.ArgumentParser(description="Validate the Roles associated with Users listed in OpenShift Project...")
     parser.add_argument("-u", "--auth_url", help="OpenShift Domain URL",required=True,action="store", dest="url")
     parser.add_argument("-t", "--team_name", help="Project/Tenant Name", action="store", dest="team")
     parser.add_argument("-s", "--scan_id", help="Scan Id from AWS", action="store", dest="scanid")
