@@ -331,7 +331,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
     session = session_handle()
     if session:
         print("LOG: Update the scan record with \"InProgress\" Status")
-        updateScanRecord(session, "P3", scan_id, team_id, "P3-IMAGE-HARDENING-TC-1", "InProgress")
+        updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
         seq_nums_list = []
         params_list = []
 
