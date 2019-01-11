@@ -1,29 +1,25 @@
 #!/opt/app-root/bin/python
 
 """
---------------------------p3_image_hardening_tc_1.py-------------------------
-Description: This python script is to list all the images in the tenant account and
-            validate the image are from the trusted source or not. This method check the
-            visibility status of the images used in the servers and the unused images contain
-            in the tenant account.
+--------------------------p3_image_hardening_tc_1.py---------------------------
+Description: This python script is to list all the images in the tenant
+             account and validate the image are from the trusted source or not.
+             This method check the visibility status of the images used in the
+             servers and the unused images contain in the tenant account.
 
 Author: Devaraj Acharya <devaacha@cisco.com>; January 8th, 2018
 
 Copyright (c) 2019 Cisco Systems.
 All rights reserved.
--------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 """
 import argparse
-import datetime
 import json
 import os
-import dateutil.parser
 import openstack
-import subprocess
 import sys
 import time
 
-from datetime import datetime
 from os import environ as env
 from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
@@ -31,6 +27,7 @@ global tc
 
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
+
 
 def list_images(conn):
     """
@@ -70,7 +67,7 @@ def list_servers(conn, images, project_name, os_auth_url):
             srvr = json.dumps(server)
             pull = json.loads(srvr)
             image = images[pull['image']['id']]
-                        
+
             address = pull['addresses'][network_name][0]
             servers.append({
                 "vm_id": pull['id'],
@@ -94,7 +91,7 @@ def list_servers(conn, images, project_name, os_auth_url):
             file.writelines(json.dumps(servers))
             file.writelines('\n ')
             file.close()
-        print(json.dumps(servers, sort_keys=False, indent=2))
+        #print(json.dumps(servers, sort_keys=False, indent=2))
         return servers
 
     except IOError as e:
@@ -117,7 +114,7 @@ def list_private_servers(servers, seq_nums_list, params_list, scan_id, team_id, 
         private_servers = []
         for server in servers:
             compliant_status = "Compliant"
-            if (server['unsecured'] == True):
+            if server['unsecured'] == True:
                 private_servers.append(server)
                 compliant_status = "Non-compliant"
                 flag = "Non-complaint"
@@ -145,15 +142,14 @@ def list_private_servers(servers, seq_nums_list, params_list, scan_id, team_id, 
         print("LOG: Sending result complete")
         send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
 
-
-        with open('private_servers.csv','w') as file:
+        with open('private_servers.csv', 'w') as file:
             file.writelines(json.dumps(private_servers))
             file.writelines('\n ')
             file.close()
         if len(private_servers) == 0:
-            print("LOG: VM test: PASS\(Unsecured image is not used in VM\)")
+            print("LOG: VM test: PASS(Unsecured image is not used in VM)")
         else:
-            print("LOG: VM test: FAIL\(Unsecured image is used in VM\)")
+            print("LOG: VM test: FAIL(Unsecured image is used in VM)")
         # print(json.dumps(private_servers, sort_keys=False, indent=2))
         return private_servers, flag
 
@@ -178,7 +174,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
         unused_images = []
         all_image_ids = []
         used_image_ids = []
-        unused_image_ids = {}
+        unused_image_ids = []
         for image in conn.image.images():
             all_image_ids.append(image['id'])
         for server in servers:
@@ -208,8 +204,9 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
         print("ERROR: Failed to retrieve unused image list with error => %s" % str(e))
         return None
     except Exception as err:
-        print("ERROR: Failed to retrieve list of unused images due to %s" % str(err))
+        # print("ERROR: Failed to retrieve list of unused images due to %s" % str(err))  # Debug Required
         return None
+
 
 def list_unused_private_images(unused_images):
     """
@@ -220,16 +217,16 @@ def list_unused_private_images(unused_images):
     try:
         unused_private_images = []
         for image in unused_images:
-            if (image['visibility'] != 'public'):
+            if image['visibility'] != 'public':
                 unused_private_images.append(image)
-        with open('unused_private_images.csv','w') as file:
+        with open('unused_private_images.csv', 'w') as file:
             file.writelines(json.dumps(unused_private_images))
             file.writelines('\n ')
             file.close()
         if len(unused_private_images) == 0:
-            print("LOG: Unused private images test: PASS\(There is no unused unsecured images\)")
+            print("LOG: Unused private images test: PASS(There is no unused unsecured images)")
         else:
-            print("LOG: Unused private images test: FAIL\(There is unused unsecured images\)")
+            print("LOG: Unused private images test: FAIL(There is unused unsecured images)")
         return unused_private_images
 
     except IOError as e:
@@ -284,25 +281,24 @@ def unsecured_images_list(all_images_list):
     :return: all_unsecured_images, Complaint|Non-Complaint
     """
     try:
-        flag = "Non-compliant"
         all_unsecured_images = []
         for image in all_images_list:
-            if (image['visibility'] != 'public'):
+            if image['visibility'] != 'public':
                 all_unsecured_images.append(image)
-                flag = "Non-compliant"
-            else:
-                flag = "Compliant"
 
-        with open('unsecured_images_list.csv','w') as file:
+        with open('unsecured_images_list.csv', 'w') as file:
             file.writelines(json.dumps(all_unsecured_images))
             file.writelines('\n ')
             file.close()
 
         if len(all_unsecured_images) == 0:
-            print("LOG: All images test: PASS\(Tenant has no unsecured images\)")
+            print("LOG: All images test: PASS(Tenant has no unsecured images)")
+            flag = "Compliant"
         else:
-            print("LOG: All images test: FAIL\(Tenant has unsecured images\)")
-        return all_unsecured_images, flag
+            print("LOG: All images test: FAIL(Tenant has unsecured images)")
+            flag = "Non-compliant"
+
+        return flag
 
     except IOError as e:
         print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
@@ -310,6 +306,7 @@ def unsecured_images_list(all_images_list):
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
         return None, None
+
 
 def main(os_auth_url, project_name, scan_id, team_id):
     """
@@ -319,7 +316,6 @@ def main(os_auth_url, project_name, scan_id, team_id):
     :param project_name: Project name
     :return: Compliant | None-compliant
     """
-    flag = "Non-compliant"
     try:
         region = os_auth_url.split(".")[0].split("//")[1]
         conn = openstack.connect(
@@ -346,16 +342,16 @@ def main(os_auth_url, project_name, scan_id, team_id):
                 servers = list_servers(conn, images, project_name, os_auth_url)
                 if servers:
                     try:
-                        private_servers, flag = list_private_servers(servers, seq_nums_list, params_list, scan_id, team_id, session)
+                        private_servers, flag1 = list_private_servers(servers, seq_nums_list, params_list, scan_id, team_id, session)
                     except Exception as err:
-                        print("ERROR: Failed to list private servers")
+                        print("ERROR: Failed to list private servers - %s" % str(err))
                         updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
 
                     unused_images = list_unused_images(conn, images, servers, project_name, os_auth_url)
                     if unused_images:
                         unused_private_images = list_unused_private_images(unused_images)
                     else:
-                        print("ERROR: Failed to get the list of unused images")
+                        # print("ERROR: Failed to get the list of unused images")   #Debug required
                 else:
                     print("ERROR: Failed to get the server list")
             else:
@@ -363,27 +359,31 @@ def main(os_auth_url, project_name, scan_id, team_id):
 
             all_images_list = list_all_images(conn, project_name, os_auth_url)
             if all_images_list:
-                all_unsecured_images = unsecured_images_list(all_images_list)
+                flag2 = unsecured_images_list(all_images_list)
             else:
                 print("ERROR: Failed to get the list of images")
-
-            return flag
+            if flag1 == flag2 == "Compliant":
+                return "Compliant"
+            else:
+                return "Non-compliant"
         except Exception as err:
-            print("ERROR: Overall execution got affected")
+            print("ERROR: Overall execution got affected due to - %s" % str(err))
             return None
     else:
         return None
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate the images listed in OpenStack Project...")
     parser.add_argument("-u", "--auth_url", help="OpenStack Horizon URL", action="store", dest="url")
     parser.add_argument("-t", "--team_name", help="Project/Tenant ID", action="store", dest="team")
-    parser.add_argument("-s", "--scan_id", help="OpenStack Horizon URL", action="store", dest="scanid")
-    parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="team")
+    parser.add_argument("-s", "--scan_id", help="Scan ID from AWS", action="store", dest="scanid")
+    parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="teamid")
     args = parser.parse_args()
     url = args.url
     p_name = args.team
     scan_id = args.scanid
-    team_id = args.team_id
+    team_id = args.teamid
 
-    main(url, p_name, scan_id, team_id)
+    compliance_status = main(url, p_name, scan_id, team_id)
+    print(compliance_status)
