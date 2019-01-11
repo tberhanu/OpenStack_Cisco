@@ -193,7 +193,7 @@ def main(url,namespace,scan_id,team_id):
                 seq_nums_list = []
                 params_list = []
             
-			exists = os.path.isfile('cae_image_hardening.csv')
+	    exists = os.path.isfile('cae_image_hardening.csv')
             if exists:
                 if debug_flag is not None and debug_flag == 1:
                     print("CSV file is available to read  => ")
