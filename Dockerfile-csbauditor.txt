@@ -1,0 +1,22 @@
+FROM containers.cisco.com/aws_managed/python-2.7_custom
+SHELL ["/bin/bash", "-c"]
+user root
+MAINTAINER phuocng
+RUN pip install --upgrade pip && pip install openstacksdk
+RUN pip install --upgrade pip && pip install openstackclient
+RUN pip install --upgrade pip && pip install boto3
+RUN pip install --upgrade pip && pip install openshift
+RUN pip install --upgrade pip && pip install kubernetes
+RUN pip install --upgrade pip && pip install pykube
+RUN pip install --upgrade pip && pip install gitpython
+RUN pip install --upgrade pip && pip install pycrypto
+RUN pip install --upgrade pip && pip install pandas
+RUN git config --global user.name csbauditor.gen
+RUN git config --global user.email csbauditor.gen@cisco.com
+RUN chmod -R 775 /opt/app-root/src/*
+ADD kube_config.enc /opt/app-root/src
+ADD csb_credentials.py.enc /opt/app-root/src
+ADD csb_auditor.py /opt/app-root/src
+ADD env_variables.py /opt/app-root/src
+CMD ["python","/opt/app-root/src/csb_auditor.py"]
+
