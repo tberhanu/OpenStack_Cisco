@@ -64,14 +64,16 @@ def list_servers(conn, images, project_name, os_auth_url):
     """
     try:
         servers = []
-        for network in conn.network.networks():
-            network_name = network['name']
         for server in conn.compute.servers():
             srvr = json.dumps(server)
             pull = json.loads(srvr)
             image = images[pull['image']['id']]
                         
-            address = pull['addresses'][network_name][0]
+            addresses = pull['addresses']
+            network_names = addresses.keys()
+            server_network_name = network_names[0]
+            address = pull['addresses'][server_network_name][0]
+            
             servers.append({
                 "vm_id": pull['id'],
                 "tenant_id": pull['project_id'],
