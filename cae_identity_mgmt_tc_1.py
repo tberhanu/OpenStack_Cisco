@@ -278,7 +278,7 @@ def output_parameters(trusted_roles, rolebinding_all={}, all_roles=[], rolebindi
         print("ERROR: Failed to retrieve the user roles with error in output: %s" % str(e))
 
 
-def main(p_name, path_url, scan_id, team_id):
+def main(path_url, p_name, scan_id, team_id):
     """
     :Constructor with project name and url as parameter
     :param project_name: holds the name of project
