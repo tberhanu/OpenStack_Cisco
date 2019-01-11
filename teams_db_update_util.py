@@ -83,33 +83,35 @@ def update_dynamodb(regionfile_name,region_name,region_url,contact,table):
 		for projectline in lines:
 			project = projectline.strip().split(" ")
 			projlist.append(project[0])
+
+		dblist = reading_table(region_url,table)
+
 		#updating the projectfile details into dynamoDB	
 		for proj in lines:
 			tstamp=str(datetime.datetime.now().date())+':'+str(datetime.datetime.now().time())
 			project = proj.strip().split(" ")
 			status =  project[2]
 			project_id = project[0]
-			data_id ="P3:"+ project_id 
-			project_name = str(project[1])
-			if status != "True":
-				print ("this project is not active: " + project_name)
-			else:
-				try:
-					print("LOG: adding project with id %s to dynamoDB table " % project_id )
-					table.put_item(
-						Item = {
-							'id' : data_id,
-							'name' : project_name,
-							'url' : region_url,
-							'contact' : {"alternate_email" : contact,"email": contact}
-						}
-					)
-				except ClientError as e:
-					print("ERROR: cannot put items into dynamoDB table")
-					print(e.response['Error']['Message'])
-					flag = False 
-		#reading dynamodb table into list
-		dblist = reading_table(region_url,table)
+			if project_id not in dblist:
+				data_id ="P3:"+ project_id 
+				project_name = str(project[1])
+				if status != "True":
+					print ("this project is not active: " + project_name)
+				else:
+					try:
+						print("LOG: adding project with id %s to dynamoDB table " % project_id )
+						table.put_item(
+							Item = {
+								'id' : data_id,
+								'name' : project_name,
+								'url' : region_url,
+								'contact' : {"alternate_email" : contact,"email": contact}
+							}
+						)
+					except ClientError as e:
+						print("ERROR: cannot put items into dynamoDB table")
+						print(e.response['Error']['Message'])
+						flag = False 
 		if dblist is not None:
 			for pid in dblist:
 				if pid not in projlist:
