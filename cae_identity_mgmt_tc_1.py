@@ -30,8 +30,6 @@ from general_util import updateScanRecord, add_result_to_stream, send_result_com
 
 requests.packages.urllib3.disable_warnings()
 
-global tc
-
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
 
