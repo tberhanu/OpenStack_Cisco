@@ -164,6 +164,7 @@ def main(url,namespace,scan_id,team_id):
     #:param namespace: holds the name of project
     #:return: True/False
     try:
+	flag = "Compliant"
         #getting region froim the url
         if url is not None:
             url_split = url.strip().split('.')
@@ -189,7 +190,7 @@ def main(url,namespace,scan_id,team_id):
             session = session_handle()
             if session:
                 print("LOG: Update the scan record with \"InProgress\" Status")
-                updateScanRecord(session, "CAE", scan_id, team_id, "CAE-IMAGE-HARDENING-TC-1", "InProgress")
+                updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
                 seq_nums_list = []
                 params_list = []
             
@@ -223,11 +224,12 @@ def main(url,namespace,scan_id,team_id):
                     if image_data is not None:
                         image = image_data[0]
                         if re.match('containers.cisco.com\/*', image):
-                            flag = "Compliant"
+                            compliance_status = "Compliant"
                             print("Secure - %s with image: %s " % (pod, image))
                             build_metadata(namespace, pod, path,flag)
                         else:
-                            flag = "Non-compliant"
+                            compliance_status = "Non-compliant"
+			    flag = "Non-compliant"
                             print("Not Secure! - %s with image: %s " % (pod, image))
                             build_metadata(namespace, pod, path,flag)
 		    #Kinesis Update
@@ -240,7 +242,7 @@ def main(url,namespace,scan_id,team_id):
                          "createdAt": audit_time,
                          "updatedAt": audit_time,
                          "resourceName": str(pod),
-                         "complianceStatus": flag,
+                         "complianceStatus": compliance_status,
                         }
                     params_list.append(params.copy())
 
@@ -254,13 +256,16 @@ def main(url,namespace,scan_id,team_id):
                 stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
                 seq_nums_list.append(stream_info)
                 print("LOG: Sending result complete")
-                send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
+                send_result_complete(session, "CAE", scan_id, team_id, tc, seq_nums_list)
 				
             else:
                 print("No Pods running in the project")
-
+	return flag
     except Exception as e:
         print("ERROR: Failed to retrieve image list and pod list with error => %s" % str(e))
+	print("LOG: Update the scan record with \"Failed\" Status")
+        updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
+	return None
 
 
 if __name__ == '__main__':
