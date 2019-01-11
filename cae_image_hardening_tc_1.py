@@ -185,7 +185,7 @@ def main(url,namespace,scan_id,team_id):
             requests.packages.urllib3.disable_warnings()
             pods_list = get_pods(namespace, path)
 			
-			#Kinesis Update
+	    #Kinesis Update
             session = session_handle()
             if session:
                 print("LOG: Update the scan record with \"InProgress\" Status")
@@ -230,7 +230,7 @@ def main(url,namespace,scan_id,team_id):
                             flag = "Non-compliant"
                             print("Not Secure! - %s with image: %s " % (pod, image))
                             build_metadata(namespace, pod, path,flag)
-					#Kinesis Update
+		    #Kinesis Update
                     audit_time = int(time.time()) * 1000
                     params = {
                          "scanid": scan_id,
@@ -267,14 +267,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Identify images with insecure source')
     parser.add_argument("-u", "--domain_url", help="Domain/Region specific URL", action="store", dest="domain_url")
     parser.add_argument('-t', '--namespace', action="store", dest='namespace', help='name of namespace/project to Search')
-	  parser.add_argument("-s", "--scan_id", help="OpenStack Horizon URL", action="store", dest="scanid")
+    parser.add_argument("-s", "--scan_id", help="OpenStack Horizon URL", action="store", dest="scanid")
     parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="teamid")
 
     debug_flag = os.environ.get('DEBUG_FLAG')
     args = parser.parse_args()
     url = args.domain_url
     namespace = args.namespace
-	  scan_id = args.scanid
+    scan_id = args.scanid
     team_id = args.teamid
     compliant_status = main(url, namespace,scan_id,team_id)
     print(compliant_status)
