@@ -336,5 +336,5 @@ if __name__ == "__main__":
     scan_id = args.scanid
     team_id = args.teamid
 
-    compliant_status = main(p_name, url, scan_id, team_id)
+    compliant_status = main(url, p_name, scan_id, team_id)
     print(compliant_status)
