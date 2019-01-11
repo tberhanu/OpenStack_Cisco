@@ -9,9 +9,8 @@ Description: This python script is to
                 d. read messages from SQS Queue created for CNT-CSB
                 e. process the required information
                 f. pass the information to audit test-script
-                g. consolidate results from each audit test-script per team
-                h. post the result to kinesis
-                i. delete message from SQS Queue
+                g. consolidate respose from each audit test-script per team
+                h. delete message from SQS Queue
 
 Dependencies:
     csb_credentials.py.enc
