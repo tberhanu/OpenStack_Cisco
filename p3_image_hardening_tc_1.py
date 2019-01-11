@@ -313,6 +313,18 @@ def unsecured_images_list(all_images_list):
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
         return None, None
 
+def summary_of_test(project_name, all_images_list, all_unsecured_images, servers, private_servers, unused_images, unused_private_images):
+    summary = []
+    print("\n##########################Summary of audit test#############################")
+    print("Project name of audit test: %s" % project_name)
+    print("Total no of images found: %s" % len(all_images_list))
+    print("Total no of unsecured images found: %s" % len(all_unsecured_images))
+    print("Total no of servers in tenant account: %s" % len(servers))
+    print("Total no of servers using private images: %s" % len(private_servers))
+    print("Total no of unused image in tenant accout: %s" % len(unused_images))
+    print("Total no of unused private image in tenant accout: %s" % len(unused_private_images))
+    return summary
+
 def main(os_auth_url, project_name, scan_id, team_id):
     """
     This main method is to validate the source of images listed in the provided OpenStack Project is
@@ -368,6 +380,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
                 all_unsecured_images = unsecured_images_list(all_images_list)
             else:
                 print("ERROR: Failed to get the list of images")
+            summary = summary_of_test(project_name, all_images_list, all_unsecured_images, servers, private_servers, unused_images, unused_private_images)
 
             return flag
         except Exception as err:
