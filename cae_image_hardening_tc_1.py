@@ -23,8 +23,7 @@ def load_config(path):
     #:param path: holds the path to config file
     #:return: api
     try:
-        if debug_flag is not None and debug_flag == 1:
-            print("load_config(path): Pulling Config from %s file => %s" , path)
+        print("Pulling Config from file => %s" , path)
         api = pykube.HTTPClient(pykube.KubeConfig.from_file(path))
         return api
     except Exception as e:
@@ -34,9 +33,8 @@ def load_config(path):
 def get_projects(project_name,path,flag):
     project_file_text = []
     try:
-        if debug_flag is not None and debug_flag == 1:
-            print("listing the projects  => %s", path)
-        api_handle = load_config(path)
+	print("LOG: Inside get_project method")
+	api_handle = load_config(path)
         project_met = pykube.Namespace.objects(api_handle).get(name=project_name)
         metadata_project = project_met.obj['metadata']
         if metadata_project is not None:
@@ -54,8 +52,7 @@ def get_projects(project_name,path,flag):
                     application_name='None'
 
             project_file_text = [name, uid, application_id, application_name]
-            if debug_flag is not None and debug_flag == 1:
-                print("LOG: Sucessfully returning the projects")
+            print("LOG: Sucessfully returning the projects")
         else:
             print("LOG: No annotations found")
     except Exception as e:
@@ -69,8 +66,7 @@ def get_pods(project_pod,path):
     ##:param project_pod: holds project name
     #:return: pods
     try:
-        if debug_flag is not None and debug_flag == 1:
-            print("listing the pod in project  => %s" % path)
+        print("LOG: Checking for POD => %s" % project_pod)
         api_handle = load_config(path)
         pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
         if pods is not None:
@@ -88,8 +84,7 @@ def get_image(project_img, pod, path,flag):
     #:return: image info
     image_data = []
     try:
-        if debug_flag is not None and debug_flag == 1:
-            print("listing the images in the pods in the project  => %s" % path)
+        print("LOG: Listing the images in the pods in the project  => %s" % project_img)
         api = load_config(path)
         pod = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
         container = pod.obj['status']['containerStatuses'][0]
@@ -112,8 +107,7 @@ def get_image(project_img, pod, path,flag):
                 container_exposed_port = pod.obj['spec']['containers'][0]['ports'][0]['containerPort']
             except Exception:
                 container_exposed_port = 'None'
-                if debug_flag is not None and debug_flag == 1:
-                    print("Ports not found in the container")
+                print("Ports not found in the container")
 
             flag_status = flag
             image_file_text = [pod_name, pod_namespace,
@@ -132,8 +126,7 @@ def get_image(project_img, pod, path,flag):
 
 def print_metadata(image_file_text, project_file_text):
     try:
-        if debug_flag is not None and debug_flag == 1:
-            print("saving the metadata into a file   => %s" % path)
+        print("LOG: Saving the metadata into a file")
         file_content = []
         if project_file_text and image_file_text is not None:
             file_content = [project_file_text + image_file_text]
@@ -147,8 +140,7 @@ def print_metadata(image_file_text, project_file_text):
 
 def build_metadata(namespace, pod, path,flag):
     try:
-        if debug_flag is not None and debug_flag == 1:
-            print("building the metadata into a file   => %s" % path)
+        print("LOG: Building the metadata into a file")
         image_values = get_image(namespace, pod, path,flag)
         image_file_text = image_values[1]
         project_file_text = get_projects(namespace, path,flag)
@@ -181,8 +173,7 @@ def main(url,namespace,scan_id,team_id):
                     path = os.path.expanduser("~") + "/" + "kube_config"
             else:
                 print("No region found")
-            if debug_flag is not None and debug_flag == 1:
-                print("Check whether source of image used is a trusted one => ")
+            print("Check whether source of image used is a trusted one => ")
             requests.packages.urllib3.disable_warnings()
             pods_list = get_pods(namespace, path)
 			
@@ -196,16 +187,14 @@ def main(url,namespace,scan_id,team_id):
             
 	    exists = os.path.isfile('cae_image_hardening.csv')
             if exists:
-                if debug_flag is not None and debug_flag == 1:
-                    print("CSV file is available to read  => ")
+                print("CSV file is available to read  => ")
                 with open('cae_image_hardening.csv', 'r') as csvFile:
                     reader = csv.reader(csvFile, delimiter=",")
                     data = list(reader)
                     row_count = len(data)
                 csvFile.close()
             else:
-                if debug_flag is not None and debug_flag == 1:
-                    print("CSV file is not available to read, writing new file  => ")
+                print("CSV file is not available to read, writing new file  => ")
                 row_count = 0
             file_headers = ['Tenant Name', 'Tenant ID', 'Application ID', 'Application Name', 'Pod Name',
                             'Pod Namespace',
@@ -275,7 +264,6 @@ if __name__ == '__main__':
     parser.add_argument("-s", "--scan_id", help="OpenStack Horizon URL", action="store", dest="scanid")
     parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="teamid")
 
-    debug_flag = os.environ.get('DEBUG_FLAG')
     args = parser.parse_args()
     url = args.domain_url
     namespace = args.namespace
