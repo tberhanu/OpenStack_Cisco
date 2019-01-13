@@ -26,7 +26,7 @@ import time
 
 from kubernetes import client, config
 from openshift.dynamic import DynamicClient
-from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
 requests.packages.urllib3.disable_warnings()
 
