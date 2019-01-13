@@ -253,11 +253,8 @@ def main():
                 print("ERROR: DynamoDB update is UnSuccessful")
             print("INFO: -.-.-.-RegionEnd -.-.-.- ")
 
-
     except IOError:
         print("ERROR: Cannot access data.xml file for P3 platform")
-
-
 
 
 if __name__== "__main__":
@@ -274,7 +271,6 @@ if __name__== "__main__":
     session = boto3.Session(aws_access_key_id=my_env["AWS_ACCESS_KEY_ID"], aws_secret_access_key=my_env["AWS_SECRET_ACCESS_KEY"], region_name='us-east-1')
     ddb=session.resource("dynamodb")
     table = ddb.Table(table_name)
-
 
     try:
         while True:
