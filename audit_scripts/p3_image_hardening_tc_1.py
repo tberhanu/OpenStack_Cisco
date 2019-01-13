@@ -21,7 +21,7 @@ import sys
 import time
 
 from os import environ as env
-from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
 global tc
 
