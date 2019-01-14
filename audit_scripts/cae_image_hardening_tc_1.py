@@ -11,9 +11,9 @@ import time
 import sys
 import json
 from os import environ as env
-from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
-global tc
+sys.path.append("../")
+from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
