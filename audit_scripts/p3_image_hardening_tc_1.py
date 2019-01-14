@@ -21,9 +21,8 @@ import sys
 import time
 
 from os import environ as env
+sys.path.append("../")
 from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
-
-global tc
 
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
