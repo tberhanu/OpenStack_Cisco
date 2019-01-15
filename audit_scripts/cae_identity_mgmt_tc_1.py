@@ -29,7 +29,7 @@ from kubernetes import client, config
 from openshift.dynamic import DynamicClient
 
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
-from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
 requests.packages.urllib3.disable_warnings()
 
