@@ -22,7 +22,7 @@ import time
 
 from os import environ as env
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
-from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
