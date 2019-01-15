@@ -1,6 +1,7 @@
 #!/opt/app-root/bin/python
 
-"""------------------------------cae_identity_mgmt_tc_1.py--------------------
+"""
+------------------------------cae_identity_mgmt_tc_1.py--------------------
 Description: This python script is to find out if any user have a role
              that outside the set of the roles defined for the normal user.
 
@@ -27,7 +28,7 @@ import time
 from kubernetes import client, config
 from openshift.dynamic import DynamicClient
 
-sys.path.append("../")
+sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
 from library.general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
 
 requests.packages.urllib3.disable_warnings()
@@ -285,7 +286,7 @@ def main(path_url, p_name, scan_id, team_id):
     :param url: holds the url of project
     """
     project_name = p_name
-    filename = 'cae_user_roles'
+    filename = os.environ["CLONED_REPO_DIR"] + "/audit_scripts/cae_user_roles"
     if os.path.isfile(filename):
         session = session_handle()
         if session:
