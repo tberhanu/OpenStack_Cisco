@@ -192,7 +192,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
                 "visibility": image['visibility'],
                 "unused": unused_image_ids != None,
                 "direct_url": image['direct_url'],
-                "image_updated_ago": server['image_updated_ago']
+                "image_updated_on": server['image_updated_on']
             })
         with open('unused_images.csv','w') as file:
             file.writelines(json.dumps(unused_images))
@@ -203,8 +203,11 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
     except IOError as e:
         print("ERROR: Failed to retrieve unused image list with error => %s" % str(e))
         return None
+    except KeyError as e:
+        print("ERROR: KeyError - Failed to retrieve unused image list with error => %s" % str(e))
+        return None
     except Exception as err:
-        # print("ERROR: Failed to retrieve list of unused images due to %s" % str(err))  # Debug Required
+        print("ERROR: Failed to retrieve list of unused images due to %s" % str(err))
         return None
 
 
@@ -350,8 +353,8 @@ def main(os_auth_url, project_name, scan_id, team_id):
                     unused_images = list_unused_images(conn, images, servers, project_name, os_auth_url)
                     if unused_images:
                         unused_private_images = list_unused_private_images(unused_images)
-                    # else:
-                        # print("ERROR: Failed to get the list of unused images")   #Debug required
+                    else:
+                        print("ERROR: Failed to get the list of unused images")
                 else:
                     print("ERROR: Failed to get the server list")
             else:
