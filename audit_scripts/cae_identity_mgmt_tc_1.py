@@ -174,7 +174,7 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
         if not rolebinding_untrusted[project_name]:
             print('Pass')
             flag = 1
-            return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
+            
         for project in rolebinding_untrusted:
             if rolebinding_untrusted[project] is not None:
                 for role in rolebinding_untrusted[project]:
