@@ -294,7 +294,7 @@ def main(path_url, p_name, scan_id, team_id):
             updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
             seq_nums_list = []
             params_list = []
-            import pdb; pdb.set_trace()
+
             try:
                 dyn_client = create_connection(path_url)
                 if dyn_client:
