@@ -44,11 +44,8 @@ def create_connection(url):
     """
     try:
         if url is not None:
-            url_split = url.strip().split('.')
-            string = str(url_split[0])
-            string_split = string.strip().split('-')
-            region_name = str(string_split[2].strip())
-            path = os.path.expanduser("~") + "/" + "kube_config"
+            region_name = url.split(".")[0].split("-")[-1]
+            path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
         k8s_client = config.new_client_from_config(path)
         dyn_client = DynamicClient(k8s_client)
     except Exception as e:
@@ -174,7 +171,7 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
         if not rolebinding_untrusted[project_name]:
             print('Pass')
             flag = 1
-            
+            #return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
         for project in rolebinding_untrusted:
             if rolebinding_untrusted[project] is not None:
                 for role in rolebinding_untrusted[project]:
@@ -195,7 +192,9 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
                         else:
                             data.append([project_name_id_mapping[project], project, "None", "None", role, "None", diff])
         df = pd.DataFrame(data,columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
-        df.to_csv('output.csv',index=False)
+        date_stamp = datetime.datetime.now().strftime('%m%d%y')
+        output_csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_output_" + date_stamp +  "_.csv"
+        df.to_csv(output_csv_filename,index=False)
         print('Fail')
         data_all = []
         for project in rolebinding_all:
@@ -226,7 +225,6 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
                                                  "complianceStatus": compliant_status
                                               }
                                     params_list.append(params.copy())
-
                                     while sys.getsizeof(json.dumps(params_list)) >= 900000:
                                         print("LOG: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
                                         stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
@@ -248,7 +246,9 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
                         else:
                             data_all.append([project, "None", "None", role, "None", diff])
         df = pd.DataFrame(data_all, columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
-        df.to_csv('metadata.csv', index=False)
+        date_stamp = datetime.datetime.now().strftime('%m%d%y')
+        metadata_csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_metadata_" + date_stamp +  "_.csv"
+        df.to_csv(metadata_csv_filename, index=False)
         print(params_list)
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in rolebindings : %s" %str(e))
@@ -294,7 +294,7 @@ def main(path_url, p_name, scan_id, team_id):
             updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
             seq_nums_list = []
             params_list = []
-
+            import pdb; pdb.set_trace()
             try:
                 dyn_client = create_connection(path_url)
                 if dyn_client:
