@@ -3,17 +3,13 @@
 --------------------------cae_image_hardening_tc_1.py--------------------------
 Description: This python script is to list all the images in the CAE namespace
              and validate if the image used are from the trusted source or not.
-
 Dependency:
             Kube config files per region
-
 Author: Dharavahani Malepati <dmalepat@cisco.com>; January 8th, 2019
-
 Copyright (c) 2019 Cisco Systems.
 All rights reserved.
 -------------------------------------------------------------------------------
 """
-
 
 import argparse
 import csv
@@ -28,7 +24,6 @@ import json
 
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
 from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
-
 
 """ Translating script name to get the TC Label """
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
@@ -61,6 +56,7 @@ def get_projects(project_name,path):
     :param path: holds the path to kube config file
     :return: project_file_text
     """
+    project_file_text = []
     try:
         print("LOG: Inside get_project method to collect info about Project")
         api_handle = load_config(path)
@@ -87,10 +83,9 @@ def get_projects(project_name,path):
             print("LOG: Successfully returning the projects")
         else:
             print("LOG: No annotations found")
-            project_file_text = ["None", "None", "None", "None"]
+            project_file_text = ['None', 'None', 'None', 'None']
     except Exception as e:
         print("ERROR: Failed to retrieve project list => %s" % str(e))
-        project_file_text = ["None", "None", "None", "None"]
 
     return project_file_text
 
@@ -100,14 +95,14 @@ def get_pods(project_pod,path):
     Method to fetch project specific POD info
     :param project_pod: holds project name
     :param path: holds path to Kube config file
-    :return: PODs list | None
+    :return: PODs list
     """
     try:
         print("LOG: Checking for POD => %s" % project_pod)
         api_handle = load_config(path)
         pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
         if pods is not None and len(pods):
-            print("LOGS: Successfully retrieved pods, Pod count is ", len(pods))
+            print("LOGS: Successfully retreived pods, Pod count is ", len(pods))
             return pods
         else:
             print("LOGS: No pods found in the pod list")
@@ -129,35 +124,41 @@ def get_image(project_img, pod, path,compliance_status):
         print("LOG: Listing the images in the pods in the project  => %s" % project_img)
         api = load_config(path)
         pod = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
-        container = pod.obj['status']['containerStatuses'][0]
-        image = pod.obj["spec"]["containers"][0]["image"]
-        if image and container and pod is not None:
+        container_info = pod.obj['status']['containerStatuses']
+        if container_info and pod is not None:
             metadata = pod.obj['metadata']
             pod_name = metadata.get('name', None)
-            print(pod_name, "THIS IS MY POD NAME <----------<<<<<<")
             pod_namespace = metadata.get('namespace', None)
             pod_stat = pod.obj['status']
             pod_status = pod_stat.get('phase', None)
-            container_id = container.get('containerID', None)
-            image_name = container.get('image', None)
-            image_id = container.get('imageID', None)
-            try:
-                container_state = container.get('state', {}).get('running', {})
-                container_start_date = container_state['startedAt']
-            except KeyError:
-                container_start_date = 'None'
-                print("LOG: Container start date not found ")
-            try:
-                container_exposed_port = pod.obj['spec']['containers'][0]['ports'][0]['containerPort']
-            except KeyError:
-                container_exposed_port = 'None'
-                print("INFO: Ports not found in Container ")
+            for container in container_info:
+                container_id = container.get('containerID', None)
+                image_name = container.get('image', None)
+                image_id = container.get('imageID', None)
+                try:
+                    container_state = container.get('state', {}).get('running', {})
+                    container_start_date = container_state.get('startedAt', None)
+                except KeyError:
+                    container_start_date = 'None'
+                    print("LOG: Container start date not found ")
+
+            for container_list in pod.obj["spec"]["containers"]:
+                image = container_list.get('image',None)
+                try:
+                    ports = " "
+                    for container_port in container_list['ports']:
+                        container_exposed_port = str(container_port.get('containerPort',None))
+                        ports = container_exposed_port + "/" + ports
+                        print("LOG: ports => %s" % ports)
+                except KeyError:
+                        container_exposed_port = 'None'
+
             image_file_text = [pod_name, pod_namespace, pod_status, container_id, image_name, image_id,
-                               container_start_date, container_exposed_port, compliance_status]
+                               container_start_date, ports, compliance_status]
             image_data = [image, image_file_text]
             return image_data
         else:
-            print("LOG: No images found")
+            print("No images found")
             return None
     except Exception as e:
         print("ERROR: Failed to retrieve images with error => %s" % str(e))
@@ -243,11 +244,11 @@ def main(url, namespace, scan_id, team_id):
                         data = list(reader)
                         row_count = len(data)
                 else:
-                    print("INFO: CSV file is not available to read, writing new file  => ")
+                    print("INFO: CSV file is not available to read, writing new file ")
                     row_count = 0
 
                 file_headers = ['Tenant Name', 'Tenant ID', 'Application ID', 'Application Name', 'Pod Name',
-                                'Pod Namespace', 'Pod Namespace', 'Container ID', 'Image Name', 'Image ID',
+                                'Pod Status', 'Pod Namespace', 'Container ID', 'Image Name', 'Image ID',
                                 'Container Start Date', 'Container Exposed Port ','Compliance_Status'
                                ]
                 file_content = [file_headers]
