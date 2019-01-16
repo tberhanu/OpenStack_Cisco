@@ -9,8 +9,9 @@ Description: This python script is to
                 d. read messages from SQS Queue created for CNT-CSB
                 e. process the required information
                 f. pass the information to audit test-script
-                g. consolidate respose from each audit test-script per team
-                h. delete message from SQS Queue
+                g. consolidate results from each audit test-script per team
+                h. post the result to kinesis
+                i. delete message from SQS Queue
 
 Dependencies:
     csb_credentials.py.enc
@@ -137,9 +138,6 @@ def clone_git_repo():
         git_repo_url = tcp_protocol + "//" + os.environ["GITHUB_TOKEN_CSBAUDITOR_GEN"] + "@" + git_url
         repo = git.Repo.clone_from(git_repo_url, os.environ["CLONED_REPO_DIR"])
         repo.git.checkout(os.environ["GIT_BRANCH_TO_USE"])
-        root = os.path.expanduser("~")
-        for filename in os.listdir(os.path.join(root, 'csb_cnt_repo')):
-            shutil.move(os.path.join(root, 'csb_cnt_repo', filename), os.path.join(root, filename))
         return True
     except git.exc.GitCommandError as err_clone:
         print("ERROR: Git Clone failed; %s" % str(err_clone))
@@ -210,28 +208,31 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
     audit_test_list = test_id.split(",")
     results = dict()
     del_flag = True
+
+    """ Building module path audit_scripts dir """
+    scripts_mod_path = os.environ["CLONED_REPO_DIR"].split("/")[-1] + "." + "audit_scripts"
+
     for tc in audit_test_list:
         """ Translating TC name to fetch the respective audit script name """
         audit_tc_script = tc.replace("-", "_").lower()
-
-        if os.path.isfile(audit_tc_script + ".py"):
-            tc_script = import_module(audit_tc_script)
+        script_file = os.environ["AUDIT_SCRIPTS_DIR"] + "/" + audit_tc_script + ".py"
+        if os.path.isfile(script_file):
+            tc_script = import_module("." + audit_tc_script, scripts_mod_path)
             try:
                 results[audit_tc_script] = tc_script.main(url, team_name, scan_id, team_id)
                 if results[audit_tc_script] is None:
                     print("LOG: Result for %s was received as None; retrying..." % audit_tc_script)
                     results[audit_tc_script] = tc_script.main(url, team_name, scan_id, team_id)
-                    print("LOG: Second Attempt received result as %" % results[audit_tc_script])
+                    print("LOG: Second Attempt received result as %s" % results[audit_tc_script])
                     print("LOG: Continuing with next Audit Test-Script")
                     if results[audit_tc_script] is None:
                         del_flag = False
             except Exception as e:
                 del_flag = False
-                print("ERROR: Execution of %s audit test-script didn't return expected value - %s" % (str(e), audit_tc_script))
+                print("ERROR: Execution of %s Audit Test-script failed to return expected value - %s" % (str(e), audit_tc_script))
         else:
             results[audit_tc_script] = "Script is not available"
-            del_flag = False
-            raise Exception("ERROR: Required Test-Script is not available %s" % audit_tc_script)
+            raise Exception("ERROR: Required Audit Test-Script is not available %s" % audit_tc_script)
     print("LOG: Execution result for Team: %s \n%s" % (team_name, results))
 
     if del_flag:
