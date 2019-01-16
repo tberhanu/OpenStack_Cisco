@@ -300,6 +300,30 @@ def main(url, namespace, scan_id, team_id):
                 else:
                     print("INFO: No Pods running in the project")
                     build_metadata(namespace, None, path, compliance_status)
+                    audit_time = int(time.time()) * 1000
+                    params = {
+                             "scanid": scan_id,
+                             "testid": tc,
+                             "teamid": str(team_id),
+                             "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, "NULL"),
+                             "createdAt": audit_time,
+                             "updatedAt": audit_time,
+                             "resourceName": "NULL",
+                             "complianceStatus": compliance_status,
+                            }
+                    params_list.append(params.copy())
+
+                    while sys.getsizeof(json.dumps(params_list)) >= 900000:
+                        print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
+                        stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
+                        seq_nums_list.append(stream_info)
+
+                    print("INFO: Adding result to Stream")
+                    stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
+                    seq_nums_list.append(stream_info)
+
+                    print("INFO: Sending result complete")
+                    send_result_complete(session, "CAE", scan_id, team_id, tc, seq_nums_list)
                     return compliance_status
         else:
             raise Exception("ERROR: Connection handle to Kinesis was None")
