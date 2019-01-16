@@ -124,6 +124,7 @@ def updateScanRecord(session, platform, scanid, teamid, testid, status):
                 "id": scanid,
                 "scanStatus": status,
                 "teamid": teamid,
+                "testid": testid,
                 "teamid-testid": sortKey,
                 "updatedAt": timeStamp
             }
@@ -166,6 +167,7 @@ def send_result_complete(session, platform, scanid, teamid, testid, seq_nums_lis
                 "id": scanid,
                 "scanStatus": "ResultComplete",
                 "teamid": teamid,
+                "testid": testid,
                 "teamid-testid": sortKey,
                 "seq_list":seq_nums_list,
                 "updatedAt": timeStamp
