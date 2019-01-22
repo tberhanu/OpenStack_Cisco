@@ -527,7 +527,8 @@ def main(os_auth_url, project_name, scan_id, team_id):
             print("LOG: Update the scan record with \"InProgress\" Status")
             update = updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
             if update is None:
-                print("LOG: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
+                raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
+                return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
@@ -573,6 +574,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
             return None
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+        
     return compliance_status
 
 
