@@ -220,7 +220,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_image_list_" + date_stamp + ".csv"
-        headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_ago"]
+        headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_on"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -284,7 +284,7 @@ def list_unused_unsecured_images(unused_images, seq_nums_list, params_list, scan
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
-        headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_ago"]
+        headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_on"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
