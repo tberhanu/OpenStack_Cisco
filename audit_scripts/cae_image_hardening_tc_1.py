@@ -30,12 +30,12 @@ from general_util import updateScanRecord, add_result_to_stream, send_result_com
 """ Translating script name to get the TC Label """
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
-seq_nums_list = []
-tc = "CAE-IMAGE-HARDENING-TC-1"
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
-csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_" + date_stamp + ".csv"
+csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_tc_1" + date_stamp + ".csv"
+
+seq_nums_list = []
 
 
 def load_config(path):
