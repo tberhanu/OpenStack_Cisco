@@ -33,7 +33,8 @@ tc = filename.replace("_", "-").upper()
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
-csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_tc_1" + date_stamp + ".csv"
+#csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_tc_1" + date_stamp + ".csv"
+csv_filename = os.path.expanduser("~") + "/logs/reports/cae_image_hardening_tc_1" + date_stamp + ".csv"
 
 seq_nums_list = []
 
