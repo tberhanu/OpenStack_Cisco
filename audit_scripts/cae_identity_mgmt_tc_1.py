@@ -193,7 +193,9 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
                             data.append([project_name_id_mapping[project], project, "None", "None", role, "None", diff])
         df = pd.DataFrame(data,columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        output_csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_output_" + date_stamp +  "_.csv"
+        #output_csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_output_" + date_stamp +  "_.csv"
+         output_csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
+
         df.to_csv(output_csv_filename,index=False)
         print('Fail')
         data_all = []
@@ -247,7 +249,8 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name, project_
                             data_all.append([project, "None", "None", role, "None", diff])
         df = pd.DataFrame(data_all, columns=["Tenant ID", "Tenant Name", "Application ID", "Application Name", "Role Name", "Users with Associate Roles", "Role Provisioned Age"])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        metadata_csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_metadata_" + date_stamp +  "_.csv"
+        #metadata_csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_metadata_" + date_stamp +  ".csv"
+        metadata_csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_metadata_" + date_stamp +  ".csv"
         df.to_csv(metadata_csv_filename, index=False)
         print(params_list)
     except Exception as e:
