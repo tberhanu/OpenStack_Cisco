@@ -101,7 +101,8 @@ def list_servers(conn, images, project_name, os_auth_url):
                         pull['user_id']
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_servers_list_" + date_stamp + ".csv"
+        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_servers_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
         headers = ["VM Id", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Owner Id", "Image Name", "VM Name", "Unsecured", "Image Direct URL", "Image Updated Ago", "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
@@ -164,7 +165,8 @@ def list_unsecured_servers(servers, seq_nums_list, params_list, scan_id, team_id
            return None
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unsecured_servers_list_" + date_stamp + ".csv"
+        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unsecured_servers_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_unsecured_servers_list_" + date_stamp + ".csv"
         headers = ["VM Id", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Owner Id", "Image Name", "VM Name", "Unsecured", "Image Direct URL", "Image Updated Ago", "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
@@ -219,7 +221,8 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
                     image['updated_at']
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_image_list_" + date_stamp + ".csv"
+        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_image_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_unused_image_list_" + date_stamp + ".csv"
         headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_on"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
@@ -283,7 +286,8 @@ def list_unused_unsecured_images(unused_images, seq_nums_list, params_list, scan
            return None
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
+        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
         headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_on"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
@@ -329,7 +333,8 @@ def list_all_images(conn, project_name, os_auth_url):
                         out['visibility'], out['status']
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/all_images_list_" + date_stamp + ".csv"
+        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/all_images_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/all_images_list_" + date_stamp + ".csv"
         headers = ["Owner Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
@@ -393,7 +398,8 @@ def unsecured_images_list(all_images_list, seq_nums_list, params_list, scan_id, 
            return None
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_all_unsecured_images_list_" + date_stamp + ".csv"
+        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_all_unsecured_images_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_all_unsecured_images_list_" + date_stamp + ".csv"
         headers = ["Owner Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
