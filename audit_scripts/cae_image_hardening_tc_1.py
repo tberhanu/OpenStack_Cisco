@@ -36,7 +36,9 @@ session = session_handle()
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
-csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_" + date_stamp + "_.csv"
+#csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_" + date_stamp + "_.csv"
+csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_" + date_stamp + ".csv"
+
 
 
 def load_config(path):
