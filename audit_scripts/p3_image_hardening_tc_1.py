@@ -24,7 +24,6 @@ import re
 import sys
 import time
 
-
 from os import environ as env
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
 from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
@@ -33,6 +32,7 @@ filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
 seq_nums_list = []
 params_list =[]
+
 
 def list_images(conn):
     """
@@ -67,43 +67,58 @@ def list_servers(conn, images, project_name, os_auth_url):
         for server in conn.compute.servers():
             srvr = json.dumps(server)
             pull = json.loads(srvr)
-
-            image = images[pull['image']['id']]
+            
             vm_created = dateutil.parser.parse(pull['created_at']).replace(tzinfo=None)
             vm_updated_days = datetime.datetime.now() - vm_created
-            vm_updated_days = ("%s Days %s Hours %s Mins" % (vm_updated_days.days, vm_updated_days.seconds//3600, (vm_updated_days.seconds//60)%60))
-
-            image_created = dateutil.parser.parse(image['updated_at']).replace(tzinfo=None)
-            image_updated_days = datetime.datetime.now() - image_created
-            image_updated_days = ("%s Days %s Hours %s Mins" % (image_updated_days.days, image_updated_days.seconds//3600, (image_updated_days.seconds//60)%60))
-
+            vm_updated_days = ("%s Days %s Hours %s Mins" % (vm_updated_days.days, vm_updated_days.seconds//3600,
+                                                             (vm_updated_days.seconds//60)%60))
+            
             addresses = pull['addresses']
             network_names = addresses.keys()
             server_network_name = network_names[0]
             address = pull['addresses'][server_network_name][0]
+            
+            if len(pull['image']):
+                image = images[pull['image']['id']]
 
-            servers.append([
-                        pull['id'],
-                        pull['project_id'],
-                        project_name,
-                        os_auth_url,
-                        image['id'],
-                        image['owner_id'],
-                        image['name'],
-                        pull['name'],
-                        image['visibility'] == 'private',
-                        image['direct_url'],
-                        image_updated_days,
-                        pull['availability_zone'],
-                        vm_updated_days,
-                        address['addr'],
-                        pull['host_id'],
-                        pull['user_id']
-            ])
+                image_created = dateutil.parser.parse(image['updated_at']).replace(tzinfo=None)
+                image_updated_days = datetime.datetime.now() - image_created
+                image_updated_days = ("%s Days %s Hours %s Mins" % (image_updated_days.days,
+                                                                    image_updated_days.seconds//3600,
+                                                                    (image_updated_days.seconds//60)%60))
+
+                servers.append([
+                            pull['id'],
+                            pull['name'],
+                            pull['project_id'],
+                            project_name,
+                            os_auth_url,
+                            image['id'],
+                            image['owner_id'],
+                            image['name'],
+                            image['visibility'] != 'private',
+                            image['direct_url'],
+                            image_updated_days,
+                            pull['availability_zone'],
+                            vm_updated_days,
+                            address['addr'],
+                            pull['host_id'],
+                            pull['user_id']
+                ])
+            else:
+                servers.append([
+                                pull['id'], pull['name'], pull['project_id'], project_name, os_auth_url,
+                                "None", "None", "None", "True", "None", "None", pull['availability_zone'],
+                                vm_updated_days, address['addr'], pull['host_id'], pull['user_id']
+                               ])
+
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_servers_list_" + date_stamp + ".csv"
         csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
-        headers = ["VM Id", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Owner Id", "Image Name", "VM Name", "Unsecured", "Image Direct URL", "Image Updated Ago", "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"]
+        headers = [
+                    "VM Id", "VM Name", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id",
+                    "Image Owner Id", "Image Name", "Secured", "Image Direct URL", "Image Updated Ago",
+                    "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"
+                  ]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -116,8 +131,7 @@ def list_servers(conn, images, project_name, os_auth_url):
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
 
-
-def list_unsecured_servers(servers, seq_nums_list, params_list, scan_id, team_id, session):
+def list_unsecured_servers(servers, scan_id, team_id, session, scanid_valid, teamid_valid):
     """
     This method is to list the servers with the unsecured images and their details.
     :param servers: list_servers(conn, images, project_name, os_auth_url)
@@ -129,45 +143,30 @@ def list_unsecured_servers(servers, seq_nums_list, params_list, scan_id, team_id
     :return: Compliant | Non-Compliant | None
     """
     try:
-        audit_time = int(time.time()) * 1000
-        flag1 = "Non-compliant"
         unsecured_servers = []
         for server in servers:
-            if server[8]:
+            if server[8] == False:
                 unsecured_servers.append(server)
-                compliant_status = "Non-compliant"
+                compliance_status = "Non-compliant"
             else:
-                compliant_status = "Compliant"
-            resource = "Instance: " + server[7]
-            params = {
-                        "scanid": scan_id,
-                         "testid": tc,
-                         "teamid": str(team_id),
-                         "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
-                         "createdAt": audit_time,
-                         "updatedAt": audit_time,
-                         "resourceName": resource,
-                         "complianceStatus": compliant_status,
-                      }
-            params_list.append(params.copy())
-            while sys.getsizeof(json.dumps(params_list)) >= 900000:
-                print("LOG: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
-                stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
-                if stream_info:
-                    seq_nums_list.append(stream_info)
+                compliance_status = "Compliant"
+            resource = "Instance: " + server[1]
+            if scanid_valid and teamid_valid:
+                if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
+                    print("LOG: Inside For loop Added the info to Kinesis Stream")
                 else:
+                    print("ERROR: Kinesis Update API Failed")
                     return None
-        print("LOG: Adding result to Stream")
-        stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
-        if stream_info:
-            seq_nums_list.append(stream_info)
-        else:
-           return None
+            else:
+                print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unsecured_servers_list_" + date_stamp + ".csv"
         csv_filename = os.path.expanduser("~") + "/logs/p3_unsecured_servers_list_" + date_stamp + ".csv"
-        headers = ["VM Id", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Owner Id", "Image Name", "VM Name", "Unsecured", "Image Direct URL", "Image Updated Ago", "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"]
+        headers = [
+                   "VM Id", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Owner Id",
+                   "Image Name", "VM Name", "Secured", "Image Direct URL", "Image Updated Ago", "VM Availability Zone",
+                   "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"
+                  ]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -205,7 +204,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
         for image in conn.image.images():
             all_image_ids.append(image['id'])
         for server in servers:
-            used_image_ids.append(server[4]),"NULL"
+            used_image_ids.append(server[5]),"NULL"
         unused_image_ids = set(all_image_ids).difference(set(used_image_ids))
         for unused_image_id in unused_image_ids:
             image = images[unused_image_id]
@@ -221,9 +220,11 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
                     image['updated_at']
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_image_list_" + date_stamp + ".csv"
         csv_filename = os.path.expanduser("~") + "/logs/p3_unused_image_list_" + date_stamp + ".csv"
-        headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_on"]
+        headers = [
+                    "Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility",
+                    "Unused", "Direct URL", "Image_Updated_on"
+                  ]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -237,7 +238,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
         print("ERROR: Failed to retrieve list of unused images servers list due to %s" % str(err))
 
 
-def list_unused_unsecured_images(unused_images, seq_nums_list, params_list, scan_id, team_id, session):
+def list_unused_unsecured_images(unused_images, scan_id, team_id, session, scanid_valid, teamid_valid):
     """
     This method is to list the unused unsecured images.
     :param unused_images: list_unused_images
@@ -249,46 +250,30 @@ def list_unused_unsecured_images(unused_images, seq_nums_list, params_list, scan
     :return: Compliant | Non-Compliant | None
     """
     try:
-        audit_time = int(time.time()) * 1000
-        flag2 = "Non-compliant"
         unused_unsecured_images = []
         for image in unused_images:
             if image[5] != 'public':
                 unused_unsecured_images.append(image)
-                compliant_status = "Non-compliant"
+                compliance_status = "Non-compliant"
             else:
-                compliant_status = "Compliant"
+                compliance_status = "Compliant"
 
             resource = "Unused_Image:" + image[4]
-            params = {
-                        "scanid": scan_id,
-                         "testid": tc,
-                         "teamid": str(team_id),
-                         "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
-                         "createdAt": audit_time,
-                         "updatedAt": audit_time,
-                         "resourceName": resource,
-                         "complianceStatus": compliant_status,
-                      }
-            params_list.append(params.copy())
-            while sys.getsizeof(json.dumps(params_list)) >= 900000:
-                print("LOG: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
-                stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
-                if stream_info:
-                    seq_nums_list.append(stream_info)
+            if scanid_valid and teamid_valid:
+                if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
+                    print("LOG: Inside For loop Added the info to Kinesis Stream")
                 else:
+                    print("ERROR: Kinesis Update API Failed")
                     return None
-        print("LOG: Adding result to Stream")
-        stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
-        if stream_info:
-            seq_nums_list.append(stream_info)
-        else:
-           return None
+            else:
+                print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
         csv_filename = os.path.expanduser("~") + "/logs/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
-        headers = ["Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility", "Unused", "Direct URL", "Image_Updated_on"]
+        headers = [
+                    "Image Owner Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Name", "Visibility",
+                    "Unused", "Direct URL", "Image_Updated_on"
+                  ]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -297,17 +282,21 @@ def list_unused_unsecured_images(unused_images, seq_nums_list, params_list, scan
             writer.writerows(unused_unsecured_images)
 
         if len(unused_unsecured_images) == 0:
-            print("LOG: unused unsecured images test: Compliant\(There is no unused unsecured images\)")
+            print("LOG: There is no unused unsecured images")
             flag2 = "Compliant"
         else:
-            print("LOG: unused unsecured images test: Non-compliant\(There is unused unsecured images\)")
+            print("LOG: There are unused unsecured images")
             flag2 = "Non-compliant"
 
         return unused_unsecured_images, flag2
+
     except IOError as e:
         print("ERROR: Failed to retrieve unused unsecured image list with error => %s" % str(e))
+        return None, None
+
     except Exception as err:
         print("ERROR: Failed to retrieve list of unused unsecured images due to %s" % str(err))
+        return None, None
 
 
 def list_all_images(conn, project_name, os_auth_url):
@@ -323,7 +312,6 @@ def list_all_images(conn, project_name, os_auth_url):
         for image in conn.image.images():
             img = json.dumps(image)
             out = json.loads(img)
-            visibility = out['visibility']
             all_images_list.append([
                         out['owner_id'],
                         project_name,
@@ -333,8 +321,7 @@ def list_all_images(conn, project_name, os_auth_url):
                         out['visibility'], out['status']
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/all_images_list_" + date_stamp + ".csv"
-        csv_filename = os.path.expanduser("~") + "/logs/all_images_list_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
         headers = ["Owner Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
@@ -344,13 +331,17 @@ def list_all_images(conn, project_name, os_auth_url):
             writer.writerows(all_images_list)
 
         return all_images_list
+
     except IOError as e:
         print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
+        return None
+
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
+        return None
 
 
-def unsecured_images_list(all_images_list, seq_nums_list, params_list, scan_id, team_id, session):
+def unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_valid, teamid_valid):
     """
     Method to fetch out the all unsecured images details in the OpenStack project
     :param all_images_list: list_all_images
@@ -362,43 +353,25 @@ def unsecured_images_list(all_images_list, seq_nums_list, params_list, scan_id, 
     :return: Compliant | Non-Compliant | None
     """
     try:
-        audit_time = int(time.time()) * 1000
-        flag3 = "Non-compliant"
         all_unsecured_images = []
         for image in all_images_list:
             if image[5] != 'public':
                 all_unsecured_images.append(image)
-                compliant_status = "Non-compliant"
+                compliance_status = "Non-compliant"
             else:
-                compliant_status = "Compliant"
+                compliance_status = "Compliant"
+
             resource = "Image:" + image[4]
-            params = {
-                        "scanid": scan_id,
-                         "testid": tc,
-                         "teamid": str(team_id),
-                         "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
-                         "createdAt": audit_time,
-                         "updatedAt": audit_time,
-                         "resourceName": resource,
-                         "complianceStatus": compliant_status,
-                      }
-            params_list.append(params.copy())
-            while sys.getsizeof(json.dumps(params_list)) >= 900000:
-                print("LOG: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
-                stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
-                if stream_info:
-                    seq_nums_list.append(stream_info)
+            if scanid_valid and teamid_valid:
+                if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
+                    print("LOG: Inside For loop Added the info to Kinesis Stream")
                 else:
+                    print("ERROR: Kinesis Update API Failed")
                     return None
-        print("LOG: Adding result to Stream")
-        stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
-        if stream_info:
-            seq_nums_list.append(stream_info)
-        else:
-           return None
+            else:
+                print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_all_unsecured_images_list_" + date_stamp + ".csv"
         csv_filename = os.path.expanduser("~") + "/logs/p3_all_unsecured_images_list_" + date_stamp + ".csv"
         headers = ["Owner Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
         with open(csv_filename, 'a') as f:
@@ -434,49 +407,43 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images, servers
     :param unused_unsecured_images: list_unused_unsecured_images
     """
     try:
-        summary = []
-        print("\n########################## SCAN REPORT #############################")
-        print("Project name of audit test: %s" % project_name)
-        print("Total no of images found: %s" % len(all_images_list))
-        print("Total no of unsecured images found: %s" % len(all_unsecured_images))
-        print("Total no of servers in tenant account: %s" % len(servers))
-        print("Total no of servers using unsecured image: %s" % len(unsecured_servers))
-        print("Total no of unused images in tenant accout: %s" % len(unused_images))
-        print("Total no of unused unsecured images in tenant accout: %s" % len(unused_unsecured_images))
-        return summary
-    except IOError as e:
-        print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
-    except Exception as err:
-        print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
+        print("\n########### SCAN REPORT for Project: %s###########" % project_name)
+        print("Name of Project under trail: %s" % project_name)
+        print("Total no. of images found: %s" % len(all_images_list))
+        print("Total no. of unsecured images found: %s" % len(all_unsecured_images))
+        print("Total no. of servers in tenant account: %s" % len(servers))
+        print("Total no. of servers using unsecured image: %s" % len(unsecured_servers))
+        print("Total no. of unused images in Tenant account: %s" % len(unused_images))
+        print("Total no. of unused unsecured images in Tenant account: %s" % len(unused_unsecured_images))
+    except KeyError as key_err:
+        print("ERROR: One of the variable do not have required data - %s" % str(key_err))
 
 
 def scanid_validation(scan_id):
     """
-    This method is to validate that scan id while sending the report to kinesis.
+    This method is to validate that scan id while sending the report to Kinesis.
     :param scan_id: ScanID received from AWS SQS
     """
-    scanid_pattern = re.compile(r'\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b')
-    try:
-        match = re.match(scanid_pattern, scan_id)
-        match.group(0)
+    scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+    if scanid_pattern.match(scan_id):
+        print("LOG: Received valid ScanID")
         return True
-    except Exception as e:
-        print("ERROR: Scan id not valid", str(e))
+    else:
+        print("ERROR: Received ScanID is not valid")
         return False
 
 
 def p3_teamid_validation(team_id):
     """
-    This method is to validate that team id of the P3 platform while sending the report to kinesis.
+    This method is to validate that team id of the P3 platform while sending the report to Kinesis.
     :param team_id: TeamID
     """
-    teamid_pattern = re.compile(r'\bP3:[0-9a-f]{32}\b')
-    try:
-        match = re.match(teamid_pattern, team_id)
-        match.group(0)
+    teamid_pattern = re.compile(r'^P3:[0-9a-f]{32}$')
+    if teamid_pattern.match(team_id):
+        print("LOG: Received valid TeamID")
         return True
-    except Exception as e:
-        print("ERROR: Team id not valid", str(e))
+    else:
+        print("ERROR: Received TeamID is not valid")
         return False
 
 
@@ -485,13 +452,53 @@ def p3_url_validation(url):
     This method is to validate the authorized url of the P3 platform.
     :url: OpenStack's Horizon URL
     """
-    p3_url_pattern = re.compile(r'https://cloud-.*-1.cisco.com:5000/v3')
-    try:
-        match = re.match(p3_url_pattern, url)
-        match.group(0)
+    p3_url_pattern = re.compile(r'^https://cloud-.*-1.cisco.com:5000/v3$')
+    if p3_url_pattern.match(url):
+        print("LOG: Received valid Domain URL")
         return True
-    except Exception as e:
-        print("ERROR: URL not valid", str(e))
+    else:
+        print("ERROR: Received Domain URL is not valid")
+        return False
+
+
+def kinesis_update(session, platform, scan_id, tc, team_id, resource_name, compliance_status):
+    params_list = []
+    audit_time = int(time.time()) * 1000
+    try:
+        params = {
+            "scanid": scan_id,
+            "testid": tc,
+            "teamid": str(team_id),
+            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource_name),
+            "createdAt": audit_time,
+            "updatedAt": audit_time,
+            "resourceName": resource_name,
+            "complianceStatus": compliance_status
+        }
+        params_list.append(params.copy())
+
+        while sys.getsizeof(json.dumps(params_list)) >= 900000:
+            print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
+            stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
+            if stream_info is None:
+                raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
+                return None
+
+            seq_nums_list.append(stream_info)
+            print("LOG: Empty params list ... ", params_list)
+            params_list[:] = []
+
+        print("INFO: Adding result to Stream")
+        stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
+        if stream_info is None:
+            raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
+            return None
+
+        seq_nums_list.append(stream_info)
+        return True
+
+    except Exception as params_err:
+        print("ERROR: Issue observed while adding result to streams - %s" % str(params_err))
         return False
 
 
@@ -543,32 +550,42 @@ def main(os_auth_url, project_name, scan_id, team_id):
             if images:
                 servers = list_servers(conn, images, project_name, os_auth_url)
                 if servers is not None:
-                    unsecured_servers, flag1 = list_unsecured_servers(servers, seq_nums_list, params_list, scan_id, team_id, session)
+                    unsecured_servers, flag1 = list_unsecured_servers(servers, scan_id, team_id, session, scanid_valid, teamid_valid)
                     unused_images = list_unused_images(conn, images, servers, project_name, os_auth_url)
                     if unused_images is not None:
-                        unused_unsecured_images, flag2 = list_unused_unsecured_images(unused_images, seq_nums_list, params_list, scan_id, team_id, session)
+                        unused_unsecured_images, flag2 = list_unused_unsecured_images(unused_images, scan_id, team_id, session, scanid_valid, teamid_valid)
                     else:
                         print("LOG: Failed to get the list of unused images")
                 else:
                     print("LOG: Failed to get the list of servers")
             else:
-                raise Exception("ERROR: Failed to fetch the image list")
+                if scanid_valid and teamid_valid:
+                    print("LOG: Update the scan record with \"Failed\" Status")
+                    update = updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
+                    if update is None:
+                        raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"Failed\" status")
+                        return None
+                else:
+                    raise Exception("ERROR: Failed to fetch the image list")
+
             all_images_list = list_all_images(conn, project_name, os_auth_url)
             if all_images_list:
-                all_unsecured_images, flag3 = unsecured_images_list(all_images_list, seq_nums_list, params_list, scan_id, team_id, session)
+                all_unsecured_images, flag3 = unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_valid, teamid_valid)
             else:
                 print("ERROR: Failed to get the list of images")
-            summary = summary_of_test(project_name, all_images_list, all_unsecured_images, servers, unsecured_servers, unused_images, unused_unsecured_images)
+
+            summary_of_test(project_name, all_images_list, all_unsecured_images, servers, unsecured_servers, unused_images, unused_unsecured_images)
+
+            list_of_flags = [flag1, flag2, flag3]
+            if any(val == "Non-compliant" for val in list_of_flags):
+                print("INFO: One of the test is Non-compliant")
+                compliance_status = "Non-compliant"
+            else:
+                print("INFO: All checks are Compliant")
+                compliance_status = "Compliant"
+
         except Exception as err:
             print("ERROR: Overall execution got affected due to - %s" % str(err))
-
-    else:
-        raise Exception("ERROR: Connection handle to Kinesis is None")
-
-    if flag1 == flag2 == flag3 == "Compliant":
-        compliance_status = "Compliant"
-    else:
-        compliance_status = "Non-compliant"
 
     if scanid_valid and teamid_valid:
         print("INFO: Sending result complete")
@@ -580,7 +597,6 @@ def main(os_auth_url, project_name, scan_id, team_id):
             return None
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
-        
     return compliance_status
 
 
@@ -599,7 +615,7 @@ if __name__ == "__main__":
     if url and p_name is not None:
         if url_valid is not None:
             compliance_status = main(url, p_name, scan_id, team_id)
-            print("LOG: Process complete with compliance status as ", compliance_status)
+            print("LOG: Process complete with compliance status as - ", compliance_status)
         else:
             print("ERROR: Failed with validation of url")
     else:
