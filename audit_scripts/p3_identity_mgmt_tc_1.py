@@ -324,8 +324,7 @@ def compliant_status_of_tenant(project_name, role, user, domain, domain_list, do
 
         headers = ["Tenant Id", "Tenant Name", "Create Role", "Create User", "Create Domain", "List Domain", "Change Domain", "Compliance Status"]
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        #csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
-        dfcsv_filename = os.path.expanduser("~") + "/logs/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
+        csv_filename = os.path.expanduser("~") + "/logs/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
