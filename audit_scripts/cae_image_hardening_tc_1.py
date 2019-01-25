@@ -36,8 +36,7 @@ session = session_handle()
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
-#csv_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/cae_image_hardening_tc_1_" + date_stamp + "_.csv"
-csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
+csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
 
 
 def load_config(path):
@@ -166,13 +165,23 @@ def get_image(project_img, pod, path, compliance_status,flag, scanid_valid, team
                         except KeyError:
                                 ports = 'None'
                     params_list = []
-                    resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
                     if scanid_valid and teamid_valid:
-                        if kinesis_update(session ,"CAE" ,scan_id, tc, team_id, resource_name, compliance_status, params_list):
-                            print("LOG: Inside For loop Added the info to Kinesis Stream")
+                        print("Log:---> dhara scan id")
+                        if container_id is not None:
+                            resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
+                            if kinesis_update(session ,"CAE" ,scan_id, tc, team_id, resource_name, compliance_status, params_list):
+                                print("LOG: Inside For loop Added the info to Kinesis Stream")
+                            else:
+                                print("ERROR: Kinesis Update API Failed")
+                                return None
                         else:
-                            print("ERROR: Kinesis Update API Failed")
-                            return None
+                            resource_name = str(pod)
+                            if kinesis_update(session, "CAE", scan_id, tc, team_id, resource_name, compliance_status,
+                                              params_list):
+                                print("LOG: Inside For loop Added the info to Kinesis Stream")
+                            else:
+                                print("ERROR: Kinesis Update API Failed")
+                                return None
                     else:
                         print(
                             "INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
@@ -375,6 +384,7 @@ def main(url, namespace, scan_id, team_id):
             return None
         raise Exception(
             "ERROR: Failed to fetch either Projects: %s or Project_list: %s" % (projects, project_list))
+        return None
 
 
 def kinesis_update(session, platform, scan_id, tc, team_id, pod, compliance_status, params_list):
