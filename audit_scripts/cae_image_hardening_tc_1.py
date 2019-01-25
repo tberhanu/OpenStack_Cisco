@@ -36,7 +36,7 @@ session = session_handle()
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
-csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
+csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
 
 
 def load_config(path):
@@ -116,7 +116,7 @@ def get_pods(project_pod,path):
         return None
 
 
-def get_image(project_img, pod, path, compliance_status,flag, scanid_valid, teamid_valid):
+def get_image(project_img, pod, path, compliance_status, flag, scan_id, team_id, scanid_valid, teamid_valid):
     """
     Method to get image details of application running on pod under specified project
     :param project_img: holds Project Name
@@ -168,7 +168,7 @@ def get_image(project_img, pod, path, compliance_status,flag, scanid_valid, team
                     if scanid_valid and teamid_valid:
                         if container_id is not None:
                             resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
-                            if kinesis_update(session ,"CAE" ,scan_id, tc, team_id, resource_name, compliance_status, params_list):
+                            if kinesis_update(session ,"CAE", scan_id, tc, team_id, resource_name, compliance_status, params_list):
                                 print("LOG: Inside For loop Added the info to Kinesis Stream")
                             else:
                                 print("ERROR: Kinesis Update API Failed")
@@ -344,7 +344,7 @@ def main(url, namespace, scan_id, team_id):
                 compliance_status = "Compliant"
                 if pods_list is not None:
                     for pod in pods_list:
-                        image_data = get_image(namespace, pod, path, compliance_status, flag,scanid_valid,teamid_valid)
+                        image_data = get_image(namespace, pod, path, compliance_status, flag, scan_id, team_id, scanid_valid, teamid_valid)
                         flag = image_data[2]
                 else:
                     print("INFO: No Pods running in the project")
