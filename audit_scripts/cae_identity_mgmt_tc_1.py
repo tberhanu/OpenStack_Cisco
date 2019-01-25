@@ -514,7 +514,8 @@ def main(path_url, p_name, scan_id, team_id):
                 teamid_valid = cae_teamid_validation(team_id)
             else:
                 print("LOG: Valid ScanId or TeamId not found")
-                return None
+                print("INFO: Execution will proceed without Kinesis update")
+
             session = session_handle()
             if session:
                 if scanid_valid and teamid_valid:
