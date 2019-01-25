@@ -222,7 +222,7 @@ def list_domain(conn, project_name, scan_id, team_id, session, scanid_valid, tea
         return None
 
 
-def change_domain(conn, domain_name, project_name, seq_nums_list, params_list, scanid_valid, teamid_valid, session):
+def change_domain(conn, domain_name, project_name, scan_id, team_id, session, scanid_valid, teamid_valid):
     """
     This method is to validate that tenant are not allowed to change the domain
     in P3 platform.
