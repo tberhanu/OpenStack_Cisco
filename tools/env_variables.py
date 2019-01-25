@@ -15,10 +15,14 @@ import os
 
 env_variables = {
     "AWS_REGION": "us-east-1",
+    "AWS_SERVICE": "execute-api",
     "AWS_ENV_TYPE": "dev",
+    "AWS_EXECUTE_API_URL": "https://hcbfujwsma.execute-api.us-east-1.amazonaws.com/abhishupStaging/teams",
+    "AWS_CANONICAL_URI": "/abhishupStaging/teams",
+    "AWS_API_KEY": "UkK1xt9IxK6fANKnJ1PeF7ev2w4hQ2C666aeRksq",
     "COUNT_OF_SQS_READ_MSG": "1",
     "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE.fifo",
-    "SQS_MSG_VISIBILITY_TIMEOUT": "600",
+    "SQS_MSG_VISIBILITY_TIMEOUT": "60",
 
     "AUDIT_SCRIPTS_DIR": os.path.expanduser("~") + "/csb_cnt_repo/audit_scripts",
     "CLONED_REPO_DIR": os.path.expanduser("~") + "/csb_cnt_repo",
@@ -32,7 +36,7 @@ env_variables = {
 
     "MPROC_TIMEOUT": "120",
     "WAIT_TIME_FOR_NEXT_POLL": "60",
-    "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "300",
+    "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "3600",
 }
 
 if __name__ == "__main__":
