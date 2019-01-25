@@ -34,7 +34,7 @@ env_variables = {
     "OS_PROJECT_DOMAIN_NAME": "cisco",
     "OS_USER_DOMAIN_NAME": "cisco",
 
-    "MPROC_TIMEOUT": "120",
+    "MPROC_TIMEOUT": "300",
     "WAIT_TIME_FOR_NEXT_POLL": "60",
     "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "3600",
 }
