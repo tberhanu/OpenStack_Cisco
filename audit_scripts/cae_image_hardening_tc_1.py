@@ -166,7 +166,7 @@ def get_image(project_img, pod, path, compliance_status,flag, scanid_valid, team
                                 ports = 'None'
                     params_list = []
                     if scanid_valid and teamid_valid:
-                        print("Log:---> dhara scan id")
+                 
                         if container_id is not None:
                             resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
                             if kinesis_update(session ,"CAE" ,scan_id, tc, team_id, resource_name, compliance_status, params_list):
