@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<data>
+<region>
+	<regionname>CAERTP</regionname>
+	<regionurl>https://cae-np-rtp.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_rtp</configpath>
+</region>
+<!--
+<region>
+	<regionname>CAERCDN</regionname>
+	<regionurl>https://cae-np-rcdn.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_rcdn</configpath>
+</region>
+-->
+<region>
+	<regionname>CAEALLN</regionname>
+	<regionurl>https://cae-np-alln.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_alln</configpath>
+</region>
+</data>
