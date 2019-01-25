@@ -186,12 +186,12 @@ def get_image(project_img, pod, path, compliance_status,flag, scanid_valid, team
                             "INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
                     image_file_text = [pod_name, pod_namespace, pod_status, container_id, image_name, image_id,
                                        container_start_date, ports, compliance_status]
-                    proj_txt = get_projects(namespace, path)
+                    proj_txt = get_projects(project_img, path)
                     image_data = [image_file_text, proj_txt, flag]
                     build_metadata(image_data)
             else:
                 image_file_text = ["None"] * 8
-                proj_txt = get_projects(namespace, path)
+                proj_txt = get_projects(project_img, path)
                 image_data = [image_file_text, proj_txt]
                 build_metadata(image_data)
 
