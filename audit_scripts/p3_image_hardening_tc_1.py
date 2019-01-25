@@ -580,6 +580,9 @@ def main(os_auth_url, project_name, scan_id, team_id):
             if any(val == "Non-compliant" for val in list_of_flags):
                 print("INFO: One of the test is Non-compliant")
                 compliance_status = "Non-compliant"
+            if any(val is None for val in list_of_flags):
+                print("INFO: One of the test returned None")
+                compliance_status = "None"
             else:
                 print("INFO: All checks are Compliant")
                 compliance_status = "Compliant"
