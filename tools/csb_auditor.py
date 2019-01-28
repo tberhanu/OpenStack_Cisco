@@ -48,7 +48,7 @@ from importlib import import_module
 def decrypt_file(filenames):
     """
     Decrypts the encrypted files using AES(CBC mode) with the given key.
-    :param in_filenames: name of encrypted kube config file(s)
+    :param filenames: name of encrypted kube config file(s)
     :return: generate decrypted file and return True/False
     """
     """ Key to decrypt the encrypted files required for CSB Audit """
