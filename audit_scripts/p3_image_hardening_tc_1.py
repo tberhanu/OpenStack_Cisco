@@ -163,9 +163,9 @@ def list_unsecured_servers(servers, scan_id, team_id, session, scanid_valid, tea
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.path.expanduser("~") + "/logs/p3_unsecured_servers_list_" + date_stamp + ".csv"
         headers = [
-                   "VM Id", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id", "Image Owner Id",
-                   "Image Name", "VM Name", "Secured", "Image Direct URL", "Image Updated Ago", "VM Availability Zone",
-                   "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"
+                   "VM Id", "VM Name", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id",
+                    "Image Owner Id", "Image Name", "Secured", "Image Direct URL", "Image Updated Ago",
+                    "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"
                   ]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
