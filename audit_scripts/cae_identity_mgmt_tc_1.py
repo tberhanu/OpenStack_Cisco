@@ -124,7 +124,7 @@ def get_app_project_mapping(projects):
     try:
         app_list = projects
         app_project_mapping = {}
-        
+
         for i in app_list.items:
             application_id = "None"
             application_name = "None"
@@ -290,12 +290,8 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                           )
 
         date = datetime.datetime.now().strftime('%m%d%y')
-        #error_file = os.environ[
-                         #"CLONED_REPO_DIR"] +
-        # "/logs/reports/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
-        error_file = os.path.expanduser("~") \
-                     + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
-
+        error_file = os.environ[
+                         "CLONED_REPO_DIR"] + "/logs/reports/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
         if os.path.isfile(error_file):
             with open(error_file, 'a') as f:
                 df.to_csv(f, header=False, index=False)
@@ -365,12 +361,24 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                           " hence ignoring Kinesis part")
 
                         else:
+                            if role in trusted_roles:
+                                compliance_status = "Compliant"
+                            else:
+                                compliance_status = "Non-compliant"
+                            if "admin" == role:
+                                compliance_status = "Non-compliant"
                             data_all.append(
                                 [path_url, project, project_name_id_mapping[project],
                                  project_app[project]['app_id'],
                                  project_app[project]['app_name'], role, "None",
                                  diff, compliance_status])
                     else:
+                        if role in trusted_roles:
+                            compliance_status = "Compliant"
+                        else:
+                            compliance_status = "Non-compliant"
+                        if "admin" == role and user != "citeis-orchadm.gen":
+                            compliance_status = "Non-compliant"
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in rolebinding_all[project][role]['usernames']:
                                 data_all.append([path_url,project, "None", "None", role, user, diff, compliance_status])
@@ -384,11 +392,8 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                    ]
                           )
         date = datetime.datetime.now().strftime('%m%d%y')
-        #metadata_file = os.environ["CLONED_REPO_DIR"] \
-                        #+ "/logs/reports/cae_identity_mgmt_tc_1_" + date +
-        # ".csv"
-        metadata_file = os.path.expanduser("~") +\
-                        "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
+        metadata_file = os.environ["CLONED_REPO_DIR"] \
+                        + "/logs/reports/cae_identity_mgmt_tc_1_" + date + ".csv"
 
         if os.path.isfile(metadata_file):
             with open(metadata_file, 'a') as f:
@@ -549,7 +554,7 @@ def main(path_url, p_name, scan_id, team_id):
                                 raise Exception("ERROR: Issue observed with updateScanRecord API call")
                                 return None
                             raise Exception(
-                                "ERROR: Failed to fetch either Projects: %s or Project_list: %s" % (projects, project_list))
+                                "ERROR: Failed to fetch either Project: %s or Project_list: %s" % (project_name, project_list))
 
                         output_parameters(
                                           trusted_roles, rolebinding_all, all_roles,
