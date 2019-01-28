@@ -1,28 +1,32 @@
 #!/opt/app-root/bin/python
 
 """
----------------------------- csb_auditor.py ------------------------------
+-------------------------------- csb_auditor.py --------------------------------
 Description: This python script is to
-                a. decrypt the required encrypted file(s)
+                a. set environment in terms of credentials to be used
+                b. decrypt the required encrypted version of kube config files
+                c. set environment w.r.t. other required parameters
                 b. clone git repo
                 c. create connection handle to SQS Queue
                 d. read messages from SQS Queue created for CNT-CSB
                 e. process the required information
                 f. pass the information to audit test-script
-                g. consolidate results from each audit test-script per team
-                h. post the result to kinesis
-                i. delete message from SQS Queue
+                g. consolidate return values from each audit script per team
+                h. delete message from SQS Queue, if none of the return values
+                   are not "None"
 
 Dependencies:
     csb_credentials.py.enc
     env_variables.py
-    kube_config.enc
+    kube_config_alln.enc
+    kube_config_rcdn.enc
+    kube_config_rtp.enc
 
 Author: Amardeep Kumar <amardkum@cisco.com>; December 19th, 2018
 
 Copyright (c) 2018 Cisco Systems.
 All rights reserved.
---------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 """
 
 
@@ -31,6 +35,7 @@ import botocore
 import git
 import multiprocessing
 import os
+import re
 import shutil
 import struct
 import time
@@ -40,43 +45,48 @@ from env_variables import env_variables
 from importlib import import_module
 
 
-def decrypt_file(in_filename):
+def decrypt_file(filenames):
     """
-    Decrypts a file using AES(CBC mode) with the given key.
-    :param in_filename: name of encrypted file
-    :return: generate decrypted file and return TRUE/FALSE
+    Decrypts the encrypted files using AES(CBC mode) with the given key.
+    :param in_filenames: name of encrypted kube config file(s)
+    :return: generate decrypted file and return True/False
     """
     """ Key to decrypt the encrypted files required for CSB Audit """
     key = "1329ebbc1b9646b890202384beaef2ec"
-    out_filename = os.path.splitext(in_filename)[0]
-    chunk_size = 64*1024
 
-    try:
-        print("LOG: Decrypt %s file" % in_filename)
-        with open(in_filename, 'rb') as infile:
-            orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
-            iv = infile.read(16)
-            decryptor = AES.new(key, AES.MODE_CBC, iv)
-            try:
-                with open(out_filename, 'wb') as outfile:
-                    while True:
-                        chunk = infile.read(chunk_size)
-                        if len(chunk) == 0:
-                            break
-                        outfile.write(decryptor.decrypt(chunk))
+    list_of_enc_files = filenames.split(",")
+    flag = True
+    for in_filename in list_of_enc_files:
+        out_filename = os.path.splitext(in_filename)[0]
+        chunk_size = 64*1024
+        try:
+            print("LOG: Decrypt %s file" % in_filename)
+            with open(in_filename, 'rb') as infile:
+                orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
+                iv = infile.read(16)
+                decryptor = AES.new(key, AES.MODE_CBC, iv)
+                try:
+                    with open(out_filename, 'wb') as outfile:
+                        while True:
+                            chunk = infile.read(chunk_size)
+                            if len(chunk) == 0:
+                                break
+                            outfile.write(decryptor.decrypt(chunk))
+                        outfile.truncate(orig_size)
+                except IOError:
+                    print("ERROR: Failed to create the decrypted file %s" % out_filename)
+                    flag = False
+        except IOError:
+            print("ERROR: File %s was not accessible" % in_filename)
+            flag = False
 
-                    outfile.truncate(orig_size)
-            except IOError:
-                print("ERROR: Failed to create the decrypted file %s" % out_filename)
-    except IOError:
-        print("ERROR: File %s was not accessible" % in_filename)
+        if os.path.isfile(out_filename):
+            print("LOG: Decrypted version of %s file is available for use" % in_filename)
+        else:
+            print("ERROR: Decrypted version of %s file is not available for use" % in_filename)
+            flag = False
 
-    if os.path.isfile(out_filename):
-        print("LOG: Decrypted File is available for use")
-        return True
-    else:
-        print("ERROR: Decrypted File is not available for use")
-        return False
+    return flag
 
 
 def sqs_client_handle():
@@ -87,14 +97,22 @@ def sqs_client_handle():
     try:
         print("LOG: Create SQS Client Handle")
         region = os.environ["SQS_URL"].split(".")[1]
-        session = boto3.session.Session(aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"], region_name=region)
+        session = boto3.session.Session(
+                                        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+                                        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+                                        region_name=region
+                                        )
         sqsclient_handle = session.client("sqs")
         return sqsclient_handle
+
     except botocore.exceptions.ClientError as boto_err:
         print("ERROR: Failed to establish connection with AWS SQS Queue - %s" % str(boto_err))
         return None
+
     except botocore.executions.ParamValidationError as param_err:
         print("ERROR: Parameter validation error: %s" % param_err)
+        return None
+
     except Exception as err:
         print("ERROR: Failed to create sqs client handle with error: %s" % str(err))
         return None
@@ -155,21 +173,35 @@ def process_messages(messages):
     if "Messages" in messages:
         for message in messages["Messages"]:
             team_name, team_id, test_id, url, scan_id, receipt_handle = retrieve_details(message)
-            print("Project: %s, TeamID: %s, TestIDs: %s, URL: %s, Scan ID = %s, Receipt Handle: %s" % (team_name, team_id, test_id, url, scan_id, receipt_handle))
+            list_of_values_received = [team_name, team_id, test_id, url, scan_id]
+            if any(val is None for val in list_of_values_received):
+                print("ERROR: One of the value received from %s is not appropriate or in expected format" % message)
+                break
+
+            print("TeamName: %s, TeamID: %s, TestIDs: %s, URL: %s, Scan ID = %s, Receipt Handle: %s"
+                  % (team_name, team_id, test_id, url, scan_id, receipt_handle))
             try:
                 """ New process will be initiated per message/team """
                 print("LOG: Start the thread for execution of Audit test-scripts per team")
-                proc = multiprocessing.Process(target=audit_project, args=(team_id, team_name, test_id, url, scan_id, receipt_handle))
+                proc = multiprocessing.Process(
+                                                target=audit_project,
+                                                args=(team_id, team_name, test_id, url, scan_id, receipt_handle)
+                                              )
                 processes.append(proc)
                 proc.start()
-            except Exception as e:
-                print("ERROR: Message processing failed for TeamId-TeamName => %s-%s due to %s" % (team_id, team_name, str(e)))
-
+            except multiprocessing.ProcessError as proc_err:
+                print("ERROR: Message processing failed for TeamId-TeamName => %s-%s due to %s"
+                      % (team_id, team_name, str(proc_err)))
         try:
             for one_process in processes:
                 one_process.join(int(os.environ["MPROC_TIMEOUT"]))
         except multiprocessing.TimeoutError as proc_err:
-            print("ERROR: Execution of audit_project\(\) for team %s took more time than expected - %s" % (team_name, str(proc_err)))
+            print("ERROR: Execution of audit_project\(\) for team %s took more time than expected - %s"
+                  % (team_name, str(proc_err)))
+            print("LOG: Exhausted the defined timeout value, hence killing the process that are still running")
+            for one_process in processes:
+                one_process.terminate()
+                one_process.join()
 
     else:
         print("LOG: There was no message available for processing")
@@ -183,11 +215,47 @@ def retrieve_details(msg):
     """
     print("LOG: Retrieve individual information available per message")
     team_name = msg["MessageAttributes"]["teamname"].get("StringValue", None)
-    test_id = msg["MessageAttributes"]["testid"].get("StringValue", None)   # [P3|CAE]:<alphanumeric string>
-    scan_id = msg["MessageAttributes"]["scanid"].get("StringValue", None)   # <alphanumeric string>f8a51d2e-1467-11e9-8219-fe4a21889d64
-    team_id = msg["MessageAttributes"]["teamid"].get("StringValue", None)   # [P3|CAE]:<alphanumeric string>
-    url = msg["MessageAttributes"]["url"].get("StringValue", None)          # https...
+    test_id = msg["MessageAttributes"]["testid"].get("StringValue", None)
+    scan_id = msg["MessageAttributes"]["scanid"].get("StringValue", None)
+    team_id = msg["MessageAttributes"]["teamid"].get("StringValue", None)
+    url = msg["MessageAttributes"]["url"].get("StringValue", None)
     receipt_handle = msg.get("ReceiptHandle", None)
+
+    scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+    teamid_pattern = re.compile(r'(^P3:[0-9a-f]{32}$)|(^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$)')
+    url_pattern = re.compile(r'^https://((cae-np-.*.cisco.com)|(cloud-.*-1.cisco.com:5000/v3))$')
+    rh_pattern = re.compile(r'([a-zA-Z0-9]*[/]?[+]?[a-zA-Z0-9]*)*=$')
+    tc_pattern = re.compile(r'^(P3|CAE)[-A-Z0-9]*(, (P3|CAE)[-A-Z0-9]*)*')
+
+    if tc_pattern.match(test_id):
+        print("LOG: Received valid TestID")
+    else:
+        test_id = None
+        print("ERROR: Received TestID is not valid")
+
+    if scanid_pattern.match(scan_id):
+        print("LOG: Received valid ScanID")
+    else:
+        scan_id = None
+        print("ERROR: Received ScanID is not valid")
+
+    if teamid_pattern.match(team_id):
+        print("LOG: Received valid TeamID")
+    else:
+        team_id = None
+        print("ERROR: Received TeamID is not valid")
+
+    if url_pattern.match(url):
+        print("LOG: Received valid URL")
+    else:
+        url = None
+        print("ERROR: Received URL is not valid")
+
+    if rh_pattern.match(receipt_handle):
+        print("LOG: Received valid Receipt Handle")
+    else:
+        receipt_handle = None
+        print("ERROR: Received Receipt Handle is not valid")
 
     return team_name, team_id, test_id, url, scan_id, receipt_handle
 
@@ -229,7 +297,8 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
                         del_flag = False
             except Exception as e:
                 del_flag = False
-                print("ERROR: Execution of %s Audit Test-script failed to return expected value - %s" % (str(e), audit_tc_script))
+                print("ERROR: Execution of %s Audit Test-script failed to return expected value - %s"
+                      % (str(e), audit_tc_script))
         else:
             results[audit_tc_script] = "Script is not available"
             raise Exception("ERROR: Required Audit Test-Script is not available %s" % audit_tc_script)
@@ -280,10 +349,10 @@ def main():
     """
     if set_credentials_env():
         """ Decrypt the kube config file """
-        if decrypt_file("kube_config.enc"):
-            print("INFO: Successfully decrypted Kube Config file")
+        if decrypt_file("kube_config_rtp.enc,kube_config_rcdn.enc,kube_config_alln.enc"):
+            print("INFO: Successfully decrypted Kube Config files for CAE required for operations")
         else:
-            raise Exception("ERROR: Failed to decrypt \"kube_config.enc\" file")
+            raise Exception("ERROR: Failed to decrypt the .enc version of Kube config file(s)")
 
         """ Setting environment variables required for execution of CBS-CNT related scripts """
         print("INFO: Set all required variables as part of ENV")
@@ -302,8 +371,9 @@ def main():
                         print("INFO: Initiate processing of the messages received from SQS")
                         process_messages(msg_from_sqs)
                     else:
-                        print("INFO: Attempt to read message from SQS didn't get any.")
-                        print("INFO: Waiting for %s secs. before re-polling SQS Queue" % os.environ["WAIT_TIME_FOR_NEXT_POLL"])
+                        print("INFO: Didn't receive any message from SQS to process")
+                        print("INFO: Waiting for %s secs. before re-polling SQS Queue"
+                              % os.environ["WAIT_TIME_FOR_NEXT_POLL"])
                         time.sleep(int(os.environ["WAIT_TIME_FOR_NEXT_POLL"]))
             else:
                 print("ERROR: Failed to get SQS Handle")
@@ -312,8 +382,12 @@ def main():
         print("INFO: Delete decrypted Credential file")
         os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
         os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
+
         print("INFO: Delete decrypted kube_config file")
-        os.remove(os.path.expanduser("~") + "/" + "kube_config")
+        os.remove(os.path.expanduser("~") + "/" + "kube_config_rtp")
+        os.remove(os.path.expanduser("~") + "/" + "kube_config_rcdn")
+        os.remove(os.path.expanduser("~") + "/" + "kube_config_alln")
+
     else:
         raise Exception("ERROR: Failed to initialize the environment in terms of credentials to use.")
 
