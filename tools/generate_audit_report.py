@@ -102,7 +102,6 @@ def cae_identity_mgmt_tc_1(date_stamp):
             for untrusted_role in cae_identity_mgmt_metadata:
                 if untrusted_role[8] == 'Non-compliant':
                     list_untrusted_roles.append(untrusted_role)
-            print("Total number of Untrusted Role found: %s" % len(list_untrusted_roles))
             
             if list_untrusted_roles is not None:
                 header = ["URL", "Tenant Name", "Tenant ID", "Application ID", "Application Name", "Role Name", 
