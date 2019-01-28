@@ -143,7 +143,7 @@ def p3_image_hardening_tc_1(date_stamp):
     try:
         print("\n######### SCAN REPORT FOR p3_image_hardening_tc_1 executed on: %s #########" % date_stamp)
         current_date_stamp = datetime.datetime.now().strftime('%m%d%y')
-        images_filename = os.environ["CLONED_REPO_DIR"] + "/logs/reports/p3_all_images_list_" + date_stamp + ".csv"
+        images_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
         images = pd.read_csv(images_filename)
         print("Total number of Images evaluated in Platform : %s" % len(images['Image Id'].unique()))
         print("Total number of Tenants Evaluated in Platform: %s" % len(images['Tenant Name'].unique()))
