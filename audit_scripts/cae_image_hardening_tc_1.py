@@ -350,6 +350,7 @@ def main(url, namespace, scan_id, team_id):
                     print("INFO: No Pods running in the project")
                     empty_metadata(namespace, path)
                     pod = 'NULL'
+                    params_list = []
                     if scanid_valid and teamid_valid:
                         if kinesis_update(session,"CAE", scan_id, tc, team_id, pod, compliance_status,params_list):
                             print("LOG: Added the info to Kinesis Stream")
