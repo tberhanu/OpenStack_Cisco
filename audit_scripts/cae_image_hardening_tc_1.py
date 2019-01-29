@@ -36,7 +36,8 @@ session = session_handle()
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
-csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
+#csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
+csv_filename = "cae_image_hardening_" + date_stamp + "_.csv"
 
 
 def load_config(path):
@@ -67,8 +68,8 @@ def get_projects(project_name,path):
         project_met = pykube.Namespace.objects(api_handle).get(name=project_name)
         metadata_project = project_met.obj['metadata']
         if metadata_project is not None:
-            uid = metadata_project.get('uid', None)
-            name = metadata_project.get('name', None)
+            uid = none_check(metadata_project.get('uid', None))
+            name = none_check(metadata_project.get('name', None))
             annotations = metadata_project.get('annotations', {})
             if annotations is not None:
                 try:
@@ -129,27 +130,25 @@ def get_image(project_img, pod, path, compliance_status, flag, scan_id, team_id,
         api = load_config(path)
         pod = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
         if pod is not None:
-            container_info = pod.obj['status']['containerStatuses']
+            metadata = pod.obj['metadata']
+            pod_name = none_check(metadata.get('name', None))
+            pod_namespace = none_check(metadata.get('namespace', None))
+            pod_stat = pod.obj['status']
+            pod_status = none_check(pod_stat.get('phase', None))
+            container_status = pod.obj['status']
+            container_info = container_status.get('containerStatuses', None)
             if container_info is not None:
-                metadata = pod.obj['metadata']
-                pod_name = metadata.get('name', None)
-                pod_namespace = metadata.get('namespace', None)
-                pod_stat = pod.obj['status']
-                pod_status = pod_stat.get('phase', None)
                 for container in container_info:
-                    image_name = container.get('image', None)
-                    image_id = container.get('imageID', None)
-                    try:
-                        container_id = container.get('containerID', None)
-                    except KeyError:
-                        container_id = 'None'
+                    image_name = none_check(container.get('image', None))
+                    image_id = none_check(container.get('imageID', None))
+                    container_id = none_check(container.get('containerID', None))
                     try:
                         container_state = container.get('state', {}).get('running', {})
-                        container_start_date = container_state.get('startedAt', None)
+                        container_start_date = none_check(container_state.get('startedAt', None))
                     except KeyError:
                         container_start_date = 'None'
                     for container_list in pod.obj["spec"]["containers"]:
-                        image = container_list.get('image',None)
+                        image = none_check(container_list.get('image',None))
                         if re.match('containers.cisco.com\/*', image):
                             compliance_status = "Compliant"
                             print("INFO: Secure - %s with image: %s " % (pod, image))
@@ -168,37 +167,34 @@ def get_image(project_img, pod, path, compliance_status, flag, scan_id, team_id,
                     if scanid_valid and teamid_valid:
                         if container_id is not None:
                             resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
-                            if kinesis_update(session ,"CAE", scan_id, tc, team_id, resource_name, compliance_status, params_list):
-                                print("LOG: Inside For loop Added the info to Kinesis Stream")
-                            else:
-                                print("ERROR: Kinesis Update API Failed")
-                                return None
                         else:
                             resource_name = str(pod)
-                            if kinesis_update(session, "CAE", scan_id, tc, team_id, resource_name, compliance_status,
-                                              params_list):
-                                print("LOG: Inside For loop Added the info to Kinesis Stream")
-                            else:
-                                print("ERROR: Kinesis Update API Failed")
-                                return None
+                        if kinesis_update(session, "CAE", scan_id, tc, team_id, resource_name, compliance_status,
+                                          params_list):
+                            print("LOG: Inside For loop Added the info to Kinesis Stream")
+                        else:
+                            print("LOG: Kinesis Update API Failed")
+                            return None
                     else:
-                        print(
-                            "INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+                        print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+                    #container_id = none_check(container_id)
+                    #container_start_date = none_check(container_start_date)
                     image_file_text = [pod_name, pod_namespace, pod_status, container_id, image_name, image_id,
                                        container_start_date, ports, compliance_status]
                     proj_txt = get_projects(project_img, path)
                     image_data = [image_file_text, proj_txt, flag]
                     build_metadata(image_data)
             else:
-                image_file_text = ["None"] * 8
+                image_file_text = [pod_name, pod_namespace, pod_status, 'None', 'None', 'None',
+                                   'None', 'None', compliance_status]
                 proj_txt = get_projects(project_img, path)
-                image_data = [image_file_text, proj_txt]
+                image_data = [image_file_text, proj_txt,compliance_status]
                 build_metadata(image_data)
 
             return image_data
         else:
             print("No images found")
-            return None
+            return compliance_status
     except Exception as e:
         print("ERROR: Failed to retrieve images with error => %s" % str(e))
         return None
@@ -225,10 +221,10 @@ def print_metadata(image_file_text, project_file_text):
         print("ERROR: Failed to write the output file with error => %s" % str(e))
 
 
-def empty_metadata(namespace, path):
+def empty_metadata(namespace, path, compliance_status):
 
     proj_txt = get_projects(namespace, path)
-    image_file_text = ["None"] * 8 + ['Compliant']
+    image_file_text = ["None"] * 8 + [compliance_status]
     print_metadata(image_file_text, proj_txt)
 
 
@@ -315,7 +311,7 @@ def main(url, namespace, scan_id, team_id):
                     print("LOG: Update the scan record with \"InProgress\" Status")
                     update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
                     if update is None:
-                        raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
+                        raise Exception("LOG: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
                         return None
                 else:
                     print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
@@ -341,6 +337,7 @@ def main(url, namespace, scan_id, team_id):
                         writer.writerows(file_content)
                 print("LOG: Check whether source of image used is a trusted one")
                 pods_list = get_pods(namespace, path)
+                get_projects(namespace, path)
                 compliance_status = "Compliant"
                 if pods_list is not None:
                     for pod in pods_list:
@@ -348,19 +345,20 @@ def main(url, namespace, scan_id, team_id):
                         flag = image_data[2]
                 else:
                     print("INFO: No Pods running in the project")
-                    empty_metadata(namespace, path)
-                    pod = 'NULL'
+                    empty_metadata(namespace, path, compliance_status)
                     params_list = []
+                    pod = 'NULL'
                     if scanid_valid and teamid_valid:
                         if kinesis_update(session,"CAE", scan_id, tc, team_id, pod, compliance_status,params_list):
                             print("LOG: Added the info to Kinesis Stream")
                         else:
-                            print("ERROR: Kinesis Update API Failed")
+                            print("LOG: Kinesis Update API Failed")
                             return None
                     else:
                         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+                    return compliance_status
         else:
-            print("ERROR: Connection handle to Kinesis was None")
+            print("ERROR:URL not found")
             return None
 
         if scanid_valid and teamid_valid:
@@ -369,7 +367,7 @@ def main(url, namespace, scan_id, team_id):
             if send_result:
                 print("LOG: Successfully submitted the result to Kinesis")
             else:
-                print("ERROR: Failed to submit the result to Kinesis")
+                print("LOG: Failed to submit the result to Kinesis")
                 return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
@@ -383,7 +381,7 @@ def main(url, namespace, scan_id, team_id):
             raise Exception("ERROR: Issue observed with updateScanRecord API call")
             return None
         raise Exception(
-            "ERROR: Failed to fetch either Projects: %s or Project_list: %s" % (projects, project_list))
+            "ERROR: Failed to fetch either Projects: %s or Project_list")
         return None
 
 
@@ -417,6 +415,11 @@ def kinesis_update(session, platform, scan_id, tc, team_id, pod, compliance_stat
     except Exception as params_err:
         print("ERROR: Issue observed while adding result to streams - %s" % str(params_err))
         return False
+
+def none_check(val):
+    if val is None:
+        val = 'None'
+    return val
 
 
 if __name__ == '__main__':
