@@ -1,0 +1,5 @@
+gitpython
+pykube
+pycrypto
+openstacksdk
+boto3
