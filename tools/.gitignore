@@ -1,2 +1,3 @@
 kube_config_*
 csb_credentials.py
+csb_credentials.pyc
