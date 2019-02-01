@@ -1,29 +1,57 @@
-FROM containers.cisco.com/aws_managed/python-3.6:latest 
-SHELL ["/bin/bash", "-c"]
-USER root
-MAINTAINER amardkum
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "csbauditor"
+spec:
+  storageClassName: "standard"
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "1Gi"
 
-# Configure username and useremail required for Git
-RUN git config --global user.name csbauditor.gen
-RUN git config --global user.email csbauditor.gen@cisco.com
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "csbauditor"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: "csbauditor"
+  template:
+    metadata:
+      labels:
+        name: "csbauditor"
+    spec:
+      containers:
+        -
+          name: "csbauditor"
+          image: "containers.cisco.com/amardkum/csb_cnt:csbauditor_py36"
 
-# Limiting the permissions on home dir
-RUN chmod -R 775 /opt/app-root/src/
+          volumeMounts:
+            - name: "storage"
+              mountPath: "/opt/app-root/src/logs"
 
-# Installing the packages required to support overall execution
-ADD requirements.txt /opt/app-root/src
-RUN pip install --upgrade pip && pip install -r requirements.txt
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            capabilities: {}
+            privileged: false
+      volumes:
+        -
+          name: "storage"
+          persistentVolumeClaim:
+           claimName: "csbauditor"
 
-USER default
-# Create dir for storing the logs which 
-RUN mkdir /opt/app-root/src/logs
-# Adding required dependency files and limiting the permissions
-ADD env_variables.py /opt/app-root/src
-ADD csb_credentials.py.enc /opt/app-root/src
-ADD kube_config_rcdn.enc /opt/app-root/src
-ADD kube_config_rtp.enc /opt/app-root/src
-ADD kube_config_alln.enc /opt/app-root/src
-
-# Adding csb_auditor script and the execution command for the same
-ADD csb_auditor.py /opt/app-root/src
-CMD python /opt/app-root/src/csb_auditor.py > /opt/app-root/src/logs/csb_audit_log_$(date +"%m%d%y_%H%M%S")
+      restartPolicy: "Always"
+      dnsPolicy: "ClusterFirst"
+  Triggers:
+    -
+      type: "ConfigChange"
+  strategy:
+    type: "RollingUpdate"
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 420
