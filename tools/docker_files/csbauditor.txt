@@ -26,4 +26,4 @@ ADD kube_config_alln.enc /opt/app-root/src
 
 # Adding csb_auditor script and the execution command for the same
 ADD csb_auditor.py /opt/app-root/src
-CMD python /opt/app-root/src/csb_auditor.py > /opt/app-root/src/logs/csb_audit_log_$(date +"%m%d%y_%H%M%S")
+CMD python /opt/app-root/src/csb_auditor.py | /usr/bin/tee /opt/app-root/src/logs/csb_audit_log_$(date +"%m%d%y_%H%M%S")
