@@ -1,0 +1,29 @@
+FROM containers.cisco.com/aws_managed/python-3.6:latest 
+SHELL ["/bin/bash", "-c"]
+USER root
+MAINTAINER amardkum
+
+# Configure username and useremail required for Git
+RUN git config --global user.name csbauditor.gen
+RUN git config --global user.email csbauditor.gen@cisco.com
+
+# Limiting the permissions on home dir
+RUN chmod -R 775 /opt/app-root/src/
+
+# Installing the packages required to support overall execution
+ADD requirements.txt /opt/app-root/src
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+USER default
+# Create dir for storing the logs which 
+RUN mkdir /opt/app-root/src/logs
+# Adding required dependency files and limiting the permissions
+ADD env_variables.py /opt/app-root/src
+ADD csb_credentials.py.enc /opt/app-root/src
+ADD kube_config_rcdn.enc /opt/app-root/src
+ADD kube_config_rtp.enc /opt/app-root/src
+ADD kube_config_alln.enc /opt/app-root/src
+
+# Adding csb_auditor script and the execution command for the same
+ADD csb_auditor.py /opt/app-root/src
+CMD python /opt/app-root/src/csb_auditor.py > /opt/app-root/src/logs/csb_audit_log_$(date +"%m%d%y_%H%M%S")
