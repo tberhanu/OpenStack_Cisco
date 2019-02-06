@@ -6,9 +6,7 @@ Description: This python script is to list all the images in the tenant
              account and validate the image are from the trusted source or not.
              This method check the visibility status of the images used in the
              servers and the unused images contain in the tenant account.
-
 Author: Devaraj Acharya <devaacha@cisco.com>; January 8th, 2018
-
 Copyright (c) 2019 Cisco Systems.
 All rights reserved.
 -------------------------------------------------------------------------------
@@ -33,7 +31,6 @@ tc = filename.replace("_", "-").upper()
 seq_nums_list = []
 params_list =[]
 
-
 def list_images(conn):
     """
     This method is to list all the images in the OpenStack project
@@ -46,77 +43,76 @@ def list_images(conn):
             out = json.loads(img)
             images[out['id']] = out
         return images
-    except IOError as e:
-        print("ERROR: Failed to retrieve image list with error => %s" % str(e))
     except Exception as err:
         print("ERROR: Failed to retrieve list of used images due to %s" % str(err))
 
-
 def list_servers(conn, images, project_name, os_auth_url):
     """
-    This main method is to list the servers in the OpenStack project along with the details of server
+    This method is to list the servers in the OpenStack project along with the details of server
     and the associated image.
     :param conn: connectivity to the P3 platform
     :param images: list_images
+    :volume: volume
     :param project_name: Project Name
     :param os_auth_url: OpenStack's Horizon URL
     :return:
     """
     try:
         servers = []
+
+        for volume in conn.volume.volumes():
+            vol = json.dumps(volume)
+            volume = json.loads(vol)
+            volume_image_id = (volume.get('volume_image_metadata') or {'image_id': "Unknown"})['image_id']
+            
         for server in conn.compute.servers():
             srvr = json.dumps(server)
             pull = json.loads(srvr)
-            
+
             vm_created = dateutil.parser.parse(pull['created_at']).replace(tzinfo=None)
             vm_updated_days = datetime.datetime.now() - vm_created
             vm_updated_days = ("%s Days %s Hours %s Mins" % (vm_updated_days.days, vm_updated_days.seconds//3600,
                                                              (vm_updated_days.seconds//60)%60))
-            
+
             addresses = pull['addresses']
             network_names = addresses.keys()
             server_network_name = network_names[0]
             address = pull['addresses'][server_network_name][0]
+
+            image_id = (pull.get('image') or {'id': volume_image_id} or {'id': "None"})['id']
+            image = images.get(image_id) or {'id': image_id}
             
-            if len(pull['image']):
-                image = images[pull['image']['id']]
+            updated_at = image.get('updated_at')
+            image_created = dateutil.parser.parse(updated_at).replace(tzinfo=None) if updated_at is not None else None
+            image_updated_days = (datetime.datetime.now() - image_created) if image_created is not None else None
+            image_updated_ago = (("%s Days %s Hours %s Mins" % (image_updated_days.days,
+                                    image_updated_days.seconds//3600, (image_updated_days.seconds//60)%60))
+                                    if image_updated_days is not None else None)
 
-                image_created = dateutil.parser.parse(image['updated_at']).replace(tzinfo=None)
-                image_updated_days = datetime.datetime.now() - image_created
-                image_updated_days = ("%s Days %s Hours %s Mins" % (image_updated_days.days,
-                                                                    image_updated_days.seconds//3600,
-                                                                    (image_updated_days.seconds//60)%60))
-
-                servers.append([
-                            pull['id'],
-                            pull['name'],
-                            pull['project_id'],
-                            project_name,
-                            os_auth_url,
-                            image['id'],
-                            image['owner_id'],
-                            image['name'],
-                            image['visibility'] != 'private',
-                            image['direct_url'],
-                            image_updated_days,
-                            pull['availability_zone'],
-                            vm_updated_days,
-                            address['addr'],
-                            pull['host_id'],
-                            pull['user_id']
-                ])
-            else:
-                servers.append([
-                                pull['id'], pull['name'], pull['project_id'], project_name, os_auth_url,
-                                "None", "None", "None", "True", "None", "None", pull['availability_zone'],
-                                vm_updated_days, address['addr'], pull['host_id'], pull['user_id']
-                               ])
-
+            servers.append([
+                        pull['id'],
+                        pull['name'],
+                        pull['project_id'],
+                        project_name,
+                        os_auth_url,
+                        image['id'],
+                        image.get('owner_id'),
+                        image.get('name'),
+                        image.get('visibility') == 'public',
+                        image.get('direct_url'),
+                        image_updated_ago,
+                        pull['availability_zone'],
+                        vm_updated_days,
+                        address['addr'],
+                        pull['host_id'],
+                        pull['user_id'],
+                       
+            ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
         headers = [
                     "VM Id", "VM Name", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id",
-                    "Image Owner Id", "Image Name", "Secured", "Image Direct URL", "Image Updated Ago",
+                    "Image Owner Id", "Image Name", "Secured", "Image Direct URL", "Image Updated Days",
                     "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"
                   ]
         with open(csv_filename, 'a') as f:
@@ -126,8 +122,6 @@ def list_servers(conn, images, project_name, os_auth_url):
                 writer.writerow(headers)
             writer.writerows(servers)
         return servers
-    except IOError as e:
-        print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
 
@@ -164,7 +158,7 @@ def list_unsecured_servers(servers, scan_id, team_id, session, scanid_valid, tea
         csv_filename = os.path.expanduser("~") + "/logs/p3_unsecured_servers_list_" + date_stamp + ".csv"
         headers = [
                    "VM Id", "VM Name", "Tenant Id", "Tenant Name", "Tenant External URL", "Image Id",
-                    "Image Owner Id", "Image Name", "Secured", "Image Direct URL", "Image Updated Ago",
+                    "Image Owner Id", "Image Name", "Secured", "Image Direct URL", "Image Updated Days",
                     "VM Availability Zone", "VM Updated Ago", "VM IP Address", "VM Host Id", "VM User Id"
                   ]
         with open(csv_filename, 'a') as f:
@@ -181,8 +175,6 @@ def list_unsecured_servers(servers, scan_id, team_id, session, scanid_valid, tea
             print("LOG: VM test: Non-compliant\(Unsecured image is used in VM\)")
             flag1 = "Non-compliant"
         return unsecured_servers, flag1
-    except IOError as e:
-        print("ERROR: Failed to retrieve unsecured servers list with error => %s" % str(e))
     except Exception as err:
         print("ERROR: Failed to retrieve list of unsecured servers list due to %s" % str(err))
 
@@ -232,11 +224,8 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
                 writer.writerow(headers)
             writer.writerows(unused_images)
         return unused_images
-    except IOError as e:
-        print("ERROR: Failed to retrieve unused images list with error => %s" % str(e))
     except Exception as err:
         print("ERROR: Failed to retrieve list of unused images servers list due to %s" % str(err))
-
 
 def list_unused_unsecured_images(unused_images, scan_id, team_id, session, scanid_valid, teamid_valid):
     """
@@ -289,17 +278,11 @@ def list_unused_unsecured_images(unused_images, scan_id, team_id, session, scani
             flag2 = "Non-compliant"
 
         return unused_unsecured_images, flag2
-
-    except IOError as e:
-        print("ERROR: Failed to retrieve unused unsecured image list with error => %s" % str(e))
-        return None, None
-
     except Exception as err:
         print("ERROR: Failed to retrieve list of unused unsecured images due to %s" % str(err))
         return None, None
 
-
-def list_all_images(conn, project_name, os_auth_url):
+def list_all_images(conn, project_name, os_auth_url, team_id):
     """
     Method to fetch out the all images details in the OpenStack project
     :param conn: established the connection
@@ -314,6 +297,7 @@ def list_all_images(conn, project_name, os_auth_url):
             out = json.loads(img)
             all_images_list.append([
                         out['owner_id'],
+                        team_id,
                         project_name,
                         os_auth_url,
                         out['id'],
@@ -322,7 +306,7 @@ def list_all_images(conn, project_name, os_auth_url):
             ])
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
-        headers = ["Owner Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
+        headers = ["Owner Id", "Tenant Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -331,15 +315,9 @@ def list_all_images(conn, project_name, os_auth_url):
             writer.writerows(all_images_list)
 
         return all_images_list
-
-    except IOError as e:
-        print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
-        return None
-
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
         return None
-
 
 def unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_valid, teamid_valid):
     """
@@ -355,13 +333,13 @@ def unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_val
     try:
         all_unsecured_images = []
         for image in all_images_list:
-            if image[5] != 'public':
+            if image[6] != 'public':
                 all_unsecured_images.append(image)
                 compliance_status = "Non-compliant"
             else:
                 compliance_status = "Compliant"
 
-            resource = "Image:" + image[4]
+            resource = "Image:" + image[5]
             if scanid_valid and teamid_valid:
                 if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
                     print("LOG: Inside For loop Added the info to Kinesis Stream")
@@ -373,7 +351,7 @@ def unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_val
 
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.path.expanduser("~") + "/logs/p3_all_unsecured_images_list_" + date_stamp + ".csv"
-        headers = ["Owner Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
+        headers = ["Owner Id", "Tenant Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
         with open(csv_filename, 'a') as f:
             file_is_empty = os.stat(csv_filename).st_size == 0
             writer = csv.writer(f, lineterminator='\n')
@@ -389,11 +367,8 @@ def unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_val
             flag3 = "Non-compliant"
 
         return all_unsecured_images, flag3
-    except IOError as e:
-        print("ERROR: Failed to retrieve server detail with error => %s" % str(e))
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
-
 
 def summary_of_test(project_name, all_images_list, all_unsecured_images, servers, unsecured_servers, unused_images, unused_unsecured_images):
     """
@@ -418,7 +393,6 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images, servers
     except KeyError as key_err:
         print("ERROR: One of the variable do not have required data - %s" % str(key_err))
 
-
 def scanid_validation(scan_id):
     """
     This method is to validate that scan id while sending the report to Kinesis.
@@ -431,7 +405,6 @@ def scanid_validation(scan_id):
     else:
         print("ERROR: Received ScanID is not valid")
         return False
-
 
 def p3_teamid_validation(team_id):
     """
@@ -446,7 +419,6 @@ def p3_teamid_validation(team_id):
         print("ERROR: Received TeamID is not valid")
         return False
 
-
 def p3_url_validation(url):
     """
     This method is to validate the authorized url of the P3 platform.
@@ -459,7 +431,6 @@ def p3_url_validation(url):
     else:
         print("ERROR: Received Domain URL is not valid")
         return False
-
 
 def kinesis_update(session, platform, scan_id, tc, team_id, resource_name, compliance_status):
     params_list = []
@@ -476,7 +447,7 @@ def kinesis_update(session, platform, scan_id, tc, team_id, resource_name, compl
             "complianceStatus": compliance_status
         }
         params_list.append(params.copy())
-
+        
         while sys.getsizeof(json.dumps(params_list)) >= 900000:
             print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
             stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
@@ -500,7 +471,6 @@ def kinesis_update(session, platform, scan_id, tc, team_id, resource_name, compl
     except Exception as params_err:
         print("ERROR: Issue observed while adding result to streams - %s" % str(params_err))
         return False
-
 
 def main(os_auth_url, project_name, scan_id, team_id):
     """
@@ -568,7 +538,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
                 else:
                     raise Exception("ERROR: Failed to fetch the image list")
 
-            all_images_list = list_all_images(conn, project_name, os_auth_url)
+            all_images_list = list_all_images(conn, project_name, os_auth_url, team_id)
             if all_images_list:
                 all_unsecured_images, flag3 = unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_valid, teamid_valid)
             else:
@@ -589,10 +559,25 @@ def main(os_auth_url, project_name, scan_id, team_id):
 
         except Exception as err:
             print("ERROR: Overall execution got affected due to - %s" % str(err))
+            if str(err):
+                date_stamp = datetime.datetime.now().strftime('%m%d%y')
+                csv_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
+                headers = ["Owner Id", "Tenant Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
+                Exception_list = ["", team_id, project_name, "", "", "", "", ""]
+                with open(csv_filename, 'a') as f:
+                    file_is_empty = os.stat(csv_filename).st_size == 0
+                    writer = csv.writer(f, lineterminator='\n')
+                    if file_is_empty:
+                        writer.writerow(headers)
+                    writer.writerows([Exception_list])
+                f.close()
+            else:
+                return None
 
     if scanid_valid and teamid_valid:
         print("INFO: Sending result complete")
         send_result = send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
+
         if send_result:
             print("LOG: Successfully submitted the result to Kinesis")
         else:
@@ -601,7 +586,6 @@ def main(os_auth_url, project_name, scan_id, team_id):
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
     return compliance_status
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate the images listed in OpenStack Project...")
