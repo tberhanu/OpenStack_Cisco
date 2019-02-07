@@ -231,7 +231,7 @@ def retrieve_details(msg):
     scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     teamid_pattern = re.compile(r'(^P3:[0-9a-f]{32}$)|(^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$)')
     url_pattern = re.compile(r'^https://((cae-np-.*.cisco.com)|(cloud-.*-1.cisco.com:5000/v3))$')
-    rh_pattern = re.compile(r'([a-zA-Z0-9]*[/]?[+]?[a-zA-Z0-9]*)*=$')
+    rh_pattern = re.compile(r'([a-zA-Z0-9]*[/]?[+]?[a-zA-Z0-9]*)*=')
     tc_pattern = re.compile(r'^(P3|CAE)[-A-Z0-9]*(, (P3|CAE)[-A-Z0-9]*)*')
 
     if tc_pattern.match(test_id):
