@@ -59,7 +59,7 @@ def list_servers(conn, images, project_name, os_auth_url):
     """
     try:
         servers = []
-
+        
         for volume in conn.volume.volumes():
             vol = json.dumps(volume)
             volume = json.loads(vol)
@@ -68,16 +68,19 @@ def list_servers(conn, images, project_name, os_auth_url):
         for server in conn.compute.servers():
             srvr = json.dumps(server)
             pull = json.loads(srvr)
-
+            
             vm_created = dateutil.parser.parse(pull['created_at']).replace(tzinfo=None)
             vm_updated_days = datetime.datetime.now() - vm_created
             vm_updated_days = ("%s Days %s Hours %s Mins" % (vm_updated_days.days, vm_updated_days.seconds//3600,
                                                              (vm_updated_days.seconds//60)%60))
 
-            addresses = pull['addresses']
-            network_names = addresses.keys()
-            server_network_name = network_names[0]
-            address = pull['addresses'][server_network_name][0]
+            addresses = pull.get('addresses', None)
+            if addresses:
+                network_names = addresses.keys()
+                server_network_name = network_names[0]
+                address = pull['addresses'][server_network_name][0]
+            else:
+                address['addr'] = "None" 
 
             image_id = (pull.get('image') or {'id': volume_image_id} or {'id': "None"})['id']
             image = images.get(image_id) or {'id': image_id}
@@ -169,15 +172,14 @@ def list_unsecured_servers(servers, scan_id, team_id, session, scanid_valid, tea
             writer.writerows(unsecured_servers)
 
         if len(unsecured_servers) == 0:
-            print("LOG: VM test: Compliant\(Unsecured image is not used in VM\)")
+            print("LOG: VM test: Compliant(Unsecured image is not used in VM)")
             flag1 = "Compliant"
         else:
-            print("LOG: VM test: Non-compliant\(Unsecured image is used in VM\)")
+            print("LOG: VM test: Non-compliant(Unsecured image is used in VM)")
             flag1 = "Non-compliant"
         return unsecured_servers, flag1
     except Exception as err:
         print("ERROR: Failed to retrieve list of unsecured servers list due to %s" % str(err))
-
 
 def list_unused_images(conn, images, servers, project_name, os_auth_url):
     """
@@ -360,10 +362,10 @@ def unsecured_images_list(all_images_list, scan_id, team_id, session, scanid_val
             writer.writerows(all_unsecured_images)
 
         if len(all_unsecured_images) == 0:
-            print("LOG: All images test: Compliant\(Tenant has no unsecured images\)")
+            print("LOG: All images test: Compliant(Tenant has no unsecured images)")
             flag3 = "Compliant"
         else:
-            print("LOG: All images test: Non-compliant\(Tenant has unsecured images\)")
+            print("LOG: All images test: Non-compliant(Tenant has unsecured images)")
             flag3 = "Non-compliant"
 
         return all_unsecured_images, flag3
@@ -602,7 +604,7 @@ if __name__ == "__main__":
     if url and p_name is not None:
         if url_valid is not None:
             compliance_status = main(url, p_name, scan_id, team_id)
-            print("LOG: Process complete with compliance status as - ", compliance_status)
+             print("LOG: Process complete with compliance status as - %s" % compliance_status)
         else:
             print("ERROR: Failed with validation of url")
     else:
