@@ -10,9 +10,7 @@ Description: This python script is to validate the negative test cases
                 c. create domain
                 d. change domain
              in the P3 platform.
-
 Author: Devaraj Acharya <devaacha@cisco.com>; January 9th, 2019
-
 Copyright (c) 2019 Cisco Systems.
 All rights reserved.
 -------------------------------------------------------------------------
@@ -334,8 +332,20 @@ def compliant_status_of_tenant(project_name, role, user, domain, domain_list, do
         f.close()
     except Exception as e:
         print("ERROR: Issue observed while retrieving compliance status() API - %s" % str(e))
-        return None
-
+        if str(e):
+            headers = ["Tenant Id", "Tenant Name", "Create Role", "Create User", "Create Domain", "List Domain", "Change Domain", "Compliance Status"]
+            Exception_list = [team_id, project_name, "", "", "", "", "", ""]
+            date_stamp = datetime.datetime.now().strftime('%m%d%y')
+            csv_filename = os.path.expanduser("~") + "/logs/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
+            with open(csv_filename, 'a') as f:
+                file_is_empty = os.stat(csv_filename).st_size == 0
+                writer = csv.writer(f, lineterminator='\n')
+                if file_is_empty:
+                    writer.writerow(headers)
+                writer.writerows([Exception_list])
+            f.close()
+        else:
+            return None
 def scanid_validation(scan_id):
     """
     This method is to validate that scan id while sending the report to Kinesis.
@@ -527,7 +537,7 @@ if __name__ == "__main__":
     if p_name is not None:
         if url_valid:
             compliance_status = main(url, p_name, scan_id, team_id)
-            print("LOG: Process completed with compliance status as - ", compliance_status)
+            print("LOG: Process complete with compliance status as - %s" % compliance_status)
         else:
             print("ERROR: Failed with validation")
     else:
