@@ -462,9 +462,7 @@ def kinesis_update(session, platform, scan_id, tc, team_id, role_user, complianc
             "complianceStatus": compliance_status
         }
         params_list.append(params.copy())
-        for i in params_list:
-            print(i)
-
+       
         while sys.getsizeof(json.dumps(params_list)) >= 900000:
             print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
             stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
