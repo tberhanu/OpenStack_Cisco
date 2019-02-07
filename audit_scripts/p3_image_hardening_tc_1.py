@@ -59,6 +59,7 @@ def list_servers(conn, images, project_name, os_auth_url):
     """
     try:
         servers = []
+        address = {}
         
         for volume in conn.volume.volumes():
             vol = json.dumps(volume)
@@ -587,6 +588,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
             return None
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+    conn.close()
     return compliance_status
 
 if __name__ == "__main__":
