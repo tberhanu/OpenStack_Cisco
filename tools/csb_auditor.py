@@ -22,6 +22,9 @@ Dependencies:
     kube_config_rcdn.enc
     kube_config_rtp.enc
 
+Usage:
+    python csb_auditor.py
+
 Author: Amardeep Kumar <amardkum@cisco.com>; December 19th, 2018
 
 Copyright (c) 2018 Cisco Systems.
@@ -32,6 +35,7 @@ All rights reserved.
 
 import boto3
 import botocore
+import datetime
 import git
 import multiprocessing
 import os
@@ -60,7 +64,7 @@ def decrypt_file(filenames):
         out_filename = os.path.splitext(in_filename)[0]
         chunk_size = 64*1024
         try:
-            print("LOG: Decrypt %s file" % in_filename)
+            print("INFO: Decrypt %s file" % in_filename)
             with open(in_filename, 'rb') as infile:
                 orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
                 iv = infile.read(16)
@@ -81,7 +85,7 @@ def decrypt_file(filenames):
             flag = False
 
         if os.path.isfile(out_filename):
-            print("LOG: Decrypted version of %s file is available for use" % in_filename)
+            print("INFO: Decrypted version of %s file is available for use" % in_filename)
         else:
             print("ERROR: Decrypted version of %s file is not available for use" % in_filename)
             flag = False
@@ -95,7 +99,7 @@ def sqs_client_handle():
     :return: handle to sqs queue or None
     """
     try:
-        print("LOG: Create SQS Client Handle")
+        print("INFO: Create SQS Client Handle")
         region = os.environ["SQS_URL"].split(".")[1]
         session = boto3.session.Session(
                                         aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
@@ -135,8 +139,10 @@ def read_message_from_sqs(sqsclient):
                                                 MessageAttributeNames=[
                                                     'All'
                                                 ],
-                                                VisibilityTimeout=int(os.environ["SQS_MSG_VISIBILITY_TIMEOUT"])
+                                                VisibilityTimeout=int(os.environ["SQS_MSG_VISIBILITY_TIMEOUT"]),
+                                                WaitTimeSeconds=int(os.environ["SQS_MSG_POLL_TIME"])
                                             )
+        print("INFO: Response received as part of \"receive_message\" request to SQS: %s" % response)
         return response
     except botocore.exceptions.ClientError as sqs_rec_msg_err:
         print("ERROR: Issue observed while reading messages from SQS Queue: %s" % str(sqs_rec_msg_err))
@@ -149,7 +155,7 @@ def clone_git_repo():
     :return: True|False
     """
     try:
-        print("LOG: Clone GIT Repo")
+        print("INFO: Clone GIT Repo")
         if os.path.isdir(os.environ["CLONED_REPO_DIR"]):
             shutil.rmtree(os.environ["CLONED_REPO_DIR"])
         tcp_protocol, git_url = os.environ["CSB_CNT_REPO"].split("//")
@@ -168,7 +174,7 @@ def process_messages(messages):
     :param messages: batch of message(s) received from SQS Queue
     :return: None
     """
-    print("LOG: Process the messages read from SQS")
+    print("INFO: Process the messages read from SQS")
     processes = list()
     if "Messages" in messages:
         for message in messages["Messages"]:
@@ -178,11 +184,11 @@ def process_messages(messages):
                 print("ERROR: One of the value received from %s is not appropriate or in expected format" % message)
                 break
 
-            print("TeamName: %s, TeamID: %s, TestIDs: %s, URL: %s, Scan ID = %s, Receipt Handle: %s"
+            print("INFO: TeamName: %s, TeamID: %s, TestIDs: %s, URL: %s, Scan ID = %s, Receipt Handle: %s"
                   % (team_name, team_id, test_id, url, scan_id, receipt_handle))
             try:
                 """ New process will be initiated per message/team """
-                print("LOG: Start the thread for execution of Audit test-scripts per team")
+                print("INFO: Start the thread for execution of Audit test-scripts per team")
                 proc = multiprocessing.Process(
                                                 target=audit_project,
                                                 args=(team_id, team_name, test_id, url, scan_id, receipt_handle)
@@ -196,15 +202,16 @@ def process_messages(messages):
             for one_process in processes:
                 one_process.join(int(os.environ["MPROC_TIMEOUT"]))
         except multiprocessing.TimeoutError as proc_err:
-            print("ERROR: Execution of audit_project\(\) for team %s took more time than expected - %s"
+            print("ERROR: Execution of audit_project() for team %s took more time than expected - %s"
                   % (team_name, str(proc_err)))
-            print("LOG: Exhausted the defined timeout value, hence killing the process that are still running")
+            print("INFO: Exhausted the defined timeout value, hence killing the process that are still running")
             for one_process in processes:
                 one_process.terminate()
+                one_process.wait()
                 one_process.join()
 
     else:
-        print("LOG: There was no message available for processing")
+        print("INFO: There was no message available for processing")
 
 
 def retrieve_details(msg):
@@ -213,7 +220,7 @@ def retrieve_details(msg):
     :param msg: one message dump from SQS Queue
     :return: team_name, team_id, test_id, url, scan_id, receipt_handle
     """
-    print("LOG: Retrieve individual information available per message")
+    print("INFO: Retrieve individual information available per message")
     team_name = msg["MessageAttributes"]["teamname"].get("StringValue", None)
     test_id = msg["MessageAttributes"]["testid"].get("StringValue", None)
     scan_id = msg["MessageAttributes"]["scanid"].get("StringValue", None)
@@ -228,31 +235,31 @@ def retrieve_details(msg):
     tc_pattern = re.compile(r'^(P3|CAE)[-A-Z0-9]*(, (P3|CAE)[-A-Z0-9]*)*')
 
     if tc_pattern.match(test_id):
-        print("LOG: Received valid TestID")
+        print("INFO: Received valid TestID")
     else:
         test_id = None
         print("ERROR: Received TestID is not valid")
 
     if scanid_pattern.match(scan_id):
-        print("LOG: Received valid ScanID")
+        print("INFO: Received valid ScanID")
     else:
         scan_id = None
         print("ERROR: Received ScanID is not valid")
 
     if teamid_pattern.match(team_id):
-        print("LOG: Received valid TeamID")
+        print("INFO: Received valid TeamID")
     else:
         team_id = None
         print("ERROR: Received TeamID is not valid")
 
     if url_pattern.match(url):
-        print("LOG: Received valid URL")
+        print("INFO: Received valid URL")
     else:
         url = None
         print("ERROR: Received URL is not valid")
 
     if rh_pattern.match(receipt_handle):
-        print("LOG: Received valid Receipt Handle")
+        print("INFO: Received valid Receipt Handle")
     else:
         receipt_handle = None
         print("ERROR: Received Receipt Handle is not valid")
@@ -272,7 +279,7 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
     :param receipt_handle:
     :return: None
     """
-    print("LOG: Execute individual Audit test-scripts per team: %s" % team_name)
+    print("INFO: Execute individual Audit test-scripts per team: %s" % team_name)
     audit_test_list = test_id.split(",")
     results = dict()
     del_flag = True
@@ -289,10 +296,10 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
             try:
                 results[audit_tc_script] = tc_script.main(url, team_name, scan_id, team_id)
                 if results[audit_tc_script] is None:
-                    print("LOG: Result for %s was received as None; retrying..." % audit_tc_script)
+                    print("INFO: Result for %s was received as None; retrying..." % audit_tc_script)
                     results[audit_tc_script] = tc_script.main(url, team_name, scan_id, team_id)
-                    print("LOG: Second Attempt received result as %s" % results[audit_tc_script])
-                    print("LOG: Continuing with next Audit Test-Script")
+                    print("INFO: Second Attempt received result as %s" % results[audit_tc_script])
+                    print("INFO: Continuing with next Audit Test-Script")
                     if results[audit_tc_script] is None:
                         del_flag = False
             except Exception as e:
@@ -301,8 +308,10 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
                       % (str(e), audit_tc_script))
         else:
             results[audit_tc_script] = "Script is not available"
-            raise Exception("ERROR: Required Audit Test-Script is not available %s" % audit_tc_script)
-    print("LOG: Execution result for Team: %s \n%s" % (team_name, results))
+            print("ERROR: Required Audit Test-Script is not available %s" % audit_tc_script)
+            del_flag = False
+    timestamp = datetime.datetime.now().strftime('%m%d%y_%H%M%S')
+    print("INFO: %s Execution result for Team: %s \n%s" % (timestamp, team_name, results))
 
     if del_flag:
         delete_msg_from_sqs(receipt_handle)
@@ -314,13 +323,14 @@ def delete_msg_from_sqs(receipt_handle):
     :param receipt_handle: Receipt handle associated with the message meant for deletion
     :return: None
     """
-    print("LOG: Delete message from SQS")
+    print("INFO: Delete message from SQS")
     try:
         sqsclient = sqs_client_handle()
         response = sqsclient.delete_message(
                                              QueueUrl=os.environ["SQS_URL"],
                                              ReceiptHandle=receipt_handle
                                             )
+        print("INFO: Response while attempting to delete the message: %s" % response)
     except botocore.exceptions.ClientError as del_err:
         print("ERROR: Failed to delete the message from SQS Queue: %s" % str(del_err))
 
@@ -330,9 +340,9 @@ def set_credentials_env():
     Method to set the environment in terms of credentials to be used during execution
     :return:
     """
-    print("LOG: Decrypt credentials file. Then set environment variables w.r.t. required set of credentials")
+    print("INFO: Decrypt credentials file. Then set environment variables w.r.t. required set of credentials")
     if decrypt_file("csb_credentials.py.enc"):
-        print("LOG: Successfully decrypted Credential file")
+        print("INFO: Successfully decrypted Credential file")
         cred_file = import_module("csb_credentials")
         for var, val in cred_file.csb_credentials.items():
             os.environ[var] = val
@@ -377,6 +387,8 @@ def main():
                         time.sleep(int(os.environ["WAIT_TIME_FOR_NEXT_POLL"]))
             else:
                 print("ERROR: Failed to get SQS Handle")
+        else:
+            print("ERROR: Failed to Clone the required GIT Repo")
 
         """ Delete the decrypted files """
         print("INFO: Delete decrypted Credential file")
