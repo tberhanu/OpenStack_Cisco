@@ -96,11 +96,24 @@ def fetch_project_list(dyn_client, project_name):
         v1_projects = dyn_client.resources.get(
             api_version='project.openshift.io/v1', kind='Project')
         projects = v1_projects.get()
-
+        count = 0
+        project_data = []
         for project in projects.items:
+            if project.metadata.name is not None:
+                count = count + 1
+            project_data.append(project.metadata.name)
             project_list.append(project.metadata.name)
             project_name_id_mapping[
                 project.metadata.name] = project.metadata.uid
+        print(count)
+        df = pd.DataFrame(project_data,
+                          columns=["project_name"]
+                          )
+
+        metadata_file = os.environ["CLONED_REPO_DIR"] \
+                        + "/logs/reports/cae_identity_mgmt_tc_1_project_name.csv"
+
+        df.to_csv(metadata_file, index=False)
         if project_name is not None:
             if project_name in project_list:
                 project_list = [project_name]
@@ -168,7 +181,9 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                                             kind='RoleBinding'
                                         )
         rolebinding_all = {}
+        rolebinding_groupName_all = {}
         rolebinding_untrusted = {}
+        rolebinding_groupname_untrusted = {}
         all_roles = []
         users_with_untrusted_roles = []
         compliance_status = "Non-compliant"
@@ -176,48 +191,59 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
             rolebinding_project = roles.get(namespace=project)
             rolebinding_dict = rolebinding_project.to_dict()
             proj_role_bind = {}
+            proj_role_group_name= {}
             proj_role_bind_untrusted = {}
+            proj_role_group_name_untrusted = {}
             for i in rolebinding_dict['items']:
                 all_roles.append(i['roleRef']['name'])
+                proj_role_group_name[i['roleRef']['name']]=i['groupNames']
                 if i['roleRef']['name'] not in proj_role_bind:
                     proj_role_bind[i['roleRef']['name']] = {
                         'usernames': i['userNames'],
                         'timecreated': i['metadata']['creationTimestamp']}
                 else:
-                    proj_role_bind[i['roleRef']['name']]['usernames'].extend(i['userNames'])
+                    if i['userNames'] is not None:
+                        proj_role_bind[i['roleRef']['name']]['usernames'].extend(i['userNames'])
 
                 if i['roleRef']['name'] not in trusted_roles:
+                    proj_role_group_name_untrusted[i['roleRef']['name']]=i['groupNames']
                     if i['roleRef']['name'] not in proj_role_bind_untrusted:
                         proj_role_bind_untrusted[i['roleRef']['name']] = {
                             'usernames': i['userNames'],
                             'timecreated': i['metadata']['creationTimestamp']}
                     else:
-                        proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].extend(i['userNames'])
-                    users_with_untrusted_roles.extend(i['userNames'])
+                        if i['userNames'] is not None:
+                            proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].extend(i['userNames'])
+                    if i['userNames'] is not None:
+                        users_with_untrusted_roles.extend(i['userNames'])
                 if "admin" == i['roleRef']['name']:
                     for user in i['userNames']:
                         if user != "citeis-orchadm.gen":
+                            proj_role_group_name_untrusted[i['roleRef']['name']]=i['groupNames']
                             if i['roleRef']['name'] not in proj_role_bind_untrusted:
                                 proj_role_bind_untrusted[i['roleRef']['name']] = {
                                     'usernames': [user],
                                     'timecreated': i['metadata'][
                                         'creationTimestamp']}
-                                users_with_untrusted_roles.extend(i['userNames'])
+                                if i['userNames'] is not None:
+                                    users_with_untrusted_roles.extend(i['userNames'])
                             else:
                                 proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].append(user)
             rolebinding_all[project] = proj_role_bind
+            rolebinding_groupName_all[project]=proj_role_group_name
             rolebinding_untrusted[
                 project] = proj_role_bind_untrusted.copy() if bool(
                 proj_role_bind_untrusted) else None
+            rolebinding_groupname_untrusted[project]=proj_role_group_name_untrusted
         project_app = get_app_project_mapping(projects)
         if not rolebinding_untrusted[project_name]:
             flag = 1
             compliance_status = "Compliant"
         untrused_data(rolebinding_untrusted, project_app,
-                      project_name_id_mapping, path_url)
+                      project_name_id_mapping, path_url,rolebinding_groupname_untrusted)
         complete_data(rolebinding_all, project_app, project_name_id_mapping,
                       trusted_roles, session, team_id, scan_id,
-                      compliance_status, path_url, scanid_valid, teamid_valid)
+                      compliance_status, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all)
         if not rolebinding_untrusted[project_name]:
             flag = 1
             return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
@@ -226,7 +252,7 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
     return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
 
 
-def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, path_url):
+def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, path_url,rolebinding_groupname_untrusted):
     """
     Method to append untrusted/Non-compliant data into a csv file
     :param rolebinding_untrusted:
@@ -247,7 +273,9 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                     diff = ("%s Days %s Hours %s Mins" % (
                         diff.days, diff.seconds // 3600,
                         (diff.seconds // 60) % 60))
+                    groupname=str(rolebinding_groupname_untrusted[project][role])
                     if project in project_app:
+                        
                         if rolebinding_untrusted[project][role]['usernames'] is not None:
                             for user in range(len(set(
                                     rolebinding_untrusted[project][role][
@@ -257,13 +285,13 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                                      project_app[project]['app_id'],
                                      project_app[project]['app_name'], role,
                                      rolebinding_untrusted[project][role][
-                                         'usernames'][user], diff])
+                                         'usernames'][user], diff,groupname])
                         else:
                             data.append(
                                 [path_url, project, project_name_id_mapping[project],
                                  project_app[project]['app_id'],
                                  project_app[project]['app_name'], role, "None",
-                                 diff])
+                                 diff,groupname])
                     else:
                         if rolebinding_untrusted[project][role]['usernames'] is not None:
                             for user in range(len(
@@ -273,27 +301,25 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                                     [path_url,project, project_name_id_mapping[project],
                                      "None", "None", role,
                                      rolebinding_untrusted[project][role][
-                                         'usernames'][user], diff])
+                                         'usernames'][user], diff,groupname])
                         else:
                             data.append(
                                         [
                                             path_url, project, project_name_id_mapping[project],
-                                            "None", "None", role, "None", diff
+                                            "None", "None", role, "None", diff,groupname
                                         ]
                                        )
         df = pd.DataFrame(data,
                           columns=["URL", "Tenant Name" ,"Tenant ID", "Application ID",
                                    "Application Name", "Role Name",
                                    "Users with Associate Roles",
-                                   "Role Provisioned Age"
+                                   "Role Provisioned Age","GroupName"
                                    ]
                           )
 
         date = datetime.datetime.now().strftime('%m%d%y')
-        # error_file = os.environ[
-        #                  "CLONED_REPO_DIR"] + "/logs/reports/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
-        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
-
+        error_file = os.environ[
+                         "CLONED_REPO_DIR"] + "/logs/reports/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
         if os.path.isfile(error_file):
             with open(error_file, 'a') as f:
                 df.to_csv(f, header=False, index=False)
@@ -306,7 +332,7 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
 
 def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                   trusted_roles ,session, team_id, scan_id,
-                  compliance_status, path_url, scanid_valid, teamid_valid):
+                  compliance_status, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all):
     """
     Method to append complete rolebinding data for the given project into a csv file
     :param rolebinding_all:
@@ -323,11 +349,9 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
     """
     try:
         data_all = []
-
         for project in rolebinding_all:
             if rolebinding_all[project] is not None:
                 for role in rolebinding_all[project]:
-
                     dt = dateutil.parser.parse(
                         rolebinding_all[project][role]['timecreated'])
                     dt = dt.replace(tzinfo=None)
@@ -335,7 +359,9 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                     diff = ("%s Days %s Hours %s Mins" % (
                         diff.days, diff.seconds // 3600,
                         (diff.seconds // 60) % 60))
+                    groupname=str(rolebinding_groupName_all[project][role])
                     if project in project_app:
+                        
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in set(rolebinding_all[project][role]['usernames']):
                                 if role in trusted_roles:
@@ -349,7 +375,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                     [path_url, project, project_name_id_mapping[project],
                                      project_app[project]['app_id'],
                                      project_app[project]['app_name'], role,
-                                     user, diff, compliance_status])
+                                     user, diff, compliance_status,groupname])
                                 role_user = role + "-" + user
 
                                 if scanid_valid and teamid_valid:
@@ -373,7 +399,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                 [path_url, project, project_name_id_mapping[project],
                                  project_app[project]['app_id'],
                                  project_app[project]['app_name'], role, "None",
-                                 diff, compliance_status])
+                                 diff, compliance_status,groupname])
                     else:
                         if role in trusted_roles:
                             compliance_status = "Compliant"
@@ -383,20 +409,19 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                             compliance_status = "Non-compliant"
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in rolebinding_all[project][role]['usernames']:
-                                data_all.append([path_url,project, "None", "None", role, user, diff, compliance_status])
+                                data_all.append([path_url,project, "None", "None", role, user, diff, compliance_status,groupname])
                         else:
-                            data_all.append([path_url,project, "None", "None", role, "None", diff, compliance_status])
+                            data_all.append([path_url,project, "None", "None", role, "None", diff, compliance_status,groupname])
         df = pd.DataFrame(data_all,
                           columns=["URL", "Tenant Name","Tenant ID", "Application ID",
                                    "Application Name", "Role Name",
                                    "Users with Associate Roles",
-                                   "Role Provisioned Age", "Compliant Status"
+                                   "Role Provisioned Age", "Compliant Status","GroupNames"
                                    ]
                           )
         date = datetime.datetime.now().strftime('%m%d%y')
-        #metadata_file = os.environ["CLONED_REPO_DIR"] \
-         #               + "/logs/reports/cae_identity_mgmt_tc_1_" + date + ".csv"
-        metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"    
+        metadata_file = os.environ["CLONED_REPO_DIR"] \
+                        + "/logs/reports/cae_identity_mgmt_tc_1_" + date + ".csv"
 
         if os.path.isfile(metadata_file):
             with open(metadata_file, 'a') as f:
@@ -406,6 +431,9 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
         if scanid_valid and teamid_valid:
             print("INFO: Sending result complete")
             send_result = send_result_complete(session, "CAE", scan_id, team_id, tc, seq_nums_list)
+            print(send_result)
+            for i in seq_nums_list:
+                print(i)
             if send_result:
                 print("LOG: Successfully submitted the result to Kinesis")
             else:
@@ -434,6 +462,8 @@ def kinesis_update(session, platform, scan_id, tc, team_id, role_user, complianc
             "complianceStatus": compliance_status
         }
         params_list.append(params.copy())
+        for i in params_list:
+            print(i)
 
         while sys.getsizeof(json.dumps(params_list)) >= 900000:
             print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
@@ -508,6 +538,26 @@ def cae_url_validation(url):
         print("ERROR: Received Domain URL is not valid")
         return False
 
+def write_metadata_connection_error(path_url,project_name, project_id):
+    data = [path_url, project_name, project_id,
+                                     None,
+                                     None, None,
+                                     None, None, None,None]
+    df = pd.DataFrame(data,
+                          columns=["URL", "Tenant Name","Tenant ID", "Application ID",
+                                   "Application Name", "Role Name",
+                                   "Users with Associate Roles",
+                                   "Role Provisioned Age", "Compliant Status","GroupNames"
+                                   ])
+    date = datetime.datetime.now().strftime('%m%d%y')
+    metadata_file = os.environ["CLONED_REPO_DIR"] \
+                    + "/logs/reports/cae_identity_mgmt_tc_1_" + date + ".csv"
+    if os.path.isfile(metadata_file):
+        with open(metadata_file, 'a') as f:
+            df.to_csv(f, header=False, index=False)
+    else:
+        df.to_csv(metadata_file, index=False)
+
 
 def main(path_url, p_name, scan_id, team_id):
     """
@@ -543,27 +593,32 @@ def main(path_url, p_name, scan_id, team_id):
                 try:
                     dyn_client = create_connection(path_url)
                     if dyn_client:
-                        trusted_roles = read_trusted_roles(filename)
-                        projects, project_list, project_name_id_mapping = fetch_project_list(
-                            dyn_client, project_name)
-                        if projects and project_list:
-                            rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag = get_rolebindings(
-                                dyn_client, projects, trusted_roles, project_name,
-                                project_name_id_mapping, project_list, scan_id, team_id,
-                              session, path_url, scanid_valid, teamid_valid)
-                        else:
-                            update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
-                            if update is None:
-                                raise Exception("ERROR: Issue observed with updateScanRecord API call")
+                        try:
+                            trusted_roles = read_trusted_roles(filename)
+                            projects, project_list, project_name_id_mapping = fetch_project_list(
+                                dyn_client, project_name)
+                            if projects and project_list:                            
+                                rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag = get_rolebindings(
+                                    dyn_client, projects, trusted_roles, project_name,
+                                    project_name_id_mapping, project_list, scan_id, team_id,
+                                    session, path_url, scanid_valid, teamid_valid)
+                            else:
+                                update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
+                                if update is None:
+                                    raise Exception("ERROR: Issue observed with updateScanRecord API call")
+                                    return None
+                                raise Exception(
+                                    "ERROR: Failed to fetch either Project: %s or Project_list: %s" % (project_name, project_list))
+                        except Exception as e:
+                                write_metadata_connection_error(path_url, p_name, team_id)
+                                print("ERROR: Fail to retrieve the projects with error in main : %s" % str(e))
                                 return None
-                            raise Exception(
-                                "ERROR: Failed to fetch either Project: %s or Project_list: %s" % (project_name, project_list))
-
                         output_parameters(
                                           trusted_roles, rolebinding_all, all_roles,
                                           rolebinding_untrusted, users_with_untrusted_roles
                                          )
                     else:
+                        write_metadata_connection_error(path_url, p_name, team_id)
                         raise Exception(
                             "ERROR: Failed to establish connection to CAE Project %s" % project_name)
                 except Exception as e:
