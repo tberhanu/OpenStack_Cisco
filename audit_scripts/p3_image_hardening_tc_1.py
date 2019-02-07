@@ -604,7 +604,7 @@ if __name__ == "__main__":
     if url and p_name is not None:
         if url_valid is not None:
             compliance_status = main(url, p_name, scan_id, team_id)
-             print("LOG: Process complete with compliance status as - %s" % compliance_status)
+            print("LOG: Process complete with compliance status as - %s" % compliance_status)
         else:
             print("ERROR: Failed with validation of url")
     else:
