@@ -59,6 +59,7 @@ def list_servers(conn, images, project_name, os_auth_url):
     """
     try:
         servers = []
+        addresses = {}
         
         for volume in conn.volume.volumes():
             vol = json.dumps(volume)
@@ -75,8 +76,8 @@ def list_servers(conn, images, project_name, os_auth_url):
                                                              (vm_updated_days.seconds//60)%60))
 
             addresses = pull.get('addresses', None)
-            if addresses:
-                network_names = addresses.keys()
+            if addresses != {}:
+                network_names = list(addresses.keys())
                 server_network_name = network_names[0]
                 address = pull['addresses'][server_network_name][0]
             else:
