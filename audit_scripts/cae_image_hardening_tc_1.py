@@ -37,7 +37,7 @@ session = session_handle()
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
 csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
-csv_filename2 = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_Non_Compliant_" + date_stamp + ".csv"
+csv_filename2 = os.path.expanduser("~") + "/logs/cae_image_hardening_Non_Compliant_" + date_stamp + "_.csv"
 
 
 def load_config(path):
@@ -102,7 +102,7 @@ def get_pods(project_pod,path):
     :return: PODs list
     """
     try:
-        print("LOG: Checking for POD => %s" % project_pod)
+        print("LOG: Checking for Projects => %s" % project_pod)
         api_handle = load_config(path)
         pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
         if pods is not None and len(pods):
@@ -125,9 +125,9 @@ def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scani
     :return: image_data | None
     """
     try:
+        print("LOG: Listing the images in the pods in the project  => %s" % project_img)
         api = load_config(path)
         pod = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
-        print("LOG: Listing the pods in the project  => %s" % pod)
         if pod is not None:
             metadata = pod.obj['metadata']
             pod_name = none_check(metadata.get('name', None))
@@ -148,7 +148,6 @@ def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scani
                         container_start_date = 'None'
                     for container_list in pod.obj["spec"]["containers"]:
                         image = none_check(container_list.get('image',None))
-                        print("LOG: Listing the images in the pods in the project  => %s" % image)
                         compliance_status = compliance_status_validation(image)
                         try:
                             ports = " "
@@ -323,11 +322,27 @@ def main(url, namespace, scan_id, team_id):
                 non_compliant_str = 'Non-Compliant'
                 if proj_txt is not None:
                     if pods_list is not None:
+                        pod_count = 0
+                        pod_status_sub_str2 = ""
                         for pod in pods_list:
-                            image_data = get_image(namespace, pod, path, compliance_status, scan_id, team_id, scanid_valid, teamid_valid)
-                            flag_txt = image_data[2]
-                            if flag_txt.lower() == non_compliant_str.lower():
-                                flag = non_compliant_str
+                            if pod_count < 5:
+                                metadata = pod.obj['metadata']
+                                pod_name = none_check(metadata.get('name', None))
+                                pod_stat = pod.obj['status']
+                                pod_status = none_check(pod_stat.get('phase', None))
+                                pod_status_sub_str = pod_name[:-5]
+                                if pod_status_sub_str.lower() == pod_status_sub_str2.lower() and pod_status.lower() == "failed":
+                                    pod_count +=1
+                                else:
+                                    pod_count -= 1
+                                pod_status_sub_str2 = pod_name[:-5]
+                                image_data = get_image(namespace, pod, path, compliance_status, scan_id, team_id, scanid_valid, teamid_valid)
+                                flag_txt = image_data[2]
+                                if flag_txt.lower() == non_compliant_str.lower():
+                                    flag = non_compliant_str
+                            else:
+                                print("ERROR: Exiting after 5 unsuccessful retries")
+                                break
                     else:
                         print("INFO: No Pods running in the project")
                         empty_metadata(namespace, path, compliance_status)
