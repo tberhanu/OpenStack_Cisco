@@ -76,7 +76,7 @@ def list_servers(conn, images, project_name, os_auth_url):
                                                              (vm_updated_days.seconds//60)%60))
 
             addresses = pull.get('addresses', None)
-            if addresses:
+            if addresses != {}:
                 network_names = addresses.keys()
                 server_network_name = network_names[0]
                 address = pull['addresses'][server_network_name][0]
