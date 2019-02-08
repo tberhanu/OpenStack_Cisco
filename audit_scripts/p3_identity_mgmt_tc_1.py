@@ -10,11 +10,14 @@ Description: This python script is to validate the negative test cases
                 c. create domain
                 d. change domain
              in the P3 platform.
+
 Author: Devaraj Acharya <devaacha@cisco.com>; January 9th, 2019
+
 Copyright (c) 2019 Cisco Systems.
 All rights reserved.
 -------------------------------------------------------------------------
 """
+
 import argparse
 import csv
 import datetime
@@ -24,7 +27,6 @@ import os
 import re
 import sys
 import time
-
 
 from os import environ as env
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
@@ -36,7 +38,7 @@ seq_nums_list = []
 params_list =[]
 
 
-def create_new_role(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid):
+def create_new_role(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
     """
     This method is to validate that tenant are not allowed to create the new role in
     P3 platform.
@@ -58,19 +60,19 @@ def create_new_role(conn, project_name, scan_id, team_id, session, scanid_valid,
         return compliance_status
 
     except openstack.exceptions.HttpException as exp_err:
-        print("LOG: Error Received while attempting to create role - %s" % str(exp_err))
+        print("INFO: Error Received while attempting to create role - %s" % str(exp_err))
         if str(exp_err).find("You are not authorized"):
-            print("LOG: Tenant are not allowed to create a role")
+            print("INFO: Tenant are not allowed to create a role")
             compliance_status = "Compliant"
         else:
             compliance_status = "Non-compliant"
-           
+
         resource = project_name + "-" + "create_role"
         if scanid_valid and teamid_valid:
-            if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
-                print("LOG: Inside For loop Added the info to Kinesis Stream")
+            if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+                print("INFO: Updating params_list")
             else:
-                print("ERROR: Kinesis Update API Failed")
+                print("ERROR: Issue observed while updating params_list")
                 return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid,"
@@ -83,7 +85,7 @@ def create_new_role(conn, project_name, scan_id, team_id, session, scanid_valid,
         return None
 
 
-def create_new_user(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid):
+def create_new_user(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
     """
     This method is to validate that tenant are not allowed to create the new user
     in P3 platform.
@@ -93,7 +95,6 @@ def create_new_user(conn, project_name, scan_id, team_id, session, scanid_valid,
     :param params_list: empty list
     :param scan_id: ScanID received from AWS SQS
     :param team_id: TeamID
-    :param session: session handle to Kinesis
     :return: Compliant | Non-Compliant | None
     """
     try:
@@ -105,19 +106,19 @@ def create_new_user(conn, project_name, scan_id, team_id, session, scanid_valid,
         compliance_status = "Non-compliant"
         return compliance_status
     except openstack.exceptions.HttpException as exp_err:
-        print("LOG: Error Received while attempting to create user - %s" % str(exp_err))
+        print("INFO: Error Received while attempting to create user - %s" % str(exp_err))
         if str(exp_err).find("You are not authorized"):
-            print("LOG: Tenant are not allowed to create a user")
+            print("INFO: Tenant are not allowed to create a user")
             compliance_status = "Compliant"
         else:
             compliance_status = "Non-compliant"
 
         resource = project_name + "-" + "create_user"
         if scanid_valid and teamid_valid:
-            if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
-                print("LOG: Inside For loop Added the info to Kinesis Stream")
+            if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+                print("INFO: Updating params_list")
             else:
-                print("ERROR: Kinesis Update API Failed")
+                print("ERROR: Issue observed while updating params_list")
                 return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
@@ -128,7 +129,7 @@ def create_new_user(conn, project_name, scan_id, team_id, session, scanid_valid,
         return None
 
 
-def create_domain(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid):
+def create_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
     """
     This method is to validate that tenant are not allowed to create the new domain
     in P3 platform.
@@ -138,7 +139,6 @@ def create_domain(conn, project_name, scan_id, team_id, session, scanid_valid, t
     :param params_list: empty list
     :param scan_id: ScanID received from AWS SQS
     :param team_id: TeamID
-    :param session: session handle to Kinesis
     :return: Compliant | Non-Compliant | None
     """
     try:
@@ -151,20 +151,20 @@ def create_domain(conn, project_name, scan_id, team_id, session, scanid_valid, t
         return compliance_status
 
     except openstack.exceptions.HttpException as exp_err:
-        print("LOG: Error Received while attempting to create domain - %s" % str(exp_err))
+        print("INFO: Error Received while attempting to create domain - %s" % str(exp_err))
         if str(exp_err).find("You are not authorized"):
-            print("LOG: Tenant are not allowed to create a domain")
+            print("INFO: Tenant are not allowed to create a domain")
             compliance_status = "Compliant"
         else:
             compliance_status = "Non-compliant"
-           
+
         resource = project_name + "-" + "create_domain"
         if scanid_valid and teamid_valid:
-            if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
-                print("LOG: Inside For loop Added the info to Kinesis Stream")
+            if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+               print("INFO: Updating params_list")
             else:
-                print("ERROR: Kinesis Update API Failed")
-                return None
+               print("ERROR: Issue observed while updating params_list")
+               return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
@@ -175,7 +175,7 @@ def create_domain(conn, project_name, scan_id, team_id, session, scanid_valid, t
         return None
 
 
-def list_domain(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid):
+def list_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
     """
     This method is to validate that tenant are not allowed to list/read the domains
     in P3 platform.
@@ -185,7 +185,6 @@ def list_domain(conn, project_name, scan_id, team_id, session, scanid_valid, tea
     :param params_list: empty list
     :param scan_id: ScanID received from AWS SQS
     :param team_id: TeamID
-    :param session: session handle to Kinesis
     :return: Compliant | Non-Compliant | None
     """
     try:
@@ -197,20 +196,20 @@ def list_domain(conn, project_name, scan_id, team_id, session, scanid_valid, tea
         compliance_status = "Non-compliant"
         return compliance_status
     except openstack.exceptions.HttpException as exp_err:
-        print("LOG: Error Received while attempting to list domains - %s" % str(exp_err))
+        print("INFO: Error Received while attempting to list domains - %s" % str(exp_err))
         if str(exp_err).find("You are not authorized"):
-            print("LOG: Tenant are not allowed to list domains")
+            print("INFO: Tenant are not allowed to list domains")
             compliance_status = "Compliant"
         else:
             compliance_status = "Non-compliant"
 
         resource = project_name + "-" + "list_domain"
         if scanid_valid and teamid_valid:
-            if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
-                print("LOG: Inside For loop Added the info to Kinesis Stream")
+            if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+               print("INFO: Updating params_list")
             else:
-                print("ERROR: Kinesis Update API Failed")
-                return None
+               print("ERROR: Issue observed while updating params_list")
+               return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
@@ -220,7 +219,7 @@ def list_domain(conn, project_name, scan_id, team_id, session, scanid_valid, tea
         return None
 
 
-def change_domain(conn, domain_name, project_name, scan_id, team_id, session, scanid_valid, teamid_valid):
+def change_domain(conn, domain_name, project_name, scan_id, team_id, scanid_valid, teamid_valid):
     """
     This method is to validate that tenant are not allowed to change the domain
     in P3 platform.
@@ -231,7 +230,6 @@ def change_domain(conn, domain_name, project_name, scan_id, team_id, session, sc
     :param params_list: empty list
     :param scan_id: ScanID received from AWS SQS
     :param team_id: TeamID
-    :param session: session handle to Kinesis
     :return: Compliant | Non-Compliant | None
     """
     try:
@@ -243,24 +241,25 @@ def change_domain(conn, domain_name, project_name, scan_id, team_id, session, sc
         compliance_status = "Non-compliant"
         return compliance_status
     except openstack.exceptions.ResourceNotFound as exp_err:
-        print("LOG: Error Received while attempting to change domain - %s" % str(exp_err))
+        print("INFO: Error Received while attempting to change domain - %s" % str(exp_err))
         if str(exp_err).find("Could not find domain"):
-            print("LOG: Tenant are not allowed to change a domain")
+            print("INFO: Tenant are not allowed to change a domain")
             compliance_status = "Compliant"
         else:
             compliance_status = "Non-compliant"
 
         resource = project_name + "-" + "change_domain"
         if scanid_valid and teamid_valid:
-            if kinesis_update(session, "P3", scan_id, tc, team_id, resource, compliance_status):
-                print("LOG: Inside For loop Added the info to Kinesis Stream")
+            if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+               print("INFO: Updating params_list")
             else:
-                print("ERROR: Kinesis Update API Failed")
-                return None
+               print("ERROR: Issue observed while updating params_list")
+               return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
         return compliance_status
+
     except Exception as e:
         print("ERROR: Issue observed while calling create domain() API - %s" % str(e))
         return None
@@ -297,7 +296,7 @@ def compliant_status_of_tenant(project_name, role, user, domain, domain_list, do
             if compliance_status in domain_list == 'Compliant':
                 domain_lists = "Not Allowed"
             else:
-                domain_lists = "Allowed"        
+                domain_lists = "Allowed"
         for compliance_status in domain_change:
             if compliance_status in domain_change == 'Compliant':
                 change_domain = "Not Allowed"
@@ -346,6 +345,8 @@ def compliant_status_of_tenant(project_name, role, user, domain, domain_list, do
             f.close()
         else:
             return None
+
+
 def scanid_validation(scan_id):
     """
     This method is to validate that scan id while sending the report to Kinesis.
@@ -353,7 +354,7 @@ def scanid_validation(scan_id):
     """
     scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     if scanid_pattern.match(scan_id):
-        print("LOG: Received valid ScanID")
+        print("INFO: Received valid ScanID")
         return True
     else:
         print("ERROR: Received ScanID is not valid")
@@ -367,7 +368,7 @@ def p3_teamid_validation(team_id):
     """
     teamid_pattern = re.compile(r'^P3:[0-9a-f]{32}$')
     if teamid_pattern.match(team_id):
-        print("LOG: Received valid TeamID")
+        print("INFO: Received valid TeamID")
         return True
     else:
         print("ERROR: Received TeamID is not valid")
@@ -381,51 +382,40 @@ def p3_url_validation(url):
     """
     p3_url_pattern = re.compile(r'^https://cloud-.*-1.cisco.com:5000/v3$')
     if p3_url_pattern.match(url):
-        print("LOG: Received valid Domain URL")
+        print("INFO: Received valid Domain URL")
         return True
     else:
         print("ERROR: Received Domain URL is not valid")
         return False
 
 
-def kinesis_update(session, platform, scan_id, tc, team_id, resource_name, compliance_status):
-    params_list = []
+def params_list_update(scan_id, tc, team_id, resource, compliance_status):
+    """
+    Method to update params_list
+    :param scan_id:
+    :param tc:
+    :param team_id:
+    :param resource:
+    :param compliance_status:
+    :return:
+    """
     audit_time = int(time.time()) * 1000
     try:
         params = {
             "scanid": scan_id,
             "testid": tc,
             "teamid": str(team_id),
-            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource_name),
+            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
             "createdAt": audit_time,
             "updatedAt": audit_time,
-            "resourceName": resource_name,
+            "resourceName": resource,
             "complianceStatus": compliance_status
         }
         params_list.append(params.copy())
-
-        while sys.getsizeof(json.dumps(params_list)) >= 900000:
-            print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
-            stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
-            if stream_info is None:
-                raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-                return None
-
-            seq_nums_list.append(stream_info)
-            print("LOG: Empty params list ... ", params_list)
-            params_list[:] = []
-
-        print("INFO: Adding result to Stream")
-        stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
-        if stream_info is None:
-            raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-            return None
-
-        seq_nums_list.append(stream_info)
         return True
 
-    except Exception as params_err:
-        print("ERROR: Issue observed while adding result to streams - %s" % str(params_err))
+    except KeyError as params_err:
+        print("ERROR: Issue observed while updating params_list - %s" % str(params_err))
         return False
 
 
@@ -448,10 +438,10 @@ def main(os_auth_url, project_name, scan_id, team_id):
         else:
             print("INFO: Valid ScanId or TeamId not found")
             print("INFO: Execution will proceed without Kinesis update")
-        
+
         domain_name = env["OS_PROJECT_DOMAIN_NAME"]
         region = os_auth_url.split(".")[0].split("//")[1]
-        print("LOG: Creating Connection handle to OpenStack Project - %s" % project_name)
+        print("INFO: Creating Connection handle to OpenStack Project - %s" % project_name)
         conn = openstack.connect(
                                 auth_url=os_auth_url,
                                 project_name=project_name,
@@ -466,7 +456,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
     session = session_handle()
     if session:
         if scanid_valid and teamid_valid:
-            print("LOG: Update the scan record with \"InProgress\" Status")
+            print("INFO: Update the scan record with \"InProgress\" Status")
             update = updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
             if update is None:
                 raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
@@ -475,11 +465,11 @@ def main(os_auth_url, project_name, scan_id, team_id):
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
         try:
-            role = create_new_role(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid)
-            user = create_new_user(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid)
-            domain = create_domain(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid)
-            domain_list = list_domain(conn, project_name, scan_id, team_id, session, scanid_valid, teamid_valid)
-            domain_change = change_domain(conn, domain_name, project_name, scan_id, team_id, session, scanid_valid, teamid_valid)
+            role = create_new_role(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            user = create_new_user(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            domain = create_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            domain_list = list_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            domain_change = change_domain(conn, domain_name, project_name, scan_id, team_id, scanid_valid, teamid_valid)
             compliant_status_of_tenant(project_name, role, user, domain, domain_list, domain_change, team_id)
 
             list_of_return_vals = [role, user, domain, domain_list, domain_change]
@@ -493,11 +483,11 @@ def main(os_auth_url, project_name, scan_id, team_id):
                 print("INFO: All checks are Compliant")
                 compliance_status = "Compliant"
 
-        
+
         except Exception as e:
             print("ERROR: Issue observed during execution - %s" % str(e))
             if scanid_valid and teamid_valid:
-                print("LOG: Update the scan record with \"Failed\" Status")
+                print("INFO: Update the scan record with \"Failed\" Status")
                 update = updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
                 if update is None:
                     raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"Failed\" status")
@@ -509,16 +499,25 @@ def main(os_auth_url, project_name, scan_id, team_id):
         return None
 
     if scanid_valid and teamid_valid:
+        print("INFO: Adding result to Stream")
+        stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
+        if stream_info is None:
+           raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
+           return None
+        seq_nums_list.append(stream_info)
+
         print("INFO: Sending result complete")
         send_result = send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
         if send_result:
-            print("LOG: Successfully submitted the result to Kinesis")
+            print("INFO: Successfully submitted the result to Kinesis")
         else:
             raise Exception("ERROR: Failed to submit the result to Kinesis")
             return None
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
     conn.close()
+
     return compliance_status
 
 
@@ -537,7 +536,7 @@ if __name__ == "__main__":
     if p_name is not None:
         if url_valid:
             compliance_status = main(url, p_name, scan_id, team_id)
-            print("LOG: Process complete with compliance status as - %s" % compliance_status)
+            print("INFO: Process complete with compliance status as - %s" % compliance_status)
         else:
             print("ERROR: Failed with validation")
     else:
