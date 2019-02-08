@@ -110,8 +110,8 @@ def fetch_project_list(dyn_client, project_name):
                           columns=["project_name"]
                           )
 
-        metadata_file = os.environ["CLONED_REPO_DIR"] \
-                        + "/logs/reports/cae_identity_mgmt_tc_1_project_name.csv"
+        metadata_file = os.path.expanduser("~") \
+                        + "/logs/cae_identity_mgmt_tc_1_project_name.csv"
 
         df.to_csv(metadata_file, index=False)
         if project_name is not None:
@@ -320,8 +320,7 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                           )
 
         date = datetime.datetime.now().strftime('%m%d%y')
-        error_file = os.environ[
-                         "CLONED_REPO_DIR"] + "/logs/reports/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
+        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
         if os.path.isfile(error_file):
             with open(error_file, 'a') as f:
                 df.to_csv(f, header=False, index=False)
@@ -427,8 +426,8 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                    ]
                           )
         date = datetime.datetime.now().strftime('%m%d%y')
-        metadata_file = os.environ["CLONED_REPO_DIR"] \
-                        + "/logs/reports/cae_identity_mgmt_tc_1_" + date + ".csv"
+        metadata_file = os.path.expanduser("~") \
+                        + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
 
         if os.path.isfile(metadata_file):
             with open(metadata_file, 'a') as f:
@@ -574,8 +573,8 @@ def write_metadata_connection_error(path_url,project_name, project_id):
                                    "Role Provisioned Age", "Compliant Status","Group Names"
                                    ])
     date = datetime.datetime.now().strftime('%m%d%y')
-    metadata_file = os.environ["CLONED_REPO_DIR"] \
-                    + "/logs/reports/cae_identity_mgmt_tc_1_" + date + ".csv"
+    metadata_file = os.path.expanduser("~") \
+                    + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
     if os.path.isfile(metadata_file):
         with open(metadata_file, 'a') as f:
             df.to_csv(f, header=False, index=False)
