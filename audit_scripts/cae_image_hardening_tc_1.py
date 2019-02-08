@@ -65,7 +65,7 @@ def get_projects(project_name,path):
     try:
         print("INFO: Inside get_project method to collect info about Project")
         api_handle = load_config(path)
-        for i in range(0,100):
+        for i in range(0,5):
             try:
                 project_met = pykube.Namespace.objects(api_handle).get(name=project_name)
             except Exception as e:
@@ -113,7 +113,7 @@ def get_pods(project_pod,path):
     try:
         print("INFO: Checking for Projects => %s" % project_pod)
         api_handle = load_config(path)
-        for i in range(0,100):
+        for i in range(0,5):
             try:
                 pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
             except Exception as e:
@@ -145,7 +145,7 @@ def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scani
     try:
         print("INFO: Listing the images in the pods in the project  => %s" % project_img)
         api = load_config(path)
-        for i in range(0,100):
+        for i in range(0,5):
             try:
                 pod = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
             except Exception as e:
