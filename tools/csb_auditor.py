@@ -198,18 +198,20 @@ def process_messages(messages):
             except multiprocessing.ProcessError as proc_err:
                 print("ERROR: Message processing failed for TeamId-TeamName => %s-%s due to %s"
                       % (team_id, team_name, str(proc_err)))
-        try:
-            for one_process in processes:
-                one_process.join(int(os.environ["MPROC_TIMEOUT"]))
-        except multiprocessing.TimeoutError as proc_err:
-            print("ERROR: Execution of audit_project() for team %s took more time than expected - %s"
-                  % (team_name, str(proc_err)))
-            print("INFO: Exhausted the defined timeout value, hence killing the process that are still running")
-            for one_process in processes:
-                one_process.terminate()
-                one_process.wait()
-                one_process.join()
-
+            try:
+                for one_process in processes:
+                    one_process.join(int(os.environ["MPROC_TIMEOUT"]))
+                for process in processes:
+                    if process.is_alive():
+                        print("INFO: Exhausted the defined timeout value, "
+                              "hence terminating the process which is still alive")
+                        process.terminate()
+            except multiprocessing.ProcessError as proc_err:
+                print("ERROR: Encountered issue while closing child process(s) meant for %s - %s"
+                      % (team_name, str(proc_err)))
+            except Exception as mproc_err:
+                print("ERROR: Encountered new issue while closing child process(s) meant for %s - %s"
+                      % (team_name, str(mproc_err)))
     else:
         print("INFO: There was no message available for processing")
 
