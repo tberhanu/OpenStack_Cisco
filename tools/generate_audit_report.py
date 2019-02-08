@@ -36,13 +36,13 @@ def cae_image_hardening_tc_1(date_stamp):
             csv_list = pd.read_csv(csv_filename)
             
             if csv_list is not None:
-                print("Total number of Tenants evaluated in CAE platform: %s" % len(csv_list['Tenant Name'].unique()))
+                print("Total number of Tenants evaluated in CAE platform: %s" % len(csv_list['Tenant ID'].unique()))
                 print("Total number of PODs evaluated in CAE platform: %s" % len(csv_list['Pod Name'].unique()))
                 print("Total number of Images Evaluated in CAE platform: %s" % len(csv_list['Image ID'].unique()))
                 
                 """ Total no of unsecured images in the CAE platform """
                 for untrusted_images in metadata:
-                    if untrusted_images[12] == 'Non-compliant':
+                    if untrusted_images[12] == 'Non-Compliant':
                         cae_unsecured_images.append(untrusted_images)
             else:
                 print("The %s file is empty" % csv_filename)
@@ -145,11 +145,11 @@ def p3_image_hardening_tc_1(date_stamp):
         images_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
         images = pd.read_csv(images_filename)
         print("Total number of Images evaluated in Platform : %s" % len(images['Image Id'].unique()))
-        print("Total number of Tenants Evaluated in Platform: %s" % len(images['Tenant Name'].unique()))
+        print("Total number of Tenants Evaluated in Platform: %s" % len(images['Tenant Id'].unique()))
 
         servers_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
         servers = pd.read_csv(servers_filename)
-        print("Total number of VMs identified in Platform: %s" % len(servers['VM Id'].unique()))
+        print("Total number of Instances identified in Platform: %s" % len(servers['VM Id'].unique()))
         
         unsecured_images_filename = (os.path.expanduser("~")
             + "/logs/p3_all_unsecured_images_list_" + date_stamp + ".csv")
@@ -194,7 +194,7 @@ def p3_identity_mgmt_tc_1(date_stamp):
             p3_identity_mgmt_metadata = list(csv_reader)
             p3_identity_mgmt_file = pd.read_csv(p3_identity_mgmt_filename)
             print("Total number of Tenants Evaluated in Platform: %s"
-                  % len(p3_identity_mgmt_file['Tenant Name'].unique()))
+                  % len(p3_identity_mgmt_file['Tenant Id'].unique()))
 
             allowed_to_create_role = []
             for create_role in p3_identity_mgmt_metadata:
