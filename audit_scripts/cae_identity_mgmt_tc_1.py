@@ -19,7 +19,6 @@ All rights reserved.
 import argparse
 import datetime
 import dateutil.parser
-import json
 import os
 import pandas as pd
 import re
@@ -39,6 +38,7 @@ requests.packages.urllib3.disable_warnings()
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
 seq_nums_list = []
+params_list = []
 
 
 def create_connection(url):
@@ -54,7 +54,7 @@ def create_connection(url):
                 path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
             else:
                 print("ERROR: No Region found")
-        print("LOG: Kube Config's Path", path)
+        print("INFO: Kube Config's Path", path)
         k8s_client = config.new_client_from_config(path)
         dyn_client = DynamicClient(k8s_client)
     except Exception as e:
@@ -146,8 +146,9 @@ def get_app_project_mapping(projects):
             if i.metadata.annotations['citeis.cisco.com/application-name'] is not None:
                 application_name = i.metadata.annotations['citeis.cisco.com/application-name']
             app_project_mapping[i.metadata.name] = {
-                'app_id': application_id,
-                'app_name': application_name    }
+                                                    'app_id': application_id,
+                                                    'app_name': application_name
+            }
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in project_mapping : %s" % str(e))
         return None
@@ -175,7 +176,6 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
     """
     try:
         flag = 0
-        audit_time = int(time.time()) * 1000
         roles = dyn_client.resources.get(
                                             api_version='authorization.openshift.io/v1',
                                             kind='RoleBinding'
@@ -238,12 +238,10 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
         project_app = get_app_project_mapping(projects)
         if not rolebinding_untrusted[project_name]:
             flag = 1
-            compliance_status = "Compliant"
         untrused_data(rolebinding_untrusted, project_app,
                       project_name_id_mapping, path_url,rolebinding_groupname_untrusted)
-        complete_data(rolebinding_all, project_app, project_name_id_mapping,
-                      trusted_roles, session, team_id, scan_id,
-                      compliance_status, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all)
+        complete_data(rolebinding_all, project_app, project_name_id_mapping, trusted_roles, session,
+                      team_id, scan_id, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all)
         if not rolebinding_untrusted[project_name]:
             flag = 1
             return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
@@ -256,16 +254,17 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
     """
     Method to append untrusted/Non-compliant data into a csv file
     :param rolebinding_untrusted:
-    :project_app:
-    :project_name_id_mapping:
-    :path_url:
+    :param project_app:
+    :param project_name_id_mapping:
+    :param path_url:
+    :param rolebinding_groupname_untrusted:
+    :return:
     """
     try:
         data = []
         for project in rolebinding_untrusted:
             if rolebinding_untrusted[project] is not None:
                 for role in rolebinding_untrusted[project]:
-
                     dt = dateutil.parser.parse(
                         rolebinding_untrusted[project][role]['timecreated'])
                     dt = dt.replace(tzinfo=None)
@@ -273,9 +272,12 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                     diff = ("%s Days %s Hours %s Mins" % (
                         diff.days, diff.seconds // 3600,
                         (diff.seconds // 60) % 60))
-                    groupname=str(rolebinding_groupname_untrusted[project][role])
+                    groupname = str(rolebinding_groupname_untrusted[project][role])
+                    if type(groupname)==list:
+                        print ("Yes")
+                        groupname = ''.join(groupname)
                     if project in project_app:
-                        
+
                         if rolebinding_untrusted[project][role]['usernames'] is not None:
                             for user in range(len(set(
                                     rolebinding_untrusted[project][role][
@@ -285,13 +287,13 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                                      project_app[project]['app_id'],
                                      project_app[project]['app_name'], role,
                                      rolebinding_untrusted[project][role][
-                                         'usernames'][user], diff,groupname])
+                                         'usernames'][user], groupname, diff])
                         else:
                             data.append(
                                 [path_url, project, project_name_id_mapping[project],
                                  project_app[project]['app_id'],
                                  project_app[project]['app_name'], role, "None",
-                                 diff,groupname])
+                                 groupname, diff])
                     else:
                         if rolebinding_untrusted[project][role]['usernames'] is not None:
                             for user in range(len(
@@ -301,19 +303,19 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                                     [path_url,project, project_name_id_mapping[project],
                                      "None", "None", role,
                                      rolebinding_untrusted[project][role][
-                                         'usernames'][user], diff,groupname])
+                                         'usernames'][user], groupname, diff])
                         else:
                             data.append(
                                         [
                                             path_url, project, project_name_id_mapping[project],
-                                            "None", "None", role, "None", diff,groupname
+                                            "None", "None", role, "None", groupname, diff
                                         ]
                                        )
         df = pd.DataFrame(data,
                           columns=["URL", "Tenant Name" ,"Tenant ID", "Application ID",
                                    "Application Name", "Role Name",
                                    "Users with Associate Roles",
-                                   "Role Provisioned Age","GroupName"
+                                   "Group Names", "Role Provisioned Age"
                                    ]
                           )
 
@@ -332,20 +334,21 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
 
 def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                   trusted_roles ,session, team_id, scan_id,
-                  compliance_status, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all):
+                  path_url, scanid_valid, teamid_valid,rolebinding_groupName_all):
     """
     Method to append complete rolebinding data for the given project into a csv file
     :param rolebinding_all:
-    :project_app:
-    :project_name_id_mapping:
-    :trusted_roles:
-    :param_list:
-    :session:
-    :team_id:
-    :scan_id:
-    :seq_nums_list:
-    :compliance_status:
-    :path_url:
+    :param project_app:
+    :param project_name_id_mapping:
+    :param trusted_roles:
+    :param session:
+    :param team_id:
+    :param scan_id:
+    :param path_url:
+    :param scanid_valid:
+    :param teamid_valid:
+    :param rolebinding_groupName_all:
+    :return:
     """
     try:
         data_all = []
@@ -359,9 +362,13 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                     diff = ("%s Days %s Hours %s Mins" % (
                         diff.days, diff.seconds // 3600,
                         (diff.seconds // 60) % 60))
-                    groupname=str(rolebinding_groupName_all[project][role])
+                    groupname = rolebinding_groupName_all[project][role]
+                    if type(groupname)==list:
+                        print ("Yes")
+                        groupname = ''.join(groupname)
+                    #print ("GroupName is %s" % groupname)
                     if project in project_app:
-                        
+
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in set(rolebinding_all[project][role]['usernames']):
                                 if role in trusted_roles:
@@ -375,14 +382,14 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                     [path_url, project, project_name_id_mapping[project],
                                      project_app[project]['app_id'],
                                      project_app[project]['app_name'], role,
-                                     user, diff, compliance_status,groupname])
+                                     user, groupname, diff, compliance_status])
                                 role_user = role + "-" + user
 
                                 if scanid_valid and teamid_valid:
-                                    if kinesis_update(session, "CAE", scan_id, tc, team_id, role_user, compliance_status):
-                                        print("LOG: Inside For loop Added the info to Kinesis Stream")
+                                    if params_list_update(scan_id, tc, team_id, role_user, compliance_status):
+                                        print("INFO: Updating params_list")
                                     else:
-                                        print("ERROR: Kinesis Update API Failed")
+                                        print("ERROR: Issue observed while updating params_list")
                                         return None
                                 else:
                                     print("INFO: ScanId or TeamId passed to main() method is not valid,"
@@ -399,7 +406,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                 [path_url, project, project_name_id_mapping[project],
                                  project_app[project]['app_id'],
                                  project_app[project]['app_name'], role, "None",
-                                 diff, compliance_status,groupname])
+                                 groupname, diff, compliance_status])
                     else:
                         if role in trusted_roles:
                             compliance_status = "Compliant"
@@ -409,14 +416,14 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                             compliance_status = "Non-compliant"
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in rolebinding_all[project][role]['usernames']:
-                                data_all.append([path_url,project, "None", "None", role, user, diff, compliance_status,groupname])
+                                data_all.append([path_url,project, "None", "None", role, user, groupname, diff, compliance_status])
                         else:
-                            data_all.append([path_url,project, "None", "None", role, "None", diff, compliance_status,groupname])
+                            data_all.append([path_url,project, "None", "None", role, "None", groupname, diff, compliance_status])
         df = pd.DataFrame(data_all,
                           columns=["URL", "Tenant Name","Tenant ID", "Application ID",
                                    "Application Name", "Role Name",
                                    "Users with Associate Roles",
-                                   "Role Provisioned Age", "Compliant Status","GroupNames"
+                                   "Group Names", "Role Provisioned Age", "Compliant Status"
                                    ]
                           )
         date = datetime.datetime.now().strftime('%m%d%y')
@@ -428,14 +435,19 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                 df.to_csv(f, header=False, index=False)
         else:
             df.to_csv(metadata_file, index=False)
+
         if scanid_valid and teamid_valid:
+            print("INFO: Adding result to Stream")
+            stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
+            if stream_info is None:
+                raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
+                return None
+            seq_nums_list.append(stream_info)
+
             print("INFO: Sending result complete")
             send_result = send_result_complete(session, "CAE", scan_id, team_id, tc, seq_nums_list)
-            print(send_result)
-            for i in seq_nums_list:
-                print(i)
             if send_result:
-                print("LOG: Successfully submitted the result to Kinesis")
+                print("INFO: Successfully submitted the result to Kinesis")
             else:
                 print("ERROR: Failed to submit the result to Kinesis")
                 return None
@@ -446,39 +458,33 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
         print("ERROR: Fail to retrieve the user roles with error in complete_data : %s" % str(e))
 
 
-def kinesis_update(session, platform, scan_id, tc, team_id, role_user, compliance_status):
+def params_list_update(scan_id, tc, team_id, resource, compliance_status):
+    """
 
-    params_list = []
+    :param scan_id:
+    :param tc:
+    :param team_id:
+    :param resource:
+    :param compliance_status:
+    :return:
+    """
     audit_time = int(time.time()) * 1000
     try:
         params = {
             "scanid": scan_id,
             "testid": tc,
             "teamid": str(team_id),
-            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, role_user),
+            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
             "createdAt": audit_time,
             "updatedAt": audit_time,
-            "resourceName": role_user,
+            "resourceName": resource,
             "complianceStatus": compliance_status
         }
         params_list.append(params.copy())
-       
-        while sys.getsizeof(json.dumps(params_list)) >= 900000:
-            print("INFO: FIRST ELEMENT OF PARAMS LIST: ", params_list[0])
-            stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
-            seq_nums_list.append(stream_info)
-            print("LOG: Empty params list ... ", params_list)
-            params_list[:] = []
-        print("INFO: Adding result to Stream")
-        stream_info = add_result_to_stream(session, platform, str(team_id), tc, params_list)
-        if stream_info is None:
-            raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-            return None
-        seq_nums_list.append(stream_info)
         return True
 
-    except Exception as params_err:
-        print("ERROR: Issue observed while adding result to streams - %s" % str(params_err))
+    except KeyError as params_err:
+        print("ERROR: Issue observed while updating params list - %s" % str(params_err))
         return False
 
 
@@ -508,9 +514,14 @@ def output_parameters(trusted_roles, rolebinding_all={}, all_roles=[],
 
 
 def scanid_validation(scan_id):
+    """
+
+    :param scan_id:
+    :return:
+    """
     scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     if scanid_pattern.match(scan_id):
-        print("LOG: Received valid ScanID")
+        print("INFO: Received valid ScanID")
         return True
     else:
         print("ERROR: Received ScanID is not valid")
@@ -518,9 +529,11 @@ def scanid_validation(scan_id):
 
 
 def cae_teamid_validation(team_id):
+    """"
+    """
     teamid_pattern = re.compile(r'^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     if teamid_pattern.match(team_id):
-        print("LOG: Received valid TeamID")
+        print("INFO: Received valid TeamID")
         return True
     else:
         print("ERROR: Received TeamID is not valid")
@@ -528,15 +541,28 @@ def cae_teamid_validation(team_id):
 
 
 def cae_url_validation(url):
+    """
+
+    :param url:
+    :return:
+    """
     cae_url_pattern = re.compile(r'^https://cae-np-.*.cisco.com$')
     if cae_url_pattern.match(url):
-        print("LOG: Received valid Domain URL")
+        print("INFO: Received valid Domain URL")
         return True
     else:
         print("ERROR: Received Domain URL is not valid")
         return False
 
+
 def write_metadata_connection_error(path_url,project_name, project_id):
+    """
+
+    :param path_url:
+    :param project_name:
+    :param project_id:
+    :return:
+    """
     data = [path_url, project_name, project_id,
                                      None,
                                      None, None,
@@ -545,7 +571,7 @@ def write_metadata_connection_error(path_url,project_name, project_id):
                           columns=["URL", "Tenant Name","Tenant ID", "Application ID",
                                    "Application Name", "Role Name",
                                    "Users with Associate Roles",
-                                   "Role Provisioned Age", "Compliant Status","GroupNames"
+                                   "Role Provisioned Age", "Compliant Status","Group Names"
                                    ])
     date = datetime.datetime.now().strftime('%m%d%y')
     metadata_file = os.environ["CLONED_REPO_DIR"] \
@@ -575,12 +601,12 @@ def main(path_url, p_name, scan_id, team_id):
                 scanid_valid = scanid_validation(scan_id)
                 teamid_valid = cae_teamid_validation(team_id)
             else:
-                print("LOG: Valid ScanId or TeamId not found")
+                print("INFO: Valid ScanId or TeamId not found")
                 return None
             session = session_handle()
             if session:
                 if scanid_valid and teamid_valid:
-                    print("LOG: Update the scan record with \"InProgress\" Status")
+                    print("INFO: Update the scan record with \"InProgress\" Status")
                     update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
                     # if update["ResponseMetadata"]["HTTPStatusCode"] != "200":
                     if update is None:
@@ -595,7 +621,7 @@ def main(path_url, p_name, scan_id, team_id):
                             trusted_roles = read_trusted_roles(filename)
                             projects, project_list, project_name_id_mapping = fetch_project_list(
                                 dyn_client, project_name)
-                            if projects and project_list:                            
+                            if projects and project_list:
                                 rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag = get_rolebindings(
                                     dyn_client, projects, trusted_roles, project_name,
                                     project_name_id_mapping, project_list, scan_id, team_id,
@@ -631,12 +657,10 @@ def main(path_url, p_name, scan_id, team_id):
             raise Exception("ERROR: The dependency file %s is not available for use" % filename)
             return None
 
-
         if flag == 1:
             return "Compliant"
         else:
             return "Non-Compliant"
-
 
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in complete_data : %s" % str(e))
@@ -649,7 +673,6 @@ def main(path_url, p_name, scan_id, team_id):
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
         return None
-
 
 
 if __name__ == "__main__":
@@ -669,7 +692,7 @@ if __name__ == "__main__":
     if p_name is not None:
         if url_valid:
             compliance_status = main(url, p_name, scan_id, team_id)
-            print("LOG: Process complete with compliance status as ", compliance_status)
+            print("INFO: Process complete with compliance status as ", compliance_status)
         else:
             print("ERROR: Failed with validation")
     else:
