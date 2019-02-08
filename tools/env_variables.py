@@ -22,7 +22,7 @@ env_variables = {
     "COUNT_OF_SQS_READ_MSG": "1",
     "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE.fifo",
     "SQS_DEAD_LETTER_QUEUE_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayStaleMessages.fifo",
-    "SQS_MSG_VISIBILITY_TIMEOUT": "60",
+    "SQS_MSG_VISIBILITY_TIMEOUT": "600",
 
     "AUDIT_SCRIPTS_DIR": os.path.expanduser("~") + "/csb_cnt_repo/audit_scripts",
     "CLONED_REPO_DIR": os.path.expanduser("~") + "/csb_cnt_repo",
@@ -35,7 +35,7 @@ env_variables = {
     "OS_PROJECT_DOMAIN_NAME": "cisco",
     "OS_USER_DOMAIN_NAME": "cisco",
 
-    "MPROC_TIMEOUT": "120",
+    "MPROC_TIMEOUT": "180",
     "WAIT_TIME_FOR_NEXT_POLL": "60",
     "WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE": "86400",
 }
