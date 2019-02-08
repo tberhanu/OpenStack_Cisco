@@ -41,10 +41,25 @@ import xml.etree.ElementTree as ET
 
 from Crypto.Cipher import AES
 from env_variables import env_variables
+from audit_tc_list import audit_tc_list
 from os import environ as env
+from importlib import import_module
 from os import path
 
+from random import choice, shuffle
+from string import digits, ascii_lowercase
+
+import generate_audit_report as report
+
+
 requests.packages.urllib3.disable_warnings()
+
+def gen_word(N, min_N_digits, min_N_lower):
+    choose_from = [digits]*min_N_digits + [ascii_lowercase]*min_N_lower
+    choose_from.extend([digits + ascii_lowercase] * (N-min_N_lower-min_N_digits))
+    chars = [choice(bet) for bet in choose_from]
+    shuffle(chars)
+    return ''.join(chars)
 
 
 def decrypt_file(key, in_filename):
@@ -201,50 +216,291 @@ def main(test_id):
     test_script = test_script_name.replace("-", "_").lower()
     test_script_type = test_script.split("_")[0]
     script_file = os.environ["AUDIT_SCRIPTS_DIR"] + "/" + test_script + ".py"
-    if test_script_type == "p3":
-        try:
-            print("LOG: Test Script belongs to P3 platform. Reading data.xml file of P3 region")
-            tree = ET.parse('data_p3.xml')
-            root = tree.getroot()
-            print("LOG: Iterating the data file for getting regionURL and RegionName in P3 region ")
-            for regions in root.iter('region'):
-                region_name = regions.find('regionname').text
-                region_url = regions.find('regionurl').text
-                p_secured = 0
-                p_unsecured = 0
-                p_unknown = 0
+    date_stamp = datetime.datetime.now().strftime('%m%d%y')
+    summary_flag = False
+    tc = test_script_name.upper()
 
+    p_secured = 0
+    p_unsecured = 0
+    p_unknown = 0
+
+    if test_script_type == "p3":
+        if os.path.isfile(script_file):
+            if test_script=="p3_identity_mgmt_tc_1":
+                csv_file = os.environ["LOGS_DIR"] + "/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
+                if os.path.isfile(csv_file):
+                    new_csv_file = os.environ["LOGS_DIR"] + "/p3_identity_mgmt_tc_1_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(csv_file,new_csv_file)
+            elif test_script=="p3_image_hardening_tc_1":         
+                all_image_csv = os.environ["LOGS_DIR"] + "/p3_all_images_list_" + date_stamp + ".csv"
+                if os.path.isfile(all_image_csv):
+                    new_all_image_csv = os.environ["LOGS_DIR"] + "/p3_all_images_list_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(all_image_csv,new_all_image_csv)
+
+                all_unsecured_image_list_csv = os.environ["LOGS_DIR"] + "/p3_all_unsecured_images_list_" + date_stamp + ".csv"
+                if os.path.isfile(all_unsecured_image_list_csv):
+                    new_all_unsecured_image_list_csv = os.environ["LOGS_DIR"] + "/p3_all_unsecured_images_list_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(all_unsecured_image_list_csv,new_all_unsecured_image_list_csv)
+
+                server_list_csv = os.environ["LOGS_DIR"] + "/p3_servers_list_" + date_stamp + ".csv"
+                if os.path.isfile(server_list_csv):
+                    new_server_list_csv = os.environ["LOGS_DIR"] + "/p3_servers_list_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(server_list_csv,new_server_list_csv)
+
+                unsecured_server_list_csv = os.environ["LOGS_DIR"] + "/p3_unsecured_servers_list_" + date_stamp + ".csv"
+                if os.path.isfile(unsecured_server_list_csv):
+                    new_unsecured_server_list_csv = os.environ["LOGS_DIR"] + "/p3_unsecured_servers_list_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(unsecured_server_list_csv,new_unsecured_server_list_csv)
+
+                unused_image_list_csv = os.environ["LOGS_DIR"] + "/p3_unused_image_list_" + date_stamp + ".csv"
+                if os.path.isfile(unused_image_list_csv):
+                    new_unused_image_list_csv = os.environ["LOGS_DIR"] + "/p3_unused_image_list_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(unused_image_list_csv,new_unused_image_list_csv)
+
+                unused_unsecured_image_list_csv = os.environ["LOGS_DIR"] + "/p3_unused_unsecured_image_list_" + date_stamp + ".csv"
+                if os.path.isfile(unused_unsecured_image_list_csv):
+                    new_unused_unsecured_image_list_csv = os.environ["LOGS_DIR"] + "/p3_unused_unsecured_image_list_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(unused_unsecured_image_list_csv,new_unused_unsecured_image_list_csv)
+
+        try:
+            tenants_file = "tenants"
+            project_count = 0
+            if path.exists(tenants_file) and path.getsize(tenants_file) > 0:
                 if os.path.isfile(script_file):
                     sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
                     tscript = importlib.import_module(test_script)
                     try:
                         start_time = time.time()
-                        print("\n \n \t-.-.-.--.- ITERATING THROUGH REGION -.-.-.-.-.-.-.-")
-                        print("LOG: Getting Project list for region %s" % region_name)
-                        my_env["OS_AUTH_URL"] = region_url
-                        plist_cmd = 'openstack project list -c ID -c Name -f csv --long'
-                        try:
-                            plist_process = subprocess.Popen(
-                                                                plist_cmd, shell = True,
-                                                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                                                env=my_env
-                                                            )
-                            project_list = plist_process.stdout
-                        except Exception as e:
-                            print("ERROR: Unable to generate project list for region %s" % region_name)
-                            print(e)
-                        if project_list:
-
-                            index = '"ID","Name"'
-                            for projectline in project_list:
-                                if projectline.strip() == index:
-                                    pass
-                                else:
-                                    print(projectline)
-                                    project_details = projectline.strip().split(",")
-                                    project_id = project_details[0][1:-1]
-                                    project_name = project_details[1][1:-1]
+                        f = open(tenants_file,"r")
+                        tenantslist = f.readlines()
+                        if tenantslist:
+                            for tenants in tenantslist:
+                                region_url = " "
+                                tenant=tenants.strip().split(",")
+                                project_name = tenant[0]
+                                region_name = tenant[1]
+                                tree = ET.parse('data_p3.xml')
+                                root = tree.getroot()
+                                for regions in root.iter('region'):
+                                    name = regions.find('regionname').text
+                                    if name == region_name:
+                                        region_url = regions.find('regionurl').text
+                                if region_url != " " :
+                                    print("\n %s " % tenants)
                                     print("LOG: Initiating '%s' test on project %s in P3 region: %s "
+                                                                % (test_script, project_name, region_url))
+                                    n_secure, n_unsecure, n_unknown = test_guardrail_for_multi_tenant(region_url, project_name, tscript, test_id)
+                                    p_secured = p_secured + n_secure
+                                    p_unsecured = p_unsecured + n_unsecure
+                                    p_unknown = p_unknown + n_unknown
+                                    project_count = project_count + 1
+                                else:
+                                    print("ERROR: NO URL Found with given REGION NAME %s" % region_name)
+                            print("INFO: OVERALL SUMMARY FOR THIS EXECUTION")
+                            print("INFO: No. of SECURE tenant for test Script %s are %s"
+                                                                        % (test_id, p_secured))
+                            print("INFO: No. of UN-SECURE tenant for test Script %s are %s"
+                                                                        % (test_id, p_unsecured))
+                            print("INFO: No. of UNKNOWN tenant for test Script %s are %s"
+                                                                        % (test_id, p_unknown))
+                            summary_flag = True
+                        else:
+                            print("ERROR: No tenant list found")
+                        end_time = round(time.time() - start_time)
+                        print("INFO: TIME of executing TEST id %s on given tenants is : %s seconds"
+                                                            % (test_id, end_time))
+                    except Exception as e:
+                        print("ERROR: Cannot perform test on test_id due to - %s" % str(e))
+
+                else:
+                    print("INFO: Test Script %s DOES NOT exist" % test_id)
+            else:
+                print("LOG: Test Script belongs to P3 platform. Reading data.xml file of P3 region")
+                
+                tree = ET.parse('data_p3.xml')
+                root = tree.getroot()
+                print("LOG: Iterating the data file for getting regionURL and RegionName in P3 region ")
+                for regions in root.iter('region'):
+                    region_name = regions.find('regionname').text
+                    region_url = regions.find('regionurl').text
+                    p_secured = 0
+                    p_unsecured = 0
+                    p_unknown = 0
+
+                    if os.path.isfile(script_file):
+                        
+                        sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
+                        tscript = importlib.import_module(test_script)
+                        try:
+                            start_time = time.time()
+                            print("\n \n \t-.-.-.--.- ITERATING THROUGH REGION -.-.-.-.-.-.-.-")
+                            print("LOG: Getting Project list for region %s" % region_name)
+                            my_env["OS_AUTH_URL"] = region_url
+                            plist_cmd = 'openstack project list -c ID -c Name -f csv --long'
+                            try:
+                                plist_process = subprocess.Popen(
+                                                                    plist_cmd, shell=True,
+                                                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                                                    env=my_env
+                                                                )
+                                #plist_process.communicate()
+                                plist_process.wait()
+                                print("project list assigned to plist")
+                                project_list = plist_process.stdout
+                                print("terminating plist sub process")
+                        
+                            except Exception as e:
+                                print("ERROR: Unable to generate project list for region %s" % region_name)
+                                print(e)
+                            if project_list:
+
+                                index = '"ID","Name"'
+                                for projectline in project_list:
+                                    if projectline.strip() == index:
+                                        pass
+                                    else:
+                                        print("\n %s " % projectline)
+                                        project_details = projectline.strip().split(",")
+                                        project_id = project_details[0][1:-1]
+                                        project_name = project_details[1][1:-1]
+                                        print("LOG: Initiating '%s' test on project %s in P3 region: %s "
+                                                                % (test_script, project_name, region_name))
+                                        n_secure, n_unsecure, n_unknown = test_guardrail(
+                                                                                            region_url, project_id,
+                                                                                            project_name, tscript,
+                                                                                            region_name, test_id
+                                                                                        )
+                                        p_secured = p_secured + n_secure
+                                        p_unsecured = p_unsecured + n_unsecure
+                                        p_unknown = p_unknown + n_unknown
+                                        project_count = project_count + 1
+
+                                print("INFO: OVERALL SUMMARY FOR THE REGION")
+                                print("INFO: No. of SECURE tenant for test Script %s in %s are %s"
+                                                                            % (test_id, region_name, p_secured))
+                                print("INFO: No. of UN-SECURE tenant for test Script %s in %s are %s"
+                                                                            % (test_id, region_name, p_unsecured))
+                                print("INFO: No. of UNKNOWN tenant for test Script %s in %s are %s"
+                                                                            % (test_id, region_name, p_unknown))
+                                summary_flag = True
+
+                            else:
+                                print("INFO: Project list did not generate for region %s " % region_name)
+                            end_time = round(time.time() - start_time)
+                            print("INFO: TIME of executing TEST id %s on region %s is : %s seconds"
+                                                                % (test_id, region_name, end_time))
+
+
+                        except Exception as e:
+                            print("ERROR: Cannot perform test on test_id due to - %s" % str(e))
+
+                    else:
+                        print("INFO: Test Script %s DOES NOT exist" % test_id)
+            print("-.-.-.-.--.. TOTAL NUMBER OF TENANTS: %s  .-.-.--.-." % project_count)
+            if summary_flag == True:
+                report.main(tc,date_stamp)
+        except Exception as e:
+            print("ERROR: Exception caught - %s" % str(e))
+
+    elif test_script_type == "cae":
+        if os.path.isfile(script_file):
+            if test_script=="cae_identity_mgmt_tc_1":
+                identity_mgmt_csv = os.environ["LOGS_DIR"] + "/cae_identity_mgmt_tc_1_" + date_stamp + ".csv"
+                if os.path.isfile(identity_mgmt_csv):
+                    new_identity_mgmt_csv = os.environ["LOGS_DIR"] + "/cae_identity_mgmt_tc_1_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(identity_mgmt_csv,new_identity_mgmt_csv)
+
+                identity_mgmt_fail_case_csv = os.environ["LOGS_DIR"] + "/cae_identity_mgmt_tc_1_fail_cases_" + date_stamp + ".csv"
+                if os.path.isfile(identity_mgmt_fail_case_csv):
+                    new_identity_mgmt_fail_case_csv = os.environ["LOGS_DIR"] + "/cae_identity_mgmt_tc_1_fail_cases_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(identity_mgmt_fail_case_csv,new_identity_mgmt_fail_case_csv)
+            elif test_script =="cae_image_hardening_tc_1":
+                image_hardening_csv = os.environ["LOGS_DIR"] + "/cae_image_hardening_tc_1_" + date_stamp + ".csv"
+                if os.path.isfile(image_hardening_csv):
+                    new_image_hardening_csv = os.environ["LOGS_DIR"] + "/cae_image_hardening_tc_1_" + str(gen_word(8, 4, 4)) + ".csv"
+                    os.rename(image_hardening_csv,new_image_hardening_csv)
+
+
+        try:
+            tenants_file = "tenants"
+            project_count = 0
+            if path.exists(tenants_file) and path.getsize(tenants_file) > 0:
+                if os.path.isfile(script_file):
+                    sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
+                    tscript = importlib.import_module(test_script)
+                    try:
+                        start_time = time.time()
+                        f = open(tenants_file,"r")
+                        tenantslist = f.readlines()
+                        if tenantslist:
+                            for tenants in tenantslist:
+                                region_url = " "
+                                tenant=tenants.strip().split(",")
+                                project_name = tenant[0]
+                                region_name = tenant[1]
+                                tree = ET.parse('data_cae.xml')
+                                root = tree.getroot()
+                                for regions in root.iter('region'):
+                                    name = regions.find('regionname').text
+                                    if name == region_name:
+                                        region_url = regions.find('regionurl').text
+                                if region_url != " " :
+                                    print("\n %s " % tenants)
+                                    print("LOG: Initiating '%s' test on project %s in CAE region: %s "
+                                                                % (test_script, project_name, region_url))
+                                    n_secure, n_unsecure, n_unknown = test_guardrail_for_multi_tenant(region_url, project_name, tscript, test_id)
+                                    p_secured = p_secured + n_secure
+                                    p_unsecured = p_unsecured + n_unsecure
+                                    p_unknown = p_unknown + n_unknown
+                                    project_count = project_count + 1
+                                else:
+                                    print("ERROR: NO URL Found with given REGION NAME %s" % region_name)
+                            print("INFO: OVERALL SUMMARY FOR THIS EXECUTION")
+                            print("INFO: No. of SECURE tenant for test Script %s are %s"
+                                                                        % (test_id, p_secured))
+                            print("INFO: No. of UN-SECURE tenant for test Script %s are %s"
+                                                                        % (test_id, p_unsecured))
+                            print("INFO: No. of UNKNOWN tenant for test Script %s are %s"
+                                                                        % (test_id, p_unknown))
+                            summary_flag = True
+                        else:
+                            print("ERROR: No tenant list found")
+                        end_time = round(time.time() - start_time)
+                        print("INFO: TIME of executing TEST id %s on given tenants is : %s seconds"
+                                                            % (test_id, end_time))
+                    except Exception as e:
+                        print("ERROR: Cannot perform test on test_id due to - %s" % str(e))
+
+                else:
+                    print("INFO: Test Script %s DOES NOT exist" % test_id)
+            else: 
+                print("LOG: Test Script belongs to CAE platform. Reading data.xml file of CAE region")
+                tree = ET.parse('data_cae.xml')
+                root = tree.getroot()
+                print("LOG: Iterating the data file for getting regionURL and RegionName in CAE region ")
+                for regions in root.iter('region'):
+                    region_name = regions.find('regionname').text
+                    region_url = regions.find('regionurl').text
+                    config_path = regions.find('configpath').text
+                    p_secured = 0
+                    p_unsecured = 0
+                    p_unknown = 0
+
+                    if os.path.isfile(script_file):
+                        sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
+                        tscript = importlib.import_module(test_script)
+                        try:
+                            start_time = time.time()
+                            print("\n \n \t-.-.-.--.- ITERATING THROUGH REGION -.-.-.-.-.-.-.-")
+                            print("LOG: Getting Project list for region %s" % region_name)
+                            project_list = get_projects(config_path)
+                            if project_list:
+                                for projectline in project_list:
+                                    print("\n %s " % projectline)
+                                    project_details = projectline.strip().split(" ")
+                                    project_id = project_details[0]
+                                    project_name = project_details[1]
+                                    print("LOG: Initiating '%s' test on project %s in CAE region: %s"
                                                             % (test_script, project_name, region_name))
                                     n_secure, n_unsecure, n_unknown = test_guardrail(
                                                                                         region_url, project_id,
@@ -254,86 +510,30 @@ def main(test_id):
                                     p_secured = p_secured + n_secure
                                     p_unsecured = p_unsecured + n_unsecure
                                     p_unknown = p_unknown + n_unknown
+                                    project_count = project_count + 1
 
-                            print("INFO: OVERALL SUMMARY FOR THE REGION")
-                            print("INFO: No. of SECURE tenant for test Script %s in %s are %s"
-                                                                        % (test_id, region_name, p_secured))
-                            print("INFO: No. of UN-SECURE tenant for test Script %s in %s are %s"
-                                                                        % (test_id, region_name, p_unsecured))
-                            print("INFO: No. of UNKNOWN tenant for test Script %s in %s are %s"
-                                                                        % (test_id, region_name, p_unknown))
+                                print("\n OVERALL SUMMARY FOR THE REGION")
+                                print("INFO: NO of SECURE tenant for test Script %s in %s are %s"
+                                                                %(test_id, region_name, p_secured))
+                                print("INFO: NO of UN-SECURE tenant for test Script %s in %s are %s"
+                                                                %(test_id, region_name, p_unsecured))
+                                print("INFO: NO of UNKNOWN tenant for test Script %s in %s are %s"
+                                                                %(test_id, region_name, p_unknown))
+                                summary_flag = True
+                            else:
+                                print("INFO: Project list didnot generate for region %s " % region_name)
 
-                        else:
-                            print("INFO: Project list did not generate for region %s " % region_name)
-                        end_time = round(time.time() - start_time)
-                        print("INFO: TIME of executing TEST id %s on region %s is : %s seconds"
-                                                            % (test_id, region_name, end_time))
+                            end_time = round(time.time() - start_time)
+                            print("INFO: TIME of executing TEST id %s on region %s is : %s seconds"
+                                                                % (test_id, region_name, end_time))
 
-                    except Exception as e:
-                        print("ERROR: Cannot perform test on test_id due to - %s" % str(e))
-
-                else:
-                    print("INFO: Test Script %s DOES NOT exist" % test_id)
-
-        except Exception as e:
-            print("ERROR: Exception caught - %s" % str(e))
-
-    elif test_script_type == "cae":
-        try:
-            print("LOG: Test Script belongs to CAE platform. Reading data.xml file of CAE region")
-            tree = ET.parse('data_cae.xml')
-            root = tree.getroot()
-            print("LOG: Iterating the data file for getting regionURL and RegionName in CAE region ")
-            for regions in root.iter('region'):
-                region_name = regions.find('regionname').text
-                region_url = regions.find('regionurl').text
-                config_path = regions.find('configpath').text
-                p_secured = 0
-                p_unsecured = 0
-                p_unknown = 0
-
-                if os.path.isfile(script_file):
-                    sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
-                    tscript = importlib.import_module(test_script)
-                    try:
-                        start_time = time.time()
-                        print("\n \n \t-.-.-.--.- ITERATING THROUGH REGION -.-.-.-.-.-.-.-")
-                        print("LOG: Getting Project list for region %s" % region_name)
-                        project_list = get_projects(config_path)
-                        if project_list:
-                            for projectline in project_list:
-                                project_details = projectline.strip().split(" ")
-                                project_id = project_details[0]
-                                project_name = project_details[1]
-                                print("LOG: Initiating '%s' test on project %s in CAE region: %s"
-                                                        % (test_script, project_name, region_name))
-                                n_secure, n_unsecure, n_unknown = test_guardrail(
-                                                                                    region_url, project_id,
-                                                                                    project_name, tscript,
-                                                                                    region_name, test_id
-                                                                                )
-                                p_secured = p_secured + n_secure
-                                p_unsecured = p_unsecured + n_unsecure
-                                p_unknown = p_unknown + n_unknown
-
-                            print("\n OVERALL SUMMARY FOR THE REGION")
-                            print("INFO: NO of SECURE tenant for test Script %s in %s are %s"
-                                                            %(test_id, region_name, p_secured))
-                            print("INFO: NO of UN-SECURE tenant for test Script %s in %s are %s"
-                                                            %(test_id, region_name, p_unsecured))
-                            print("INFO: NO of UNKNOWN tenant for test Script %s in %s are %s"
-                                                            %(test_id, region_name, p_unknown))
-                        else:
-                            print("INFO: Project list didnot generate for region %s " % region_name)
-
-                        end_time = round(time.time() - start_time)
-                        print("INFO: TIME of executing TEST id %s on region %s is : %s seconds"
-                                                            % (test_id, region_name, end_time))
-
-                    except Exception as e:
-                        print("ERROR: cannot perform test on test_id")
-                else:
-                    print("INFO: Test Script %s DOES NOT exist" % test_id)
+                        except Exception as e:
+                            print("ERROR: cannot perform test on test_id")
+                    else:
+                        print("INFO: Test Script %s DOES NOT exist" % test_id)
+            print("-.-.-.-.--.. TOTAL NUMBER OF TENANTS: %s  .-.-.--.-." % project_count)
+            if summary_flag == True:
+                report.main(tc,date_stamp)
         except Exception as e:
             print("ERROR: Exception caught - %s" % str(e))
 
@@ -361,13 +561,44 @@ def test_guardrail(region_url, project_id, project_name, tscript, region_name, t
         x = tscript.main(region_url, project_name, scan_id, project_id)
         if x == "Compliant":
             count_secure = count_secure + 1
-        else:
+            print("********INFO: THIS PROJECT IS SECURE*******")
+        elif x== "Non-compliant":
+            print("********INFO: THIS PROJECT IS UN-SECURE*******")
             count_unsecure = count_unsecure + 1
+        else:
+            print("********INFO: THIS PROJECT IS UN-KNOWN*******")
+            count_unknown = count_unknown + 1
     except Exception as e:
+        print("*********INFO: EXCEPTION- UNKNOWN********")
         print("ERROR: Test Case %s did not run properly on project: %s due to %s" % (test_id, project_name, str(e)))
         count_unknown = count_unknown + 1
     
     return count_secure, count_unsecure, count_unknown
+
+def test_guardrail_for_multi_tenant(region_url,project_name,tscript,test_id):
+    count_secure = 0
+    count_unsecure = 0
+    count_unknown = 0
+    try:
+        scan_id = "samplescanid"
+        project_id = str(gen_word(8, 4, 4))
+        x = tscript.main(region_url, project_name, scan_id, project_id)
+        if x == "Compliant":
+            count_secure = count_secure + 1
+            print("********INFO: THIS PROJECT IS SECURE*******")
+        elif x == "Non-compliant":
+            print("********INFO: THIS PROJECT IS UN-SECURE*******")
+            count_unsecure = count_unsecure + 1
+        else:
+            print("********INFO: THIS PROJECT IS UN-KNOWN*******")
+            count_unknown = count_unknown + 1
+    except Exception as e:
+        print("*********INFO: EXCEPTION- UNKNOWN********")
+        print("ERROR: Test Case %s did not run properly on project: %s due to %s" % (test_id, project_name, str(e)))
+        count_unknown = count_unknown + 1
+    
+    return count_secure, count_unsecure, count_unknown
+
 
 
 if __name__== "__main__":
@@ -375,6 +606,16 @@ if __name__== "__main__":
     parser.add_argument("-t", "--test_id", help="Test id", action="store", dest="test_id")
     args = parser.parse_args()
     test_id = args.test_id
+
+    if args.test_id in audit_tc_list["P3"]:
+        platform = "P3"
+    elif args.test_id in audit_tc_list["CAE"]:
+        platform = "CAE"
+    else:
+        print("ERROR: Test ID entered is incorrect, please choose one from below list. CASE SENSITIVE : \n %s" % audit_tc_list)
+        sys.exit()
+
+
 
     """ loading variables from encrypted credentials file, decrypting config and credentials file"""
     load_enc_variable()
@@ -384,6 +625,7 @@ if __name__== "__main__":
         os.environ[var] = val
 
     """ clone CSB git repo"""
+    
     repo_chk = clone_git_repo()
     if repo_chk:
         my_env = os.environ.copy()
@@ -391,12 +633,19 @@ if __name__== "__main__":
     else:
         print("ERROR: Failed to download GIT REPO.")
         print("INFO: TERMINATING THE PROCESS")
-
+    """
+    my_env = os.environ.copy()
+    main(test_id)
+    """
     """ Delete the decrypted files """
     print("INFO: Delete decrypted Credential file")
     try:
-        os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
-        os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
+        cred_file = os.path.expanduser("~") + "/" + "csb_credentials.py"
+        if os.path.isfile(cred_file):
+            os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
+            os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
+        else:
+            print("INFO: No Credentials file Found")
     except OSError as e:
         print("ERROR: Unable to remove csb_credentials file")
         print(str(e))
