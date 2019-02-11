@@ -342,9 +342,6 @@ def compliant_status_of_tenant(project_name, role, user, domain, domain_list, do
                 if file_is_empty:
                     writer.writerow(headers)
                 writer.writerows([Exception_list])
-            f.close()
-        else:
-            return None
 
 
 def scanid_validation(scan_id):
@@ -357,7 +354,7 @@ def scanid_validation(scan_id):
         print("INFO: Received valid ScanID")
         return True
     else:
-        print("ERROR: Received ScanID is not valid")
+        print("INFO: Received ScanID is not valid")
         return False
 
 
@@ -371,7 +368,7 @@ def p3_teamid_validation(team_id):
         print("INFO: Received valid TeamID")
         return True
     else:
-        print("ERROR: Received TeamID is not valid")
+        print("INFO: Received TeamID is not valid")
         return False
 
 
@@ -385,7 +382,7 @@ def p3_url_validation(url):
         print("INFO: Received valid Domain URL")
         return True
     else:
-        print("ERROR: Received Domain URL is not valid")
+        print("INFO: Received Domain URL is not valid")
         return False
 
 
@@ -429,6 +426,10 @@ def main(os_auth_url, project_name, scan_id, team_id):
     :param team_id: required during Kinesis Update
     :return: Compliant or Non-compliant
     """
+    summary_report = {
+        "No_of_Compliant_Tenant(s)": 0,
+        "No_of_Non_compliant_Tenant(s)": 0
+    }
     try:
         scanid_valid = False
         teamid_valid = False
@@ -451,7 +452,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
                                 )
     except Exception as e:
         print("ERROR: Connection failed with error => %s" % str(e))
-        return None
+        return None, summary_report
 
     session = session_handle()
     if session:
@@ -460,7 +461,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
             update = updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
             if update is None:
                 raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
-                return None
+                return None, summary_report
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
@@ -476,13 +477,15 @@ def main(os_auth_url, project_name, scan_id, team_id):
             if any(val == "Non-compliant" for val in list_of_return_vals):
                 print("INFO: One of the test is Non-compliant")
                 compliance_status = "Non-compliant"
+                summary_report["No_of_Non_compliant_Tenant(s)"] = 1
+
             elif any(val is None for val in list_of_return_vals):
                 print("INFO: One of the test returned None")
                 compliance_status = "None"
             else:
                 print("INFO: All checks are Compliant")
                 compliance_status = "Compliant"
-
+                summary_report["No_of_Compliant_Tenant(s)"] = 1
 
         except Exception as e:
             print("ERROR: Issue observed during execution - %s" % str(e))
@@ -491,19 +494,19 @@ def main(os_auth_url, project_name, scan_id, team_id):
                 update = updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
                 if update is None:
                     raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"Failed\" status")
-                    return None
+                    return None, summary_report
 
-            return None
+            return None, summary_report
     else:
         raise Exception("ERROR: Failed to get the connection handle")
-        return None
+        return None, summary_report
 
     if scanid_valid and teamid_valid:
         print("INFO: Adding result to Stream")
         stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
         if stream_info is None:
            raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-           return None
+           return None, summary_report
         seq_nums_list.append(stream_info)
 
         print("INFO: Sending result complete")
@@ -512,13 +515,13 @@ def main(os_auth_url, project_name, scan_id, team_id):
             print("INFO: Successfully submitted the result to Kinesis")
         else:
             raise Exception("ERROR: Failed to submit the result to Kinesis")
-            return None
+            return None, summary_report
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
     conn.close()
 
-    return compliance_status
+    return compliance_status, summary_report
 
 
 if __name__ == "__main__":
@@ -533,10 +536,11 @@ if __name__ == "__main__":
     scan_id = args.scanid
     team_id = args.teamid
     url_valid = p3_url_validation(url)
-    if p_name is not None:
+    if url and p_name is not None:
         if url_valid:
-            compliance_status = main(url, p_name, scan_id, team_id)
-            print("INFO: Process complete with compliance status as - %s" % compliance_status)
+            compliance_status, summary_report = main(url, p_name, scan_id, team_id)
+            print("INFO: Process completed with:\nCompliance Status as - %s\nSummary_report as - %s"
+                  % (compliance_status, summary_report))
         else:
             print("ERROR: Failed with validation")
     else:
