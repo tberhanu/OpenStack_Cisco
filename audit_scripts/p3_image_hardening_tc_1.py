@@ -26,12 +26,12 @@ import time
 
 from os import environ as env
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
-from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle, params_list_update
 
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
-seq_nums_list = []
-params_list =[]
+seq_nums_list = list()
+params_list = list()
 
 
 def list_images(conn):
@@ -40,7 +40,7 @@ def list_images(conn):
     :param conn: connectivity to the P3 platform
     """
     try:
-        images = {}
+        images = dict()
         for image in conn.image.images():
             img = json.dumps(image)
             out = json.loads(img)
@@ -48,9 +48,27 @@ def list_images(conn):
         return images
     except Exception as err:
         print("ERROR: Failed to retrieve list of used images due to %s" % str(err))
+        return None
 
 
-def list_servers(conn, images, project_name, os_auth_url):
+def list_volumes(conn):
+    """
+    This method is to list all the volumes in the OpenStack project
+    :param conn: connectivity to the P3 platform
+    """
+    try:
+        volumes_list = dict()
+        for volume in conn.volume.volumes():
+            vol = json.dumps(volume)
+            volume = json.loads(vol)
+            volumes_list[volume['id']] = volume
+        return volumes_list
+    except Exception as err:
+        print("ERROR: Failed to retrieve list of used volume due to %s" % str(err))
+        return None
+
+
+def list_servers(conn, images, volumes_list, project_name, os_auth_url):
     """
     This method is to list the servers in the OpenStack project along with the details of server
     and the associated image.
@@ -62,13 +80,8 @@ def list_servers(conn, images, project_name, os_auth_url):
     :return:
     """
     try:
-        servers = []
-        address = {}
-
-        for volume in conn.volume.volumes():
-            vol = json.dumps(volume)
-            volume = json.loads(vol)
-            volume_image_id = (volume.get('volume_image_metadata') or {'image_id': "Unknown"})['image_id']
+        servers = list()
+        address = dict()
 
         for server in conn.compute.servers():
             srvr = json.dumps(server)
@@ -87,11 +100,17 @@ def list_servers(conn, images, project_name, os_auth_url):
             else:
                 address['addr'] = "None"
 
+            volume = pull.get('attached_volumes', None)
+            volume_id = volume[0]['id'] if volume else None
+            volume_metadata = volumes_list.get(volume_id)
+            volume_image_detail = (volume_metadata.get('volume_image_metadata') or None) if volume_metadata else None
+            volume_image_id = volume_image_detail.get('image_id') if volume_image_detail else None
+            
             image_id = (pull.get('image') or {'id': volume_image_id} or {'id': "None"})['id']
             image = images.get(image_id) or {'id': image_id}
-
-            updated_at = image.get('updated_at')
-            image_created = dateutil.parser.parse(updated_at).replace(tzinfo=None) if updated_at is not None else None
+            
+            image_updated_at = image.get('updated_at')
+            image_created = dateutil.parser.parse(image_updated_at).replace(tzinfo=None) if image_updated_at is not None else None
             image_updated_days = (datetime.datetime.now() - image_created) if image_created is not None else None
             image_updated_ago = (("%s Days %s Hours %s Mins" % (image_updated_days.days,
                                     image_updated_days.seconds//3600, (image_updated_days.seconds//60) % 60))
@@ -132,6 +151,7 @@ def list_servers(conn, images, project_name, os_auth_url):
         return servers
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
+        return None
 
 
 def list_unsecured_servers(servers, scan_id, team_id, scanid_valid, teamid_valid):
@@ -145,7 +165,7 @@ def list_unsecured_servers(servers, scan_id, team_id, scanid_valid, teamid_valid
     :return: Compliant | Non-Compliant | None
     """
     try:
-        unsecured_servers = []
+        unsecured_servers = list()
         for server in servers:
             if server[8] == False:
                 unsecured_servers.append(server)
@@ -154,7 +174,7 @@ def list_unsecured_servers(servers, scan_id, team_id, scanid_valid, teamid_valid
                 compliance_status = "Compliant"
             resource = "Instance: " + server[1]
             if scanid_valid and teamid_valid:
-                if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+                if params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
                     print("INFO: Updating params_list")
                 else:
                     print("ERROR: Issue observed while updating params_list")
@@ -185,6 +205,7 @@ def list_unsecured_servers(servers, scan_id, team_id, scanid_valid, teamid_valid
         return unsecured_servers, flag1
     except Exception as err:
         print("ERROR: Failed to retrieve list of unsecured servers list due to %s" % str(err))
+        return None, None
 
 
 def list_unused_images(conn, images, servers, project_name, os_auth_url):
@@ -197,10 +218,10 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
     :param project_name: Project name
     """
     try:
-        unused_images = []
-        all_image_ids = []
-        used_image_ids = []
-        unused_image_ids = {}
+        unused_images = list()
+        all_image_ids = list()
+        used_image_ids = list()
+        unused_image_ids = dict()
         for image in conn.image.images():
             all_image_ids.append(image['id'])
         for server in servers:
@@ -234,6 +255,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
         return unused_images
     except Exception as err:
         print("ERROR: Failed to retrieve list of unused images servers list due to %s" % str(err))
+        return None
 
 
 def list_unused_unsecured_images(unused_images, scan_id, team_id, scanid_valid, teamid_valid):
@@ -247,7 +269,7 @@ def list_unused_unsecured_images(unused_images, scan_id, team_id, scanid_valid, 
     :return: Compliant | Non-Compliant | None
     """
     try:
-        unused_unsecured_images = []
+        unused_unsecured_images = list()
         for image in unused_images:
             if image[5] != 'public':
                 unused_unsecured_images.append(image)
@@ -257,11 +279,11 @@ def list_unused_unsecured_images(unused_images, scan_id, team_id, scanid_valid, 
 
             resource = "Unused_Image:" + image[4]
             if scanid_valid and teamid_valid:
-                if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+                if params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
                     print("INFO: Updating params_list")
                 else:
                     print("ERROR: Issue observed while updating params_list")
-                    return None
+                    return None, None
             else:
                 print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
@@ -300,7 +322,7 @@ def list_all_images(conn, project_name, os_auth_url, team_id):
     :return: Compliant or Non-compliant
     """
     try:
-        all_images_list = []
+        all_images_list = list()
         for image in conn.image.images():
             img = json.dumps(image)
             out = json.loads(img)
@@ -341,7 +363,7 @@ def unsecured_images_list(all_images_list, scan_id, team_id, scanid_valid, teami
     :return: Compliant | Non-Compliant | None
     """
     try:
-        all_unsecured_images = []
+        all_unsecured_images = list()
         for image in all_images_list:
             if image[6] != 'public':
                 all_unsecured_images.append(image)
@@ -351,11 +373,11 @@ def unsecured_images_list(all_images_list, scan_id, team_id, scanid_valid, teami
 
             resource = "Image:" + image[5]
             if scanid_valid and teamid_valid:
-                if params_list_update(scan_id, tc, team_id, resource, compliance_status):
+                if params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
                     print("INFO: Updating params_list")
                 else:
                     print("ERROR: Issue observed while updating params_list")
-                    return None
+                    return None, None
 
             else:
                 print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
@@ -380,12 +402,13 @@ def unsecured_images_list(all_images_list, scan_id, team_id, scanid_valid, teami
         return all_unsecured_images, flag3
     except Exception as err:
         print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
+        return None, None
 
 
 def summary_of_test(project_name, all_images_list, all_unsecured_images,
                     servers, unsecured_servers, unused_images, unused_unsecured_images):
     """
-    Method to get the overall scan report of the above functions:
+    Method to print the overall scan report of the above functions:
     :param project_name: Project name
     :param all_images_list: list_all_images
     :param all_unsecured_images: unsecured_images_list
@@ -395,6 +418,14 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images,
     :param unused_unsecured_images: list_unused_unsecured_images
     """
     try:
+        summary_report = {
+            "No_of_Image(s)_evaluated": len(all_images_list),
+            "No_of_Unsecured_Image(s)": len(all_unsecured_images),
+            "No_of_Server(s)_evaluated": len(servers),
+            "No_of_Unsecured_Server(s)": len(unsecured_servers),
+            "No_of_Unused_Image(s)": len(unused_images),
+            "No_of_Unused_Unsecured_Image(s)": len(unused_unsecured_images)
+        }
         print("\n########### SCAN REPORT for Project: %s###########" % project_name)
         print("Name of Project under trail: %s" % project_name)
         print("Total no. of images found: %s" % len(all_images_list))
@@ -403,8 +434,18 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images,
         print("Total no. of servers using unsecured image: %s" % len(unsecured_servers))
         print("Total no. of unused images in Tenant account: %s" % len(unused_images))
         print("Total no. of unused unsecured images in Tenant account: %s" % len(unused_unsecured_images))
+        return summary_report
     except KeyError as key_err:
         print("ERROR: One of the variable do not have required data - %s" % str(key_err))
+        summary_report = {
+            "No_of_Image(s)_evaluated": 0,
+            "No_of_Unsecured_Image(s)": 0,
+            "No_of_Server(s)_evaluated": 0,
+            "No_of_Unsecured_Server(s)": 0,
+            "No_of_Unused_Image(s)": 0,
+            "No_of_Unused_Unsecured_Image(s)": 0
+        }
+        return summary_report
 
 
 def scanid_validation(scan_id):
@@ -417,7 +458,7 @@ def scanid_validation(scan_id):
         print("INFO: Received valid ScanID")
         return True
     else:
-        print("ERROR: Received ScanID is not valid")
+        print("INFO: Received ScanID is not valid")
         return False
 
 
@@ -431,7 +472,7 @@ def p3_teamid_validation(team_id):
         print("INFO: Received valid TeamID")
         return True
     else:
-        print("ERROR: Received TeamID is not valid")
+        print("INFO: Received TeamID is not valid")
         return False
 
 
@@ -445,11 +486,11 @@ def p3_url_validation(url):
         print("INFO: Received valid Domain URL")
         return True
     else:
-        print("ERROR: Received Domain URL is not valid")
+        print("INFO: Received Domain URL is not valid")
         return False
 
 
-def params_list_update(scan_id, tc, team_id, resource_name, compliance_status):
+def params_list_update(scan_id, tc, team_id, resource_name, compliance_status, params_list):
     """
     Method to update params_list
     :param scan_id:
@@ -489,6 +530,15 @@ def main(os_auth_url, project_name, scan_id, team_id):
     :param team_id: required during Kinesis Update
     :return: Compliant or Non-compliant
     """
+    summary_report = {
+            "No_of_Image(s)_evaluated": 0,
+            "No_of_Unsecured_Image(s)": 0,
+            "No_of_Server(s)_evaluated": 0,
+            "No_of_Unsecured_Server(s)": 0,
+            "No_of_Unused_Image(s)": 0,
+            "No_of_Unused_Unsecured_Image(s)": 0
+    }
+
     try:
         scanid_valid = False
         teamid_valid = False
@@ -509,7 +559,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
                                 )
     except Exception as e:
         print("ERROR: Connection failed with error => %s" % str(e))
-        return None
+        return None, summary_report
 
     session = session_handle()
     if session:
@@ -518,14 +568,15 @@ def main(os_auth_url, project_name, scan_id, team_id):
             update = updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
             if update is None:
                 raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
-                return None
+                return None, summary_report
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
         images = list_images(conn)
         try:
             if images:
-                servers = list_servers(conn, images, project_name, os_auth_url)
+                volumes_list = list_volumes(conn)
+                servers = list_servers(conn, images, volumes_list, project_name, os_auth_url)
                 if servers is not None:
                     unsecured_servers, flag1 = list_unsecured_servers(servers, scan_id, team_id,
                                                                       scanid_valid, teamid_valid)
@@ -543,7 +594,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
                     update = updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
                     if update is None:
                         raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"Failed\" status")
-                        return None
+                        return None, summary_report
                 else:
                     raise Exception("ERROR: Failed to fetch the image list")
 
@@ -554,7 +605,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
             else:
                 print("ERROR: Failed to get the list of images")
 
-            summary_of_test(project_name, all_images_list, all_unsecured_images, servers, unsecured_servers,
+            summary_report = summary_of_test(project_name, all_images_list, all_unsecured_images, servers, unsecured_servers,
                             unused_images, unused_unsecured_images)
 
             list_of_flags = [flag1, flag2, flag3]
@@ -570,42 +621,41 @@ def main(os_auth_url, project_name, scan_id, team_id):
 
         except Exception as err:
             print("ERROR: Overall execution got affected due to - %s" % str(err))
-            if str(err):
-                date_stamp = datetime.datetime.now().strftime('%m%d%y')
-                csv_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
-                headers = ["Owner Id", "Tenant Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
-                Exception_list = ["", team_id, project_name, "", "", "", "", ""]
+            date_stamp = datetime.datetime.now().strftime('%m%d%y')
+            csv_filename = os.path.expanduser("~") + "/logs/p3_all_images_list_" + date_stamp + ".csv"
+            headers = ["Owner Id", "Tenant Id", "Tenant Name", "Tenant External Url", "Image Id", "Image Name", "Visibility", "Status"]
+            Exception_list = ["", team_id, project_name, "", "", "", "", ""]
+            try:
                 with open(csv_filename, 'a') as f:
                     file_is_empty = os.stat(csv_filename).st_size == 0
                     writer = csv.writer(f, lineterminator='\n')
                     if file_is_empty:
                         writer.writerow(headers)
                     writer.writerows([Exception_list])
-                f.close()
-            else:
-                return None
+                return None, summary_report
+            except Exception as file_err:
+                print("ERROR: Issue observed while writing to csv file with - %s" % str(file_err))
+                return None, summary_report
 
     if scanid_valid and teamid_valid:
         print("INFO: Adding result to Stream")
         stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
         if stream_info is None:
            raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-           return None
+           return None, summary_report
         seq_nums_list.append(stream_info)
 
         print("INFO: Sending result complete")
         send_result = send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
-
         if send_result:
             print("INFO: Successfully submitted the result to Kinesis")
         else:
             raise Exception("ERROR: Failed to submit the result to Kinesis")
-            return None
+            return None, summary_report
     else:
         print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
     conn.close()
-
-    return compliance_status
+    return compliance_status, summary_report
 
 
 if __name__ == "__main__":
@@ -621,9 +671,10 @@ if __name__ == "__main__":
     team_id = args.teamid
     url_valid = p3_url_validation(url)
     if url and p_name is not None:
-        if url_valid is not None:
-            compliance_status = main(url, p_name, scan_id, team_id)
-            print("INFO: Process complete with compliance status as - %s" % compliance_status)
+        if url_valid:
+            compliance_status, summary_report = main(url, p_name, scan_id, team_id)
+            print("INFO: Process completed with:\nCompliance Status as - %s\nSummary_report as - %s"
+                  % (compliance_status, summary_report))
         else:
             print("ERROR: Failed with validation of url")
     else:
