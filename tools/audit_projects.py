@@ -8,7 +8,9 @@ Description: This script is used to run a Test Script based on script id
             If tenants file contain any data, then the script will run on
             the details that are provided in tenants file, if not it will
             fetch the complete projects list from the platform.
-
+Execution: 
+            Manual: python audit_projects.py -t <testcase-ID>(ex: P3-IDENTITY-MGMT-TC-1)
+            for log: python audit_projects.py -t <testcase-ID> | tee <logFile_name> 
 Dependency:
             data_p3.xml
             date_cae.xml
@@ -19,6 +21,7 @@ Dependency:
             kube_config_alln.enc
             OpenStack Client
             tenants
+            audit_tc_list
 
 Author: Ravi Gujja
 
