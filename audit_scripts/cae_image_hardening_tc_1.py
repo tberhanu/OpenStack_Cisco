@@ -36,9 +36,9 @@ params_list = []
 
 """ Creating name of CSV file """
 date_stamp = datetime.datetime.now().strftime('%m%d%y')
+
 csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
 csv_filename2 = os.path.expanduser("~") + "/logs/cae_image_hardening_Non_Compliant_" + date_stamp + ".csv"
-
 
 def load_config(path):
     """
@@ -65,39 +65,41 @@ def get_projects(project_name,path):
     try:
         print("INFO: Inside get_project method to collect info about Project")
         api_handle = load_config(path)
-        for i in range(0,5):
+        for i in range(0,100):
             try:
                 project_met = pykube.Namespace.objects(api_handle).get(name=project_name)
+                metadata_project = project_met.obj['metadata']
+                if metadata_project is not None:
+                    uid = none_check(metadata_project.get('uid', None))
+                    name = none_check(metadata_project.get('name', None))
+                    annotations = metadata_project.get('annotations', {})
+                    if annotations is not None:
+                        try:
+                            application_id = annotations['citeis.cisco.com/application-id']
+                        except KeyError:
+                            application_id = 'None'
+                            print("INFO: No application Id found ")
+
+                        try:
+                            application_name = annotations['citeis.cisco.com/application-name']
+                        except KeyError:
+                            application_name = 'None'
+                            print("INFO: No application Name found ")
+
+                    project_file_text = [name, uid, application_id, application_name]
+                    print("INFO: Successfully returning the projects")
+                else:
+                    print("INFO: No annotations found")
+                    project_file_text = ['None', 'None', 'None', 'None']
             except Exception as e:
                 exception_str = str(e)
-                if '429' in exception_str:
+                if '429' in str(e):
                     time.sleep(5)
                     print("LOG:RETRYING When too many requests hit the cluster",exception_str)
                     continue
+                else:
+                    print("ERROR:HTTP error ", exception_str)
             break
-        metadata_project = project_met.obj['metadata']
-        if metadata_project is not None:
-            uid = none_check(metadata_project.get('uid', None))
-            name = none_check(metadata_project.get('name', None))
-            annotations = metadata_project.get('annotations', {})
-            if annotations is not None:
-                try:
-                    application_id = annotations['citeis.cisco.com/application-id']
-                except KeyError:
-                    application_id = 'None'
-                    print("INFO: No application Id found ")
-
-                try:
-                    application_name = annotations['citeis.cisco.com/application-name']
-                except KeyError:
-                    application_name = 'None'
-                    print("INFO: No application Name found ")
-
-            project_file_text = [name, uid, application_id, application_name]
-            print("INFO: Successfully returning the projects")
-        else:
-            print("INFO: No annotations found")
-            project_file_text = ['None','None', 'None', 'None']
     except Exception as e:
         print("ERROR: Failed to retrieve project list => %s" % str(e))
     return project_file_text
@@ -113,28 +115,31 @@ def get_pods(project_pod,path):
     try:
         print("INFO: Checking for Projects => %s" % project_pod)
         api_handle = load_config(path)
-        for i in range(0,5):
+        for i in range(0,100):
             try:
                 pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
+                if pods is not None and len(pods):
+                    print("LOGS: Successfully retreived pods, Pod count is ", len(pods))
+                    return pods, len(pods)
+                else:
+                    print("LOGS: No pods found in the pod list")
+                    return None, None
             except Exception as e:
                 exception_str = str(e)
                 if '429' in exception_str:
                     time.sleep(5)
                     print("LOG:RETRYING When too many requests hit the cluster", exception_str)
                     continue
+                else:
+                    print("ERROR:HTTP error ", str(e))
             break
-        if pods is not None and len(pods):
-            print("LOGS: Successfully retreived pods, Pod count is ", len(pods))
-            return pods
-        else:
-            print("LOGS: No pods found in the pod list")
-            return None
     except Exception as e:
         print("ERROR: Failed to retrieve pods with error => %s" % str(e))
         return None
 
 
-def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scanid_valid, teamid_valid):
+def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scanid_valid, teamid_valid, image_count,
+              unsecured_image_count):
     """
     Method to get image details of application running on pod under specified project
     :param project_img: holds Project Name
@@ -143,11 +148,79 @@ def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scani
     :return: image_data | None
     """
     try:
-        print("INFO: Listing the images in the pods in the project  => %s" % project_img)
+        print("INFO: Listing the images in the pods in the project  => %s")
         api = load_config(path)
-        for i in range(0,5):
+        for i in range(0,100):
             try:
                 pod = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
+                if pod is not None:
+                    metadata = pod.obj['metadata']
+                    pod_name = none_check(metadata.get('name', None))
+                    pod_namespace = none_check(metadata.get('namespace', None))
+                    pod_stat = pod.obj['status']
+                    pod_status = none_check(pod_stat.get('phase', None))
+                    container_status = pod.obj['status']
+                    container_info = container_status.get('containerStatuses', None)
+                    if container_info is not None:
+                        for container in container_info:
+                            image_name = none_check(container.get('image', None))
+                            image_id = none_check(container.get('imageID', None))
+                            if image_id is not 'None':
+                                if image_id != 'None':
+                                    image_count +=1
+                            container_id = none_check(container.get('containerID', None))
+                            try:
+                                container_state = container.get('state', {}).get('running', {})
+                                container_start_date = none_check(container_state.get('startedAt', None))
+                            except KeyError:
+                                container_start_date = 'None'
+                            for container_list in pod.obj["spec"]["containers"]:
+                                image = none_check(container_list.get('image',None))
+                                compliance_status = compliance_status_validation(image)
+                                try:
+                                    ports = " "
+                                    for container_port in container_list['ports']:
+                                        container_exposed_port = str(container_port.get('containerPort',None))
+                                        ports = container_exposed_port + "/" + ports
+                                except KeyError:
+                                        ports = 'None'
+
+                            if scanid_valid and teamid_valid:
+                                if container_id is not None:
+                                    resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
+                                else:
+                                    resource_name = str(pod)
+                                if params_list_update(scan_id, tc, team_id, resource_name, compliance_status):
+                                    print("INFO: Updating params_list")
+                                else:
+                                    print("ERROR: Issue observed while updating params_list")
+                                    return None
+                            else:
+                                print("INFO: ScanId or TeamId passed to main() method is not valid, "
+                                      "hence ignoring Kinesis part")
+                            image_file_text = [pod_name, pod_namespace, pod_status, container_id, image_name, image_id,
+                                               container_start_date, ports, compliance_status]
+                            proj_txt = get_projects(project_img, path)
+                            image_data = [image_file_text, proj_txt, compliance_status]
+                            build_metadata(image_data, csv_filename)
+                            non_compliant_str = 'Non-compliant'
+                            if compliance_status.lower() == non_compliant_str.lower():
+                                unsecured_image_count +=1
+                                """ Write a new CSV file when the image is Non-compliant """
+                                create_csv_file_headers(csv_filename2)
+                                build_metadata(image_data, csv_filename2)
+
+                    else:
+                        image_file_text = [pod_name, pod_namespace, pod_status, 'None', 'None', 'None',
+                                           'None', 'None', compliance_status]
+                        proj_txt = get_projects(project_img, path)
+                        image_data = [image_file_text, proj_txt,compliance_status]
+                        build_metadata(image_data, csv_filename)
+
+                    return image_data, image_count, unsecured_image_count
+                else:
+                    print("INFO: No images found")
+                    return None, None, None
             except Exception as e:
                 exception_str = str(e)
                 if '429' in exception_str:
@@ -155,72 +228,9 @@ def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scani
                     print("LOG:RETRYING When too many requests hit the cluster", exception_str)
                     continue
             break
-        if pod is not None:
-            metadata = pod.obj['metadata']
-            pod_name = none_check(metadata.get('name', None))
-            pod_namespace = none_check(metadata.get('namespace', None))
-            pod_stat = pod.obj['status']
-            pod_status = none_check(pod_stat.get('phase', None))
-            container_status = pod.obj['status']
-            container_info = container_status.get('containerStatuses', None)
-            if container_info is not None:
-                for container in container_info:
-                    image_name = none_check(container.get('image', None))
-                    image_id = none_check(container.get('imageID', None))
-                    container_id = none_check(container.get('containerID', None))
-                    try:
-                        container_state = container.get('state', {}).get('running', {})
-                        container_start_date = none_check(container_state.get('startedAt', None))
-                    except KeyError:
-                        container_start_date = 'None'
-                    for container_list in pod.obj["spec"]["containers"]:
-                        image = none_check(container_list.get('image',None))
-                        compliance_status = compliance_status_validation(image)
-                        try:
-                            ports = " "
-                            for container_port in container_list['ports']:
-                                container_exposed_port = str(container_port.get('containerPort',None))
-                                ports = container_exposed_port + "/" + ports
-                        except KeyError:
-                                ports = 'None'
-
-                    if scanid_valid and teamid_valid:
-                        if container_id is not None:
-                            resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
-                        else:
-                            resource_name = str(pod)
-                        if params_list_update(scan_id, tc, team_id, resource_name, compliance_status):
-                            print("INFO: Updating params_list")
-                        else:
-                            print("ERROR: Issue observed while updating params_list")
-                            return None
-                    else:
-                        print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
-                    image_file_text = [pod_name, pod_namespace, pod_status, container_id, image_name, image_id,
-                                       container_start_date, ports, compliance_status]
-                    proj_txt = get_projects(project_img, path)
-                    image_data = [image_file_text, proj_txt, compliance_status]
-                    build_metadata(image_data, csv_filename)
-                    non_compliant_str = 'Non-Compliant'
-                    if compliance_status.lower() == non_compliant_str.lower():
-                        """ Write a new CSV file when the image is Non-compliant """
-                        create_csv_file_headers(csv_filename2)
-                        build_metadata(image_data, csv_filename2)
-
-            else:
-                image_file_text = [pod_name, pod_namespace, pod_status, 'None', 'None', 'None',
-                                   'None', 'None', compliance_status]
-                proj_txt = get_projects(project_img, path)
-                image_data = [image_file_text, proj_txt,compliance_status]
-                build_metadata(image_data, csv_filename)
-
-            return image_data
-        else:
-            print("INFO: No images found")
-            return compliance_status
     except Exception as e:
         print("ERROR: Failed to retrieve images with error => %s" % str(e))
-        return None
+        return None,  None, None
 
 
 def print_metadata(image_file_text, project_file_text, csv_filename):
@@ -316,7 +326,15 @@ def main(url, namespace, scan_id, team_id):
     :return: Compliant | Non-compliant | None
     """
     try:
+        summary_dict = {'No_of_POD(s)_evaluated': 0,
+                    'No_of_Image(s)_evaluated': 0,
+                    'No_of_Unsecured_Image(s)_found': 0,
+                    'No_of_POD(s)_using_unsecured_image(s)': 0,
+                    'No_of_Tenants_with_unsecure_image(s)': 0}
+
+
         flag = "Compliant"
+        unsecured_tenant_count = 0
         scanid_valid = False
         teamid_valid = False
         if scan_id and team_id is not None:
@@ -334,7 +352,7 @@ def main(url, namespace, scan_id, team_id):
                 path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
             else:
                 raise Exception("ERROR: Region name is None")
-                return None
+                return None,summary_dict
             session = session_handle()
             if session:
                 if scanid_valid and teamid_valid:
@@ -342,22 +360,25 @@ def main(url, namespace, scan_id, team_id):
                     update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
                     if update is None:
                         raise Exception("INFO: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
-                        return None
+                        return None,summary_dict
                 else:
                     print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
                 create_csv_file_headers(csv_filename)
                 print("INFO: Check whether source of image used is a trusted one")
-                pods_list = get_pods(namespace, path)
                 proj_txt = get_projects(namespace, path)
                 compliance_status = "Compliant"
-                non_compliant_str = 'Non-Compliant'
+                non_compliant_str = 'Non-compliant'
                 if proj_txt is not None:
+                    pods_list, pod_count = get_pods(namespace, path)
                     if pods_list is not None:
-                        pod_count = 0
+                        temp_pod_count = 0
                         pod_status_sub_str2 = ""
+                        image_count = 0
+                        unsecured_pod_count = 0
+                        unsecured_image_count_total = 0
                         for pod in pods_list:
-                            if pod_count < 5:
+                            if temp_pod_count < 5:
                                 metadata = pod.obj['metadata']
                                 pod_name = none_check(metadata.get('name', None))
                                 pod_stat = pod.obj['status']
@@ -365,18 +386,28 @@ def main(url, namespace, scan_id, team_id):
                                 pod_status_sub_str = pod_name[:-5]
                                 if pod_status_sub_str.lower() == pod_status_sub_str2.lower() \
                                         and pod_status.lower() == "failed":
-                                    pod_count += 1
+                                    temp_pod_count += 1
                                 else:
-                                    pod_count -= 1
+                                    temp_pod_count -= 1
                                 pod_status_sub_str2 = pod_name[:-5]
-                                image_data = get_image(namespace, pod, path, compliance_status,
-                                                       scan_id, team_id, scanid_valid, teamid_valid)
+                                unsecured_image_count = 0
+                                image_data, image_count, unsecured_image_count = get_image(namespace, pod, path,
+                                                        compliance_status, scan_id, team_id, scanid_valid,
+                                                        teamid_valid, image_count, unsecured_image_count)
+                                unsecured_image_count_total = unsecured_image_count_total + unsecured_image_count
+                                if unsecured_image_count > 0:
+                                    unsecured_pod_count +=1
                                 flag_txt = image_data[2]
                                 if flag_txt.lower() == non_compliant_str.lower():
                                     flag = non_compliant_str
+                                    unsecured_tenant_count +=1
+
+
                             else:
                                 print("ERROR: Exiting after 5 unsuccessful retries")
                                 break
+                        summary_dict = build_summary_report(pod_count, image_count, unsecured_image_count_total,
+                                                                unsecured_pod_count, unsecured_tenant_count)
                     else:
                         print("INFO: No Pods running in the project")
                         empty_metadata(namespace, path, compliance_status)
@@ -386,24 +417,25 @@ def main(url, namespace, scan_id, team_id):
                                 print("INFO: Updating params_list")
                             else:
                                 print("ERROR: Issue observed while updating params_list")
-                                return None
+                                return None,summary_dict
                         else:
                             print("INFO: ScanId or TeamId passed to main() method is not valid, "
                                   "hence ignoring Kinesis part")
-                        return compliance_status
+                        return compliance_status,summary_dict
                 else:
                     proj_txt = [namespace] + ["Does not exist"] * 4
                     image_file_text = ["Does not exist"] * 9
                     print_metadata(image_file_text, proj_txt, csv_filename)
+                    return None, summary_dict
         else:
             print("ERROR:URL not found")
-            return None
+            return None, summary_dict
 
         if scanid_valid and teamid_valid:
             stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
             if stream_info is None:
                 raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-                return None
+                return None,summary_dict
             seq_nums_list.append(stream_info)
 
             print("INFO: Sending result complete")
@@ -412,21 +444,19 @@ def main(url, namespace, scan_id, team_id):
                 print("INFO: Successfully submitted the result to Kinesis")
             else:
                 print("INFO: Failed to submit the result to Kinesis")
-                return None
+                return None, summary_dict
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
-
-        return flag
+        return flag, summary_dict
 
     except Exception as e:
-        print("INFO: Failed to retrieve image list and pod list => %s" % str(e))
+        print("INFO: Failed to retrieve image list and pod list => %s" % str(e),summary_dict)
         update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
         if update is None:
             raise Exception("ERROR: Issue observed with updateScanRecord API call")
-            return None
-        raise Exception(
-            "ERROR: Failed to fetch either Projects: %s or Project_list")
-        return None
+            return None,summary_dict
+        raise Exception("ERROR: Failed to fetch either Projects" % str(e))
+        return None, summary_dict
 
 
 def params_list_update(scan_id, tc, team_id, resource, compliance_status):
@@ -461,9 +491,9 @@ def params_list_update(scan_id, tc, team_id, resource, compliance_status):
 
 def none_check(val):
     """
-    
-    :param val: 
-    :return: 
+
+    :param val:
+    :return:
     """
     if val is None:
         val = 'None'
@@ -472,9 +502,9 @@ def none_check(val):
 
 def create_csv_file_headers(csv_filename):
     """
-    
-    :param csv_filename: 
-    :return: 
+
+    :param csv_filename:
+    :return:
     """
     if os.path.isfile(csv_filename):
         print("INFO: CSV file is available to read")
@@ -498,16 +528,24 @@ def create_csv_file_headers(csv_filename):
 
 def compliance_status_validation(image):
     """
-    
-    :param image: 
-    :return: 
+    :param image:
+    :return:
     """
     if re.match(r'^containers.*.cisco.com\/*', image):
         compliance_status = "Compliant"
         return compliance_status
     else:
-        compliance_status = "Non-Compliant"
+        compliance_status = "Non-compliant"
         return compliance_status
+
+
+def build_summary_report(pod_count, image_count, unsecured_image_count_total, unsecured_pod_count, unsecured_tenant_count):
+    summary_dict = {'No_of_POD(s)_evaluated': pod_count,
+                    'No_of_Image(s)_evaluated': image_count,
+                    'No_of_Unsecured_Image(s)_found': unsecured_image_count_total,
+                    'No_of_POD(s)_using_unsecured_image(s)': unsecured_pod_count,
+                    'No_of_Tenants_with_unsecure_image(s)': unsecured_tenant_count}
+    return summary_dict
 
 
 if __name__ == '__main__':
@@ -525,8 +563,8 @@ if __name__ == '__main__':
     url_valid = cae_url_validation(url)
     if url and namespace is not None:
         if url_valid is not None:
-            compliance_status = main(url, namespace, scan_id, team_id)
-            print("INFO: Process complete with compliance status as ", compliance_status)
+            compliance_status, summary_report = main(url, namespace, scan_id, team_id)
+            print("INFO: Process complete with compliance status as ", compliance_status, summary_report)
         else:
             print("ERROR: Failed with validation")
     else:
