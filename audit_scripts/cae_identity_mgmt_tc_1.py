@@ -39,7 +39,7 @@ filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
 seq_nums_list = []
 params_list = []
-
+admin_untrusted = 0
 
 def create_connection(url):
     """
@@ -55,8 +55,19 @@ def create_connection(url):
             else:
                 print("ERROR: No Region found")
         print("INFO: Kube Config's Path", path)
-        k8s_client = config.new_client_from_config(path)
-        dyn_client = DynamicClient(k8s_client)
+
+        for i in range(0,10):
+            try:
+                k8s_client = config.new_client_from_config(path)
+                dyn_client = DynamicClient(k8s_client)
+            except Exception as e:
+                exception_str = str(e)
+                if '429' in exception_str:
+                    time.sleep(5)
+                    print("LOG:RETRYING When too many requests hit the cluster", exception_str)
+                    continue
+            break
+
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in connection: %s" % str(e))
         return None
@@ -85,7 +96,7 @@ def read_trusted_roles(filename):
 
 def fetch_project_list(dyn_client, project_name):
     """
-    Method to fetch the project list and validate if the exists in that list or not
+     Method to fetch the project list and validate if the exists in that list or not
     :param dyn_client:
     :param project_name:
     :return:
@@ -105,13 +116,11 @@ def fetch_project_list(dyn_client, project_name):
             project_list.append(project.metadata.name)
             project_name_id_mapping[
                 project.metadata.name] = project.metadata.uid
-        print(count)
         df = pd.DataFrame(project_data,
                           columns=["project_name"]
                           )
 
-        metadata_file = os.path.expanduser("~") \
-                        + "/logs/cae_identity_mgmt_tc_1_project_name.csv"
+        metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_project_name.csv" 
 
         df.to_csv(metadata_file, index=False)
         if project_name is not None:
@@ -130,7 +139,7 @@ def fetch_project_list(dyn_client, project_name):
 
 def get_app_project_mapping(projects):
     """
-    Method to get application project mapping
+     Method to get application project mapping
     :param projects:
     :return:app_project_mapping
     """
@@ -160,7 +169,7 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                      project_name_id_mapping, project_list, scan_id, team_id,
                      session, path_url, scanid_valid, teamid_valid):
     """
-    Method to get rolebindings
+     Method to get rolebindings data
     :param dyn_client:
     :param projects:
     :param trusted_roles:
@@ -175,6 +184,7 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
     :return:
     """
     try:
+        admin_untrusted=0
         flag = 0
         roles = dyn_client.resources.get(
                                             api_version='authorization.openshift.io/v1',
@@ -219,6 +229,7 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                 if "admin" == i['roleRef']['name']:
                     for user in i['userNames']:
                         if user != "citeis-orchadm.gen":
+                            admin_untrusted +=1
                             proj_role_group_name_untrusted[i['roleRef']['name']]=i['groupNames']
                             if i['roleRef']['name'] not in proj_role_bind_untrusted:
                                 proj_role_bind_untrusted[i['roleRef']['name']] = {
@@ -242,17 +253,19 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                       project_name_id_mapping, path_url,rolebinding_groupname_untrusted)
         complete_data(rolebinding_all, project_app, project_name_id_mapping, trusted_roles, session,
                       team_id, scan_id, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all)
+
         if not rolebinding_untrusted[project_name]:
             flag = 1
-            return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
+
+            return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in rolebindings : %s" % str(e))
-    return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag
+    return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted
 
 
 def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, path_url,rolebinding_groupname_untrusted):
     """
-    Method to append untrusted/Non-compliant data into a csv file
+     Method to append untrusted/Non-compliant data into a csv file
     :param rolebinding_untrusted:
     :param project_app:
     :param project_name_id_mapping:
@@ -274,7 +287,6 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                         (diff.seconds // 60) % 60))
                     groupname = str(rolebinding_groupname_untrusted[project][role])
                     if type(groupname)==list:
-                        print ("Yes")
                         groupname = ''.join(groupname)
                     if project in project_app:
 
@@ -320,7 +332,7 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                           )
 
         date = datetime.datetime.now().strftime('%m%d%y')
-        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
+        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv" 
         if os.path.isfile(error_file):
             with open(error_file, 'a') as f:
                 df.to_csv(f, header=False, index=False)
@@ -335,7 +347,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                   trusted_roles ,session, team_id, scan_id,
                   path_url, scanid_valid, teamid_valid,rolebinding_groupName_all):
     """
-    Method to append complete rolebinding data for the given project into a csv file
+     Method to append complete rolebinding data for the given project into a csv file
     :param rolebinding_all:
     :param project_app:
     :param project_name_id_mapping:
@@ -350,6 +362,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
     :return:
     """
     try:
+
         data_all = []
         for project in rolebinding_all:
             if rolebinding_all[project] is not None:
@@ -363,9 +376,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                         (diff.seconds // 60) % 60))
                     groupname = rolebinding_groupName_all[project][role]
                     if type(groupname)==list:
-                        print ("Yes")
                         groupname = ''.join(groupname)
-                    #print ("GroupName is %s" % groupname)
                     if project in project_app:
 
                         if rolebinding_all[project][role]['usernames'] is not None:
@@ -375,6 +386,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                 else:
                                     compliance_status = "Non-compliant"
                                 if "admin" == role and user != "citeis-orchadm.gen":
+                                    #admin_untrusted +=1
                                     compliance_status = "Non-compliant"
 
                                 data_all.append(
@@ -412,6 +424,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                         else:
                             compliance_status = "Non-compliant"
                         if "admin" == role and user != "citeis-orchadm.gen":
+                            #admin_untrusted +=1
                             compliance_status = "Non-compliant"
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in rolebinding_all[project][role]['usernames']:
@@ -426,8 +439,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                    ]
                           )
         date = datetime.datetime.now().strftime('%m%d%y')
-        metadata_file = os.path.expanduser("~") \
-                        + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
+        metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
 
         if os.path.isfile(metadata_file):
             with open(metadata_file, 'a') as f:
@@ -459,7 +471,7 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
 
 def params_list_update(scan_id, tc, team_id, resource, compliance_status):
     """
-
+    Method to update the param dictionary key values
     :param scan_id:
     :param tc:
     :param team_id:
@@ -487,7 +499,7 @@ def params_list_update(scan_id, tc, team_id, resource, compliance_status):
         return False
 
 
-def output_parameters(trusted_roles, rolebinding_all={}, all_roles=[],
+def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_roles=[],
                       rolebinding_untrusted={}, users_with_untrusted_roles=[]):
     """
     :Method to print all required summary of the execution on the screen
@@ -497,24 +509,43 @@ def output_parameters(trusted_roles, rolebinding_all={}, all_roles=[],
     :param rolebinding_untrusted:
     :param users_with_untrusted_roles:
     """
+    summary_report = {  "No_of_Tenant(s)_evaluated": 0,
+                        "No_of_Unique_Role(s)": 0,
+                        "No_of_Untrusted_Role(s)": 0,
+                        "No_of_Tenants_with_untrusted_role(s)": 0,
+                        "No_of_Users_with_untrusted_roles": 0,
+                        "No_of_Users_tagged_to_admin_role": 0
+                     }
     try:
-        print("Total Number of Tenants Evaluated in Platform : %s" % (len(rolebinding_all.keys())))
+        print("Total Number of Tenant(s) Evaluated in Platform : %s" % (len(rolebinding_all.keys())))
         untrusted_roles = set(all_roles) - set(trusted_roles)
-        print("Total Number of Unique Roles found evaluated in Platform : %s" % len(set(all_roles)))
-        print("Total Number of Untrusted Role Found found : %s" % len(untrusted_roles))
+        print("Total Number of Unique Role(s) found Platform : %s" % len(set(all_roles)))
+        if admin_untrusted == 0:
+            admin_untrusted_role = 0
+        else:
+            admin_untrusted_role =1
+        print("Total Number of Untrusted Role(s) Found : %s" % (len(untrusted_roles) + admin_untrusted_role)) 
         projects_with_untrusted_roles = [
                                          i for i in rolebinding_untrusted.keys()
                                          if rolebinding_untrusted[i] is not None
                                         ]
-        print("Untrusted roles belongs to these many tenants: %s" % len(projects_with_untrusted_roles))
-        print("Unsecured role belongs to these many users : %s" % len(set(users_with_untrusted_roles)))
+        print("Untrusted role(s) belongs to these many tenant(s): %s" % len(projects_with_untrusted_roles))
+        print("Unsecured role(s) belongs to these many user(s) : %s" % (len(set(users_with_untrusted_roles)) + admin_untrusted_role))
+
+        summary_report = { "No_of_Tenant(s)_evaluated": len(rolebinding_all.keys()), "No_of_Unique_Role(s)":len(set(all_roles)),
+                            "No_of_Untrusted_Role(s)":(len(untrusted_roles) + admin_untrusted_role),
+                            "No_of_Tenants_with_untrusted_role(s)":len(projects_with_untrusted_roles),
+                            "No_of_Users_with_untrusted_roles":(len(set(users_with_untrusted_roles))) + admin_untrusted_role,
+                            "No_of_Users_tagged_to_admin_role":admin_untrusted
+                        }
+
     except Exception as e:
         print("ERROR: Failed to retrieve the user roles with error in output: %s" % str(e))
-
+    return summary_report
 
 def scanid_validation(scan_id):
     """
-
+     Method tovalidate the syntax of the scan ID entered
     :param scan_id:
     :return:
     """
@@ -529,6 +560,7 @@ def scanid_validation(scan_id):
 
 def cae_teamid_validation(team_id):
     """"
+    Method tovalidate the syntax of the team ID entered
     """
     teamid_pattern = re.compile(r'^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     if teamid_pattern.match(team_id):
@@ -541,7 +573,7 @@ def cae_teamid_validation(team_id):
 
 def cae_url_validation(url):
     """
-
+     Method tovalidate the syntax of the cluster URL entered
     :param url:
     :return:
     """
@@ -556,7 +588,7 @@ def cae_url_validation(url):
 
 def write_metadata_connection_error(path_url,project_name, project_id):
     """
-
+     Method to send least available data into the csv file in case of connection error
     :param path_url:
     :param project_name:
     :param project_id:
@@ -573,8 +605,7 @@ def write_metadata_connection_error(path_url,project_name, project_id):
                                    "Role Provisioned Age", "Compliant Status","Group Names"
                                    ])
     date = datetime.datetime.now().strftime('%m%d%y')
-    metadata_file = os.path.expanduser("~") \
-                    + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
+    metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv" 
     if os.path.isfile(metadata_file):
         with open(metadata_file, 'a') as f:
             df.to_csv(f, header=False, index=False)
@@ -590,6 +621,14 @@ def main(path_url, p_name, scan_id, team_id):
     :param scan_id: holds the ID of the current scan
     :param team_id: holds the project/tenant ID
     """
+    summary_report = {
+			            "No_of_Tenant(s)_evaluated": 0,
+			            "No_of_Unique_Role(s)": 0,
+			            "No_of_Untrusted_Role(s)": 0,
+			            "No_of_Tenants_with_untrusted_role(s)": 0,
+			            "No_of_Users_with_untrusted_roles": 0,
+			            "No_of_Users_tagged_to_admin_role": 0
+                     }
     try:
         scanid_valid = False
         teamid_valid = False
@@ -601,16 +640,15 @@ def main(path_url, p_name, scan_id, team_id):
                 teamid_valid = cae_teamid_validation(team_id)
             else:
                 print("INFO: Valid ScanId or TeamId not found")
-                return None
+                return None, summary_report
             session = session_handle()
             if session:
                 if scanid_valid and teamid_valid:
                     print("INFO: Update the scan record with \"InProgress\" Status")
                     update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
-                    # if update["ResponseMetadata"]["HTTPStatusCode"] != "200":
                     if update is None:
                         raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
-                        return None
+                        return None, summary_report
                 else:
                     print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
                 try:
@@ -621,7 +659,7 @@ def main(path_url, p_name, scan_id, team_id):
                             projects, project_list, project_name_id_mapping = fetch_project_list(
                                 dyn_client, project_name)
                             if projects and project_list:
-                                rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag = get_rolebindings(
+                                rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted = get_rolebindings(
                                     dyn_client, projects, trusted_roles, project_name,
                                     project_name_id_mapping, project_list, scan_id, team_id,
                                     session, path_url, scanid_valid, teamid_valid)
@@ -629,15 +667,15 @@ def main(path_url, p_name, scan_id, team_id):
                                 update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
                                 if update is None:
                                     raise Exception("ERROR: Issue observed with updateScanRecord API call")
-                                    return None
+                                    return None, summary_report
                                 raise Exception(
                                     "ERROR: Failed to fetch either Project: %s or Project_list: %s" % (project_name, project_list))
                         except Exception as e:
                                 write_metadata_connection_error(path_url, p_name, team_id)
                                 print("ERROR: Fail to retrieve the projects with error in main : %s" % str(e))
-                                return None
-                        output_parameters(
-                                          trusted_roles, rolebinding_all, all_roles,
+                                return None, summary_report
+                        summary_report=output_parameters(
+                                          trusted_roles, admin_untrusted,rolebinding_all, all_roles,
                                           rolebinding_untrusted, users_with_untrusted_roles
                                          )
                     else:
@@ -646,21 +684,20 @@ def main(path_url, p_name, scan_id, team_id):
                             "ERROR: Failed to establish connection to CAE Project %s" % project_name)
                 except Exception as e:
                     print("ERROR: Fail to retrieve the user roles with error in main : %s" % str(e))
-                    return None
+                    return None, summary_report
 
             else:
                 raise Exception("ERROR: Failed to get the connection handle")
-                return None
+                return None, summary_report
 
         else:
             raise Exception("ERROR: The dependency file %s is not available for use" % filename)
-            return None
+            return None, summary_report
 
         if flag == 1:
-            return "Compliant"
+            return "Compliant", summary_report
         else:
-            return "Non-Compliant"
-
+            return "Non-compliant", summary_report
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in complete_data : %s" % str(e))
         if scanid_valid and teamid_valid:
@@ -668,10 +705,10 @@ def main(path_url, p_name, scan_id, team_id):
             update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
             if update is None:
                 raise Exception("ERROR: Issue observed while calling updateScanRecord API")
-                return None
+                return None, summary_report
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
-        return None
+        return None, summary_report
 
 
 if __name__ == "__main__":
@@ -690,7 +727,7 @@ if __name__ == "__main__":
     url_valid = cae_url_validation(url)
     if p_name is not None:
         if url_valid:
-            compliance_status = main(url, p_name, scan_id, team_id)
+            compliance_status, summary_report = main(url, p_name, scan_id, team_id)
             print("INFO: Process complete with compliance status as ", compliance_status)
         else:
             print("ERROR: Failed with validation")
