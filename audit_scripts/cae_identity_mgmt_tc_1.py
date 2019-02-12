@@ -227,6 +227,11 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                     if i['userNames'] is not None:
                         users_with_untrusted_roles.extend(i['userNames'])
                 if "admin" == i['roleRef']['name']:
+                    if i['userNames'] is not None:
+                        admin_untrusted_users = i['userNames']
+                        if "citeis-orchadm.gen" in admin_untrusted_users: 
+                            admin_untrusted_users.remove("citeis-orchadm.gen")
+                        users_with_untrusted_roles.extend(admin_untrusted_users)
                     for user in i['userNames']:
                         if user != "citeis-orchadm.gen":
                             admin_untrusted +=1
@@ -236,8 +241,6 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                                     'usernames': [user],
                                     'timecreated': i['metadata'][
                                         'creationTimestamp']}
-                                if i['userNames'] is not None:
-                                    users_with_untrusted_roles.extend(i['userNames'])
                             else:
                                 proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].append(user)
             rolebinding_all[project] = proj_role_bind
@@ -530,12 +533,12 @@ def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_rol
                                          if rolebinding_untrusted[i] is not None
                                         ]
         print("Untrusted role(s) belongs to these many tenant(s): %s" % len(projects_with_untrusted_roles))
-        print("Unsecured role(s) belongs to these many user(s) : %s" % (len(set(users_with_untrusted_roles)) + admin_untrusted_role))
+        print("Unsecured role(s) belongs to these many user(s) : %s" % (len(set(users_with_untrusted_roles))))
 
         summary_report = { "No_of_Tenant(s)_evaluated": len(rolebinding_all.keys()), "No_of_Unique_Role(s)":len(set(all_roles)),
                             "No_of_Untrusted_Role(s)":(len(untrusted_roles) + admin_untrusted_role),
                             "No_of_Tenants_with_untrusted_role(s)":len(projects_with_untrusted_roles),
-                            "No_of_Users_with_untrusted_roles":(len(set(users_with_untrusted_roles))) + admin_untrusted_role,
+                            "No_of_Users_with_untrusted_roles":(len(set(users_with_untrusted_roles))),
                             "No_of_Users_tagged_to_admin_role":admin_untrusted
                         }
 
