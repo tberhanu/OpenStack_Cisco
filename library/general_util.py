@@ -7,7 +7,7 @@ Description: This python script holds the APIs required to post
 
 Author: Sudip Das <sudipda@cisco.com>; January 7th, 2019
 
-Copyright (c) 2018 Cisco Systems.
+Copyright (c) 2019 Cisco Systems.
 All rights reserved.
 -----------------------------------------------------------------------
 """
@@ -55,13 +55,10 @@ def add_result_to_stream(session, platform, teamid, testid, params_list):
            'createdAt':<value taken as audit_time = int(time.time()) * 1000>,
            'updatedAt':<value in the same form as audit_time = int(time.time()) * 1000>
            }
-
     Every params goes to dynamoDB as record and has size restriction
     per https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html
     There are other restriction as dynamoDB key can not have null value
-
     os.environ['ENV_TYPE'] should return blank for production as "".
-
     :param platform:
     :param teamid:
     :param testid:
@@ -108,7 +105,6 @@ def add_result_to_stream(session, platform, teamid, testid, params_list):
 def updateScanRecord(session, platform, scanid, teamid, testid, status):
     """
     update scan records
-
     :param platform: name of platform
     :param scanid: scanid received while reading SQS message
     :param teamid: teamid received while reading SQS message
@@ -139,6 +135,37 @@ def updateScanRecord(session, platform, scanid, teamid, testid, status):
         print("ERROR: Record posting on Kinesis Stream failed due to %s" % str(update_record_err))
 
     return response
+
+
+def params_list_update(scan_id, tc, team_id, resource_name, compliance_status, params_list):
+    """
+    Method to update params_list
+    :param scan_id:
+    :param tc:
+    :param team_id:
+    :param resource_name:
+    :param compliance_status:
+    :param params_list:
+    :return:
+    """
+    audit_time = int(time.time()) * 1000
+    try:
+        params = {
+            "scanid": scan_id,
+            "testid": tc,
+            "teamid": str(team_id),
+            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource_name),
+            "createdAt": audit_time,
+            "updatedAt": audit_time,
+            "resourceName": resource_name,
+            "complianceStatus": compliance_status
+        }
+        params_list.append(params.copy())
+        return True
+
+    except KeyError as params_err:
+        print("ERROR: Issue observed while updating params_list - %s" % str(params_err))
+        return False
 
 
 def send_result_complete(session, platform, scanid, teamid, testid, seq_nums_list):
