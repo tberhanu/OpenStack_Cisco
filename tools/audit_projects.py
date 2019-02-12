@@ -5,8 +5,11 @@
 Description: This script is used to run a Test Script based on script id
             on all the projects in P3 and CAE regions.
             Complete git repo will be downloaded when we run the script.
+            If tenants file contain any data, then the script will run on
+            the details that are provided in tenants file, if not it will
+            fetch the complete projects list from the platform.
 
-Dependency: 
+Dependency:
             data_p3.xml
             date_cae.xml
             env_variables.py
@@ -15,6 +18,7 @@ Dependency:
             kube_config_rcdn.enc
             kube_config_alln.enc
             OpenStack Client
+            tenants
 
 Author: Ravi Gujja
 
@@ -49,12 +53,19 @@ from os import path
 from random import choice, shuffle
 from string import digits, ascii_lowercase
 
-import generate_audit_report as report
 
 
 requests.packages.urllib3.disable_warnings()
 
 def gen_word(N, min_N_digits, min_N_lower):
+    """
+    Genetares a randum value based on the inputs
+    :param N : n number to create random value
+    :param min_N_digits: no of digits in random value
+    :param min_N_lower: no of letters in random value
+    :return: randum value
+
+    """
     choose_from = [digits]*min_N_digits + [ascii_lowercase]*min_N_lower
     choose_from.extend([digits + ascii_lowercase] * (N-min_N_lower-min_N_digits))
     chars = [choice(bet) for bet in choose_from]
@@ -154,7 +165,7 @@ def get_projects(config_path):
     """
     This method is used to get the project list for CAE platform
     :param config_path : path to config file for cae regions
-    :return: return the list of project details 
+    :return: return the list of project details
     """
     try:
         api_handle = load_config(config_path)
@@ -208,7 +219,9 @@ def load_config(config_path):
 
 def main(test_id):
     """
-    This method will run the audit test script on all the projects in P3 and CAE w.r.t the test id 
+    This method will run the audit test script on all the projects in P3 and CAE w.r.t the test id.
+    This will also check if there are any details in tenants file, to execute testcase on multiple projects.
+    This will also change the name of the csv file if it already exists.
     :param test_id: audit test ID
     return: none
     """
@@ -231,7 +244,7 @@ def main(test_id):
                 if os.path.isfile(csv_file):
                     new_csv_file = os.environ["LOGS_DIR"] + "/p3_identity_mgmt_tc_1_" + str(gen_word(8, 4, 4)) + ".csv"
                     os.rename(csv_file,new_csv_file)
-            elif test_script=="p3_image_hardening_tc_1":         
+            elif test_script=="p3_image_hardening_tc_1":
                 all_image_csv = os.environ["LOGS_DIR"] + "/p3_all_images_list_" + date_stamp + ".csv"
                 if os.path.isfile(all_image_csv):
                     new_all_image_csv = os.environ["LOGS_DIR"] + "/p3_all_images_list_" + str(gen_word(8, 4, 4)) + ".csv"
@@ -265,6 +278,10 @@ def main(test_id):
         try:
             tenants_file = "tenants"
             project_count = 0
+            finalsummary = {}
+            rtp_summary = {}
+            rcdn_summary = {}
+            alln_summary ={}
             if path.exists(tenants_file) and path.getsize(tenants_file) > 0:
                 if os.path.isfile(script_file):
                     sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
@@ -285,17 +302,24 @@ def main(test_id):
                                     name = regions.find('regionname').text
                                     if name == region_name:
                                         region_url = regions.find('regionurl').text
+
                                 if region_url != " " :
+                                    summary = {}
                                     print("\n %s " % tenants)
                                     print("LOG: Initiating '%s' test on project %s in P3 region: %s "
                                                                 % (test_script, project_name, region_url))
-                                    n_secure, n_unsecure, n_unknown = test_guardrail_for_multi_tenant(region_url, project_name, tscript, test_id)
+                                    n_secure, n_unsecure, n_unknown, summary = test_guardrail_for_multi_tenant(region_url, project_name, tscript, test_id)
                                     p_secured = p_secured + n_secure
                                     p_unsecured = p_unsecured + n_unsecure
                                     p_unknown = p_unknown + n_unknown
+                                    for var,val in summary.items():
+                                            if var in finalsummary:
+                                                finalsummary[var]= finalsummary[var] + val
+                                            else:
+                                                finalsummary[var] = val
                                     project_count = project_count + 1
                                 else:
-                                    print("ERROR: NO URL Found with given REGION NAME %s" % region_name)
+                                    print("ERROR: NO URL Found for given REGION NAME %s" % region_name)
                             print("INFO: OVERALL SUMMARY FOR THIS EXECUTION")
                             print("INFO: No. of SECURE tenant for test Script %s are %s"
                                                                         % (test_id, p_secured))
@@ -303,7 +327,6 @@ def main(test_id):
                                                                         % (test_id, p_unsecured))
                             print("INFO: No. of UNKNOWN tenant for test Script %s are %s"
                                                                         % (test_id, p_unknown))
-                            summary_flag = True
                         else:
                             print("ERROR: No tenant list found")
                         end_time = round(time.time() - start_time)
@@ -316,7 +339,7 @@ def main(test_id):
                     print("INFO: Test Script %s DOES NOT exist" % test_id)
             else:
                 print("LOG: Test Script belongs to P3 platform. Reading data.xml file of P3 region")
-                
+
                 tree = ET.parse('data_p3.xml')
                 root = tree.getroot()
                 print("LOG: Iterating the data file for getting regionURL and RegionName in P3 region ")
@@ -328,7 +351,7 @@ def main(test_id):
                     p_unknown = 0
 
                     if os.path.isfile(script_file):
-                        
+
                         sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
                         tscript = importlib.import_module(test_script)
                         try:
@@ -343,29 +366,28 @@ def main(test_id):
                                                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                                                     env=my_env
                                                                 )
-                                #plist_process.communicate()
                                 plist_process.wait()
                                 print("project list assigned to plist")
                                 project_list = plist_process.stdout
                                 print("terminating plist sub process")
-                        
+
                             except Exception as e:
                                 print("ERROR: Unable to generate project list for region %s" % region_name)
                                 print(e)
                             if project_list:
-
                                 index = '"ID","Name"'
                                 for projectline in project_list:
                                     if projectline.strip() == index:
                                         pass
                                     else:
+                                        summary = {}
                                         print("\n %s " % projectline)
                                         project_details = projectline.strip().split(",")
                                         project_id = project_details[0][1:-1]
                                         project_name = project_details[1][1:-1]
                                         print("LOG: Initiating '%s' test on project %s in P3 region: %s "
                                                                 % (test_script, project_name, region_name))
-                                        n_secure, n_unsecure, n_unknown = test_guardrail(
+                                        n_secure, n_unsecure, n_unknown,summary = test_guardrail(
                                                                                             region_url, project_id,
                                                                                             project_name, tscript,
                                                                                             region_name, test_id
@@ -373,17 +395,47 @@ def main(test_id):
                                         p_secured = p_secured + n_secure
                                         p_unsecured = p_unsecured + n_unsecure
                                         p_unknown = p_unknown + n_unknown
+                                        for var,val in summary.items():
+                                            if var in finalsummary:
+                                                finalsummary[var]= finalsummary[var] + val
+                                            else:
+                                                finalsummary[var] = val
                                         project_count = project_count + 1
+                                        if region_name == "RTP":
+                                            for var,val in summary.items():
+                                                if var in rtp_summary:
+                                                    rtp_summary[var]= rtp_summary[var] + val
+                                                else:
+                                                    rtp_summary[var] = val
+                                        elif region_name == "RCDN":
+                                            for var,val in summary.items():
+                                                if var in rcdn_summary:
+                                                    rcdn_summary[var]= rcdn_summary[var] + val
+                                                else:
+                                                    rcdn_summary[var] = val
+                                        elif region_name == "ALLN":
+                                            for var,val in summary.items():
+                                                if var in alln_summary:
+                                                    alln_summary[var]= alln_summary[var] + val
+                                                else:
+                                                    alln_summary[var] = val
 
-                                print("INFO: OVERALL SUMMARY FOR THE REGION")
+                                print("INFO: OVERALL SUMMARY FOR THE REGION : %s " % region_name)
                                 print("INFO: No. of SECURE tenant for test Script %s in %s are %s"
                                                                             % (test_id, region_name, p_secured))
                                 print("INFO: No. of UN-SECURE tenant for test Script %s in %s are %s"
                                                                             % (test_id, region_name, p_unsecured))
                                 print("INFO: No. of UNKNOWN tenant for test Script %s in %s are %s"
                                                                             % (test_id, region_name, p_unknown))
-                                summary_flag = True
-
+                                if region_name == "RTP":
+                                    for var,val in rtp_summary.items():
+                                        print(str(var) + " : " + str(val) + "\n")
+                                elif region_name == "RCDN":
+                                    for var,val in rcdn_summary.items():
+                                        print(str(var) + " : " + str(val) + "\n")
+                                if region_name == "ALLN":
+                                    for var,val in alln_summary.items():
+                                        print(str(var) + " : " + str(val) + "\n")
                             else:
                                 print("INFO: Project list did not generate for region %s " % region_name)
                             end_time = round(time.time() - start_time)
@@ -396,9 +448,9 @@ def main(test_id):
 
                     else:
                         print("INFO: Test Script %s DOES NOT exist" % test_id)
-            print("-.-.-.-.--.. TOTAL NUMBER OF TENANTS: %s  .-.-.--.-." % project_count)
-            if summary_flag == True:
-                report.main(tc,date_stamp)
+            print("\n -.-.-.-.--.. TOTAL NUMBER OF TENANTS: %s  .-.-.--.-." % project_count)
+            for var,val in finalsummary.items():
+                print(str(var) + " : " + str(val) + "\n")
         except Exception as e:
             print("ERROR: Exception caught - %s" % str(e))
 
@@ -420,10 +472,13 @@ def main(test_id):
                     new_image_hardening_csv = os.environ["LOGS_DIR"] + "/cae_image_hardening_tc_1_" + str(gen_word(8, 4, 4)) + ".csv"
                     os.rename(image_hardening_csv,new_image_hardening_csv)
 
-
         try:
             tenants_file = "tenants"
             project_count = 0
+            finalsummary = {}
+            rtp_summary = {}
+            rcdn_summary = {}
+            alln_summary ={}
             if path.exists(tenants_file) and path.getsize(tenants_file) > 0:
                 if os.path.isfile(script_file):
                     sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
@@ -445,13 +500,20 @@ def main(test_id):
                                     if name == region_name:
                                         region_url = regions.find('regionurl').text
                                 if region_url != " " :
+                                    summary = {}
                                     print("\n %s " % tenants)
                                     print("LOG: Initiating '%s' test on project %s in CAE region: %s "
                                                                 % (test_script, project_name, region_url))
-                                    n_secure, n_unsecure, n_unknown = test_guardrail_for_multi_tenant(region_url, project_name, tscript, test_id)
+                                    n_secure, n_unsecure, n_unknown,summary = test_guardrail_for_multi_tenant(region_url, project_name, tscript, test_id)
                                     p_secured = p_secured + n_secure
                                     p_unsecured = p_unsecured + n_unsecure
                                     p_unknown = p_unknown + n_unknown
+
+                                    for var,val in summary.items():
+                                            if var in finalsummary:
+                                                finalsummary[var]= finalsummary[var] + val
+                                            else:
+                                                finalsummary[var] = val
                                     project_count = project_count + 1
                                 else:
                                     print("ERROR: NO URL Found with given REGION NAME %s" % region_name)
@@ -462,7 +524,8 @@ def main(test_id):
                                                                         % (test_id, p_unsecured))
                             print("INFO: No. of UNKNOWN tenant for test Script %s are %s"
                                                                         % (test_id, p_unknown))
-                            summary_flag = True
+                            #summary_flag = True
+
                         else:
                             print("ERROR: No tenant list found")
                         end_time = round(time.time() - start_time)
@@ -473,7 +536,7 @@ def main(test_id):
 
                 else:
                     print("INFO: Test Script %s DOES NOT exist" % test_id)
-            else: 
+            else:
                 print("LOG: Test Script belongs to CAE platform. Reading data.xml file of CAE region")
                 tree = ET.parse('data_cae.xml')
                 root = tree.getroot()
@@ -496,13 +559,14 @@ def main(test_id):
                             project_list = get_projects(config_path)
                             if project_list:
                                 for projectline in project_list:
+                                    summary = {}
                                     print("\n %s " % projectline)
                                     project_details = projectline.strip().split(" ")
                                     project_id = project_details[0]
                                     project_name = project_details[1]
                                     print("LOG: Initiating '%s' test on project %s in CAE region: %s"
                                                             % (test_script, project_name, region_name))
-                                    n_secure, n_unsecure, n_unknown = test_guardrail(
+                                    n_secure, n_unsecure, n_unknown, summary = test_guardrail(
                                                                                         region_url, project_id,
                                                                                         project_name, tscript,
                                                                                         region_name, test_id
@@ -510,16 +574,47 @@ def main(test_id):
                                     p_secured = p_secured + n_secure
                                     p_unsecured = p_unsecured + n_unsecure
                                     p_unknown = p_unknown + n_unknown
+                                    for var,val in summary.items():
+                                            if var in finalsummary:
+                                                finalsummary[var]= finalsummary[var] + val
+                                            else:
+                                                finalsummary[var] = val
                                     project_count = project_count + 1
+                                    if region_name == "CAERTP":
+                                        for var,val in summary.items():
+                                            if var in rtp_summary:
+                                                rtp_summary[var]= rtp_summary[var] + val
+                                            else:
+                                                rtp_summary[var] = val
+                                    elif region_name == "CAERCDN":
+                                        for var,val in summary.items():
+                                            if var in rcdn_summary:
+                                                rcdn_summary[var]= rcdn_summary[var] + val
+                                            else:
+                                                rcdn_summary[var] = val
+                                    elif region_name == "CAEALLN":
+                                        for var,val in summary.items():
+                                            if var in alln_summary:
+                                                alln_summary[var]= alln_summary[var] + val
+                                            else:
+                                                alln_summary[var] = val
 
-                                print("\n OVERALL SUMMARY FOR THE REGION")
+                                print("\n OVERALL SUMMARY FOR THE REGION : %s " % region_name)
                                 print("INFO: NO of SECURE tenant for test Script %s in %s are %s"
                                                                 %(test_id, region_name, p_secured))
                                 print("INFO: NO of UN-SECURE tenant for test Script %s in %s are %s"
                                                                 %(test_id, region_name, p_unsecured))
                                 print("INFO: NO of UNKNOWN tenant for test Script %s in %s are %s"
                                                                 %(test_id, region_name, p_unknown))
-                                summary_flag = True
+                                if region_name == "CAERTP":
+                                    for var,val in rtp_summary.items():
+                                        print(str(var) + " : " + str(val) + "\n")
+                                elif region_name == "CAERCDN":
+                                    for var,val in rcdn_summary.items():
+                                        print(str(var) + " : " + str(val) + "\n")
+                                if region_name == "CAEALLN":
+                                    for var,val in alln_summary.items():
+                                        print(str(var) + " : " + str(val) + "\n")
                             else:
                                 print("INFO: Project list didnot generate for region %s " % region_name)
 
@@ -532,8 +627,8 @@ def main(test_id):
                     else:
                         print("INFO: Test Script %s DOES NOT exist" % test_id)
             print("-.-.-.-.--.. TOTAL NUMBER OF TENANTS: %s  .-.-.--.-." % project_count)
-            if summary_flag == True:
-                report.main(tc,date_stamp)
+            for var,val in finalsummary.items():
+                print(str(var) + " : " + str(val) + "\n")
         except Exception as e:
             print("ERROR: Exception caught - %s" % str(e))
 
@@ -550,7 +645,7 @@ def test_guardrail(region_url, project_id, project_name, tscript, region_name, t
     :param tscript: import module of test script
     :param region_name: region name
     :param test_id: test id
-    :return : count of secured and unsecured tenants for region
+    :return : count of secured and unsecured tenants for region,and also summary of the testcase for given project
     """
     print("LOG: Running Test Script on region %s" % region_name)
     count_secure = 0
@@ -558,7 +653,8 @@ def test_guardrail(region_url, project_id, project_name, tscript, region_name, t
     count_unknown = 0
     try:
         scan_id = "samplescanid"
-        x = tscript.main(region_url, project_name, scan_id, project_id)
+        summary = {}
+        x,summary = tscript.main(region_url, project_name, scan_id, project_id)
         if x == "Compliant":
             count_secure = count_secure + 1
             print("********INFO: THIS PROJECT IS SECURE*******")
@@ -572,17 +668,27 @@ def test_guardrail(region_url, project_id, project_name, tscript, region_name, t
         print("*********INFO: EXCEPTION- UNKNOWN********")
         print("ERROR: Test Case %s did not run properly on project: %s due to %s" % (test_id, project_name, str(e)))
         count_unknown = count_unknown + 1
-    
-    return count_secure, count_unsecure, count_unknown
+
+    return count_secure, count_unsecure, count_unknown , summary
 
 def test_guardrail_for_multi_tenant(region_url,project_name,tscript,test_id):
+    """
+    This function executes the main method of the audit script based on the test id.
+    This is used in case the testcase had to be executed based on tenants file
+    :param region_ulr: url to pass to audit script
+    :param project_name: name of the project/tenant
+    :param tscript: import module of test script
+    :param test_id: test id
+    :return : count of secured and unsecured tenants for region and also summary of the testcase for given project
+    """
     count_secure = 0
     count_unsecure = 0
     count_unknown = 0
     try:
         scan_id = "samplescanid"
+        summary = {}
         project_id = str(gen_word(8, 4, 4))
-        x = tscript.main(region_url, project_name, scan_id, project_id)
+        x,summary = tscript.main(region_url, project_name, scan_id, project_id)
         if x == "Compliant":
             count_secure = count_secure + 1
             print("********INFO: THIS PROJECT IS SECURE*******")
@@ -596,8 +702,8 @@ def test_guardrail_for_multi_tenant(region_url,project_name,tscript,test_id):
         print("*********INFO: EXCEPTION- UNKNOWN********")
         print("ERROR: Test Case %s did not run properly on project: %s due to %s" % (test_id, project_name, str(e)))
         count_unknown = count_unknown + 1
-    
-    return count_secure, count_unsecure, count_unknown
+
+    return count_secure, count_unsecure, count_unknown, summary
 
 
 
@@ -614,8 +720,6 @@ if __name__== "__main__":
     else:
         print("ERROR: Test ID entered is incorrect, please choose one from below list. CASE SENSITIVE : \n %s" % audit_tc_list)
         sys.exit()
-
-
 
     """ loading variables from encrypted credentials file, decrypting config and credentials file"""
     load_enc_variable()
@@ -634,6 +738,7 @@ if __name__== "__main__":
         print("ERROR: Failed to download GIT REPO.")
         print("INFO: TERMINATING THE PROCESS")
     """
+    #for manual execution
     my_env = os.environ.copy()
     main(test_id)
     """
