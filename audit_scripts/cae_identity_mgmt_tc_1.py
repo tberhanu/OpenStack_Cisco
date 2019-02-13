@@ -116,13 +116,7 @@ def fetch_project_list(dyn_client, project_name):
             project_list.append(project.metadata.name)
             project_name_id_mapping[
                 project.metadata.name] = project.metadata.uid
-        df = pd.DataFrame(project_data,
-                          columns=["project_name"]
-                          )
-
-        metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_project_name.csv" 
-
-        df.to_csv(metadata_file, index=False)
+        
         if project_name is not None:
             if project_name in project_list:
                 project_list = [project_name]
@@ -227,11 +221,6 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                     if i['userNames'] is not None:
                         users_with_untrusted_roles.extend(i['userNames'])
                 if "admin" == i['roleRef']['name']:
-                    if i['userNames'] is not None:
-                        admin_untrusted_users = i['userNames']
-                        if "citeis-orchadm.gen" in admin_untrusted_users: 
-                            admin_untrusted_users.remove("citeis-orchadm.gen")
-                        users_with_untrusted_roles.extend(admin_untrusted_users)
                     for user in i['userNames']:
                         if user != "citeis-orchadm.gen":
                             admin_untrusted +=1
@@ -241,6 +230,11 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                                     'usernames': [user],
                                     'timecreated': i['metadata'][
                                         'creationTimestamp']}
+                                if i['userNames'] is not None:
+                                    admin_untrusted_users = i['userNames']
+                                    if "citeis-orchadm.gen" in admin_untrusted_users: 
+                                        admin_untrusted_users.remove("citeis-orchadm.gen")
+                                    users_with_untrusted_roles.extend(admin_untrusted_users)
                             else:
                                 proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].append(user)
             rolebinding_all[project] = proj_role_bind
