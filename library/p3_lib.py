@@ -14,6 +14,8 @@ All rights reserved.
 
 import openstack
 import re
+import os
+from os import environ as env
 
 
 def p3_teamid_validation(team_id):
