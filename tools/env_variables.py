@@ -20,8 +20,8 @@ env_variables = {
     "AWS_EXECUTE_API_URL" : "https://n98uo7cw6i.execute-api.us-east-1.amazonaws.com/devStaging/teams",
     "AWS_CANONICAL_URI": "/devStaging/teams",
     "COUNT_OF_SQS_READ_MSG": "1",
-    "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE.fifo",
-    "SQS_DEAD_LETTER_QUEUE_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayStaleMessages.fifo",
+    "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE",
+    "SQS_DEAD_LETTER_QUEUE_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBDeadLetterQueueCAE",
     "SQS_MSG_VISIBILITY_TIMEOUT": "600",
 
     "AUDIT_SCRIPTS_DIR": os.path.expanduser("~") + "/csb_cnt_repo/audit_scripts",
