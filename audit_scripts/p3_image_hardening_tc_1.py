@@ -101,40 +101,43 @@ def list_servers(conn, images, volumes_list, project_name, os_auth_url):
                 address['addr'] = "None"
 
             volume = pull.get('attached_volumes', None)
-            volume_id = volume[0]['id'] if volume else None
-            volume_metadata = volumes_list.get(volume_id)
-            volume_image_detail = (volume_metadata.get('volume_image_metadata') or None) if volume_metadata else None
-            volume_image_id = volume_image_detail.get('image_id') if volume_image_detail else None
+            image_ids = []
+            for each in volume: 
+                volume_metadata = volumes_list.get(each['id']) if volume else None
+                volume_image_detail = (volume_metadata.get('volume_image_metadata') or None) if volume_metadata else None
+                image_ids.append(volume_image_detail.get('image_id', None)) if volume_image_detail else None
             
-            image_id = (pull.get('image') or {'id': volume_image_id} or {'id': "None"})['id']
-            image = images.get(image_id) or {'id': image_id}
-            
-            image_updated_at = image.get('updated_at')
-            image_created = dateutil.parser.parse(image_updated_at).replace(tzinfo=None) if image_updated_at is not None else None
-            image_updated_days = (datetime.datetime.now() - image_created) if image_created is not None else None
-            image_updated_ago = (("%s Days %s Hours %s Mins" % (image_updated_days.days,
-                                    image_updated_days.seconds//3600, (image_updated_days.seconds//60) % 60))
-                                    if image_updated_days is not None else None)
+            image_ids.append(pull.get('image')['id']) if pull.get('image') else None
+            for image_id in image_ids:
+                image = images.get(image_id) or {'id': image_id}
+                
+                image_updated_at = image.get('updated_at')
+                image_created = dateutil.parser.parse(image_updated_at).replace(tzinfo=None) if image_updated_at is not None else None
+                image_updated_days = (datetime.datetime.now() - image_created) if image_created is not None else None
+                image_updated_ago = (("%s Days %s Hours %s Mins" % (image_updated_days.days,
+                                        image_updated_days.seconds//3600, (image_updated_days.seconds//60) % 60))
+                                        if image_updated_days is not None else None)
 
-            servers.append([
-                        pull['id'],
-                        pull['name'],
-                        pull['project_id'],
-                        project_name,
-                        os_auth_url,
-                        image['id'],
-                        image.get('owner_id'),
-                        image.get('name'),
-                        image.get('visibility') == 'public',
-                        image.get('direct_url'),
-                        image_updated_ago,
-                        pull['availability_zone'],
-                        vm_updated_days,
-                        address['addr'],
-                        pull['host_id'],
-                        pull['user_id'],
+                servers.append([
+                            pull['id'],
+                            pull['name'],
+                            pull['project_id'],
+                            project_name,
+                            os_auth_url,
+                            image_id,
+                            image.get('owner_id'),
+                            image.get('name'),
+                            image.get('visibility') == 'public',
+                            image.get('direct_url'),
+                            image_updated_ago,
+                            pull['availability_zone'],
+                            vm_updated_days,
+                            address['addr'],
+                            pull['host_id'],
+                            pull['user_id'],
 
-            ])
+                ])
+        
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
         headers = [
@@ -418,11 +421,20 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images,
     :param unused_unsecured_images: list_unused_unsecured_images
     """
     try:
+        server_ids = []
+        unsecured_server_ids = []
+        for server in servers:
+            server_ids.append(server[0])
+        server_id = set(server_ids)
+        for unsecured_server in unsecured_servers:
+            unsecured_server_ids.append(unsecured_server[0])
+        unsecured_server_id = set(unsecured_server_ids)
+        
         summary_report = {
             "No_of_Image(s)_evaluated": len(all_images_list),
             "No_of_Unsecured_Image(s)": len(all_unsecured_images),
-            "No_of_Server(s)_evaluated": len(servers),
-            "No_of_Unsecured_Server(s)": len(unsecured_servers),
+            "No_of_Server(s)_evaluated": len(server_id),
+            "No_of_Unsecured_Server(s)": len(unsecured_server_id),
             "No_of_Unused_Image(s)": len(unused_images),
             "No_of_Unused_Unsecured_Image(s)": len(unused_unsecured_images)
         }
@@ -430,8 +442,8 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images,
         print("Name of Project under trail: %s" % project_name)
         print("Total no. of images found: %s" % len(all_images_list))
         print("Total no. of unsecured images found: %s" % len(all_unsecured_images))
-        print("Total no. of servers in tenant account: %s" % len(servers))
-        print("Total no. of servers using unsecured image: %s" % len(unsecured_servers))
+        print("Total no. of servers in tenant account: %s" % len(server_id))
+        print("Total no. of servers using unsecured image: %s" % len(unsecured_server_id))
         print("Total no. of unused images in Tenant account: %s" % len(unused_images))
         print("Total no. of unused unsecured images in Tenant account: %s" % len(unused_unsecured_images))
         return summary_report
