@@ -17,7 +17,7 @@ env_variables = {
     "AWS_REGION": "us-east-1",
     "AWS_SERVICE": "execute-api",
     "AWS_ENV_TYPE": "dev",
-    "AWS_EXECUTE_API_URL" : "https://n98uo7cw6i.execute-api.us-east-1.amazonaws.com/devStaging/teams",
+    "AWS_EXECUTE_API_URL": "https://n98uo7cw6i.execute-api.us-east-1.amazonaws.com/devStaging/teams",
     "AWS_CANONICAL_URI": "/devStaging/teams",
     "COUNT_OF_SQS_READ_MSG": "1",
     "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE",
