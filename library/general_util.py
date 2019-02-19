@@ -86,8 +86,7 @@ def add_result_to_stream(session, platform, teamid, testid, params_list):
     kinesis_client = session.client('kinesis', region_name=os.environ["AWS_REGION"])
     try:
         response = kinesis_client.put_record(
-                    #StreamName=os.environ['ENV_TYPE']+"ResultStream"+platform,
-                    StreamName="dev"+"ResultStream"+platform,
+                    StreamName=os.environ['AWS_ENV_TYPE']+"ResultStream"+platform,
                     Data=json.dumps(params_list, cls=CustomEncoder),
                     PartitionKey=sortKey
         )
@@ -126,8 +125,7 @@ def updateScanRecord(session, platform, scanid, teamid, testid, status):
             }
     try:
         response = kinesis_client.put_record(
-                                        #StreamName=os.environ['ENV_TYPE']+"ScanStream"+platform,
-                                        StreamName="dev"+"ScanStream"+platform,
+                                        StreamName=os.environ['AWS_ENV_TYPE']+"ScanStream"+platform,
                                         Data=json.dumps(value, cls=CustomEncoder),
                                         PartitionKey=sortKey
         )
@@ -201,8 +199,7 @@ def send_result_complete(session, platform, scanid, teamid, testid, seq_nums_lis
             }
     try:
         response = kinesis_client.put_record(
-                                        #StreamName=os.environ['ENV_TYPE']+"ScanStream"+platform,
-                                        StreamName="dev"+"ScanStream"+platform,
+                                        StreamName=os.environ['AWS_ENV_TYPE']+"ScanStream"+platform,
                                         Data=json.dumps(value, cls=CustomEncoder),
                                         PartitionKey=sortKey
         )
