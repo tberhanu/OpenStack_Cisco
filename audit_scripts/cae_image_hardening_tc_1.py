@@ -25,7 +25,9 @@ import time
 import sys
 
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
-from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+import cae_lib
+import common_lib
+import general_util
 
 
 """ Translating script name to get the TC Label """
@@ -190,7 +192,7 @@ def get_image(project_img, pod, path, compliance_status, scan_id, team_id, scani
                                     resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
                                 else:
                                     resource_name = str(pod)
-                                if params_list_update(scan_id, tc, team_id, resource_name, compliance_status):
+                                if general_util.params_list_update(scan_id, tc, team_id, resource_name, compliance_status, params_list):
                                     print("INFO: Updating params_list")
                                 else:
                                     print("ERROR: Issue observed while updating params_list")
@@ -286,36 +288,6 @@ def build_metadata(image_values, csv_filename):
         return None
 
 
-def scanid_validation(scan_id):
-    scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-    if scanid_pattern.match(scan_id):
-        print("INFO: Received valid ScanID")
-        return True
-    else:
-        print("ERROR: Received ScanID is not valid")
-        return False
-
-
-def cae_teamid_validation(team_id):
-    teamid_pattern = re.compile(r'^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-    if teamid_pattern.match(team_id):
-        print("INFO: Received valid TeamID")
-        return True
-    else:
-        print("ERROR: Received TeamID is not valid")
-        return False
-
-
-
-def cae_url_validation(url):
-    cae_url_pattern = re.compile(r'^https://cae-np-.*.cisco.com$')
-    if cae_url_pattern.match(url):
-        print("INFO: Received valid Domain URL")
-        return True
-    else:
-        print("ERROR: Received Domain URL is not valid")
-        return False
-
 def main(url, namespace, scan_id, team_id):
     """
     Main method to start the audit over images used in the given NameSpace
@@ -326,20 +298,21 @@ def main(url, namespace, scan_id, team_id):
     :return: Compliant | Non-compliant | None
     """
     try:
-        summary_dict = {'No_of_POD(s)_evaluated': 0,
-                    'No_of_Image(s)_evaluated': 0,
-                    'No_of_Unsecured_Image(s)_found': 0,
-                    'No_of_POD(s)_using_unsecured_image(s)': 0,
-                    'No_of_Tenants_with_unsecure_image(s)': 0}
-
+        summary_dict = {
+                        'No_of_POD(s)_evaluated': 0,
+                        'No_of_Image(s)_evaluated': 0,
+                        'No_of_Unsecured_Image(s)_found': 0,
+                        'No_of_POD(s)_using_unsecured_image(s)': 0,
+                        'No_of_Tenants_with_unsecure_image(s)': 0
+                       }
 
         flag = "Compliant"
         unsecured_tenant_count = 0
         scanid_valid = False
         teamid_valid = False
         if scan_id and team_id is not None:
-            scanid_valid = scanid_validation(scan_id)
-            teamid_valid = cae_teamid_validation(team_id)
+            scanid_valid = common_lib.scanid_validation(scan_id)
+            teamid_valid = cae_lib.cae_teamid_validation(team_id)
         else:
             print("INFO: Valid ScanId or TeamId not found")
             print("INFO: Execution will proceed without Kinesis update")
@@ -353,11 +326,11 @@ def main(url, namespace, scan_id, team_id):
             else:
                 raise Exception("ERROR: Region name is None")
                 return None,summary_dict
-            session = session_handle()
+            session = general_util.session_handle()
             if session:
                 if scanid_valid and teamid_valid:
                     print("INFO: Update the scan record with \"InProgress\" Status")
-                    update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
+                    update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
                     if update is None:
                         raise Exception("INFO: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
                         return None,summary_dict
@@ -413,7 +386,7 @@ def main(url, namespace, scan_id, team_id):
                         empty_metadata(namespace, path, compliance_status)
                         pod = 'NULL'
                         if scanid_valid and teamid_valid:
-                            if params_list_update(scan_id, tc, team_id, pod, compliance_status):
+                            if general_util.params_list_update(scan_id, tc, team_id, pod, compliance_status, params_list):
                                 print("INFO: Updating params_list")
                             else:
                                 print("ERROR: Issue observed while updating params_list")
@@ -432,14 +405,14 @@ def main(url, namespace, scan_id, team_id):
             return None, summary_dict
 
         if scanid_valid and teamid_valid:
-            stream_info = add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
+            stream_info = general_util.add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
             if stream_info is None:
                 raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
                 return None,summary_dict
             seq_nums_list.append(stream_info)
 
             print("INFO: Sending result complete")
-            send_result = send_result_complete(session, "CAE", scan_id, team_id, tc, seq_nums_list)
+            send_result = general_util.send_result_complete(session, "CAE", scan_id, team_id, tc, seq_nums_list)
             if send_result:
                 print("INFO: Successfully submitted the result to Kinesis")
             else:
@@ -451,42 +424,12 @@ def main(url, namespace, scan_id, team_id):
 
     except Exception as e:
         print("INFO: Failed to retrieve image list and pod list => %s" % str(e),summary_dict)
-        update = updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
+        update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
         if update is None:
             raise Exception("ERROR: Issue observed with updateScanRecord API call")
             return None,summary_dict
         raise Exception("ERROR: Failed to fetch either Projects" % str(e))
         return None, summary_dict
-
-
-def params_list_update(scan_id, tc, team_id, resource, compliance_status):
-    """
-    Method to update params_list
-    :param scan_id:
-    :param tc:
-    :param team_id:
-    :param resource:
-    :param compliance_status:
-    :return:
-    """
-    audit_time = int(time.time()) * 1000
-    try:
-        params = {
-            "scanid": scan_id,
-            "testid": tc,
-            "teamid": str(team_id),
-            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
-            "createdAt": audit_time,
-            "updatedAt": audit_time,
-            "resourceName": resource,
-            "complianceStatus": compliance_status,
-        }
-        params_list.append(params.copy())
-        return True
-
-    except KeyError as params_err:
-        print("ERROR: Issue observed while updating params_list - %s" % str(params_err))
-        return False
 
 
 def none_check(val):
@@ -560,7 +503,7 @@ if __name__ == '__main__':
     namespace = args.namespace
     scan_id = args.scanid
     team_id = args.teamid
-    url_valid = cae_url_validation(url)
+    url_valid = cae_lib.cae_url_validation(url)
     if url and namespace is not None:
         if url_valid is not None:
             compliance_status, summary_report = main(url, namespace, scan_id, team_id)
