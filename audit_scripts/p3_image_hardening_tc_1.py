@@ -24,9 +24,11 @@ import re
 import sys
 import time
 
-from os import environ as env
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
-from general_util import updateScanRecord, add_result_to_stream, send_result_complete, session_handle
+import common_lib
+import general_util
+import p3_lib
+
 
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
@@ -74,7 +76,7 @@ def list_servers(conn, images, volumes_list, project_name, os_auth_url):
     and the associated image.
     :param conn: connectivity to the P3 platform
     :param images: list_images
-    :volume: volume
+    :volume_list: volume
     :param project_name: Project Name
     :param os_auth_url: OpenStack's Horizon URL
     :return:
@@ -100,9 +102,9 @@ def list_servers(conn, images, volumes_list, project_name, os_auth_url):
             else:
                 address['addr'] = "None"
 
-            volume = pull.get('attached_volumes', None)
             image_ids = []
-            for each in volume: 
+            volume = pull.get('attached_volumes', None)
+            for each in volume:
                 volume_metadata = volumes_list.get(each['id']) if volume else None
                 volume_image_detail = (volume_metadata.get('volume_image_metadata')) if volume_metadata else None
                 image_ids.append(volume_image_detail.get('image_id')) if volume_image_detail else None
@@ -135,9 +137,7 @@ def list_servers(conn, images, volumes_list, project_name, os_auth_url):
                             address['addr'],
                             pull['host_id'],
                             pull['user_id'],
-
                 ])
-        
         date_stamp = datetime.datetime.now().strftime('%m%d%y')
         csv_filename = os.path.expanduser("~") + "/logs/p3_servers_list_" + date_stamp + ".csv"
         headers = [
@@ -161,8 +161,6 @@ def list_unsecured_servers(servers, scan_id, team_id, scanid_valid, teamid_valid
     """
     This method is to list the servers with the unsecured images and their details.
     :param servers: list_servers(conn, images, project_name, os_auth_url)
-    :param seq_nums_list: empty list
-    :param params_list: empty list
     :param scan_id: ScanID received from AWS SQS
     :param team_id: TeamID
     :return: Compliant | Non-Compliant | None
@@ -177,7 +175,7 @@ def list_unsecured_servers(servers, scan_id, team_id, scanid_valid, teamid_valid
                 compliance_status = "Compliant"
             resource = "Instance: " + server[1]
             if scanid_valid and teamid_valid:
-                if params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+                if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
                     print("INFO: Updating params_list")
                 else:
                     print("ERROR: Issue observed while updating params_list")
@@ -265,10 +263,10 @@ def list_unused_unsecured_images(unused_images, scan_id, team_id, scanid_valid, 
     """
     This method is to list the unused unsecured images.
     :param unused_images: list_unused_images
-    :param seq_nums_list: empty list
-    :param params_list: empty list
     :param scan_id: ScanID received from AWS SQS
     :param team_id: TeamID
+    :param scanid_valid: Scan id
+    :param: teamid_valid: Team id
     :return: Compliant | Non-Compliant | None
     """
     try:
@@ -282,7 +280,7 @@ def list_unused_unsecured_images(unused_images, scan_id, team_id, scanid_valid, 
 
             resource = "Unused_Image:" + image[4]
             if scanid_valid and teamid_valid:
-                if params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+                if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
                     print("INFO: Updating params_list")
                 else:
                     print("ERROR: Issue observed while updating params_list")
@@ -322,6 +320,7 @@ def list_all_images(conn, project_name, os_auth_url, team_id):
     :param conn: established the connection
     :param project_name:
     :param os_auth_url:
+	:param team_id:
     :return: Compliant or Non-compliant
     """
     try:
@@ -376,7 +375,7 @@ def unsecured_images_list(all_images_list, scan_id, team_id, scanid_valid, teami
 
             resource = "Image:" + image[5]
             if scanid_valid and teamid_valid:
-                if params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+                if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
                     print("INFO: Updating params_list")
                 else:
                     print("ERROR: Issue observed while updating params_list")
@@ -460,78 +459,6 @@ def summary_of_test(project_name, all_images_list, all_unsecured_images,
         return summary_report
 
 
-def scanid_validation(scan_id):
-    """
-    This method is to validate that scan id while sending the report to Kinesis.
-    :param scan_id: ScanID received from AWS SQS
-    """
-    scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-    if scanid_pattern.match(scan_id):
-        print("INFO: Received valid ScanID")
-        return True
-    else:
-        print("INFO: Received ScanID is not valid")
-        return False
-
-
-def p3_teamid_validation(team_id):
-    """
-    This method is to validate that team id of the P3 platform while sending the report to Kinesis.
-    :param team_id: TeamID
-    """
-    teamid_pattern = re.compile(r'^P3:[0-9a-f]{32}$')
-    if teamid_pattern.match(team_id):
-        print("INFO: Received valid TeamID")
-        return True
-    else:
-        print("INFO: Received TeamID is not valid")
-        return False
-
-
-def p3_url_validation(url):
-    """
-    This method is to validate the authorized url of the P3 platform.
-    :url: OpenStack's Horizon URL
-    """
-    p3_url_pattern = re.compile(r'^https://cloud-.*-1.cisco.com:5000/v3$')
-    if p3_url_pattern.match(url):
-        print("INFO: Received valid Domain URL")
-        return True
-    else:
-        print("INFO: Received Domain URL is not valid")
-        return False
-
-
-def params_list_update(scan_id, tc, team_id, resource_name, compliance_status, params_list):
-    """
-    Method to update params_list
-    :param scan_id:
-    :param tc:
-    :param team_id:
-    :param resource_name:
-    :param compliance_status:
-    :return:
-    """
-    audit_time = int(time.time()) * 1000
-    try:
-        params = {
-            "scanid": scan_id,
-            "testid": tc,
-            "teamid": str(team_id),
-            "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource_name),
-            "createdAt": audit_time,
-            "updatedAt": audit_time,
-            "resourceName": resource_name,
-            "complianceStatus": compliance_status
-        }
-        params_list.append(params.copy())
-        return True
-
-    except KeyError as params_err:
-        print("ERROR: Issue observed while updating params_list - %s" % str(params_err))
-        return False
-
-
 def main(os_auth_url, project_name, scan_id, team_id):
     """
     This main method is to validate the source of images listed in the provided OpenStack Project is
@@ -551,33 +478,28 @@ def main(os_auth_url, project_name, scan_id, team_id):
             "No_of_Unused_Unsecured_Image(s)": 0
     }
 
-    try:
-        scanid_valid = False
-        teamid_valid = False
-        if scan_id and team_id is not None:
-            scanid_valid = scanid_validation(scan_id)
-            teamid_valid = p3_teamid_validation(team_id)
-        else:
-            print("INFO: Valid ScanId or TeamId not found")
-            print("INFO: Execution will proceed without Kinesis update")
+    
+    scanid_valid = False
+    teamid_valid = False
+    if scan_id and team_id is not None:
+    	scanid_valid = common_lib.scanid_validation(scan_id)
+    	teamid_valid = p3_lib.p3_teamid_validation(team_id)
+    else:
+    	print("INFO: Valid ScanId or TeamId not found")
+    	print("INFO: Execution will proceed without Kinesis update")
 
+    try:
         region = os_auth_url.split(".")[0].split("//")[1]
-        conn = openstack.connect(
-                                auth_url=os_auth_url,
-                                project_name=project_name,
-                                username=env['USERNAME'],
-                                password=env['PASSWORD'],
-                                region_name=region
-                                )
+        conn = p3_lib.connect(os_auth_url, project_name, region)
     except Exception as e:
         print("ERROR: Connection failed with error => %s" % str(e))
         return None, summary_report
 
-    session = session_handle()
+    session = general_util.session_handle()
     if session:
         if scanid_valid and teamid_valid:
             print("INFO: Update the scan record with \"InProgress\" Status")
-            update = updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
+            update = general_util.updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
             if update is None:
                 raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
                 return None, summary_report
@@ -603,7 +525,7 @@ def main(os_auth_url, project_name, scan_id, team_id):
             else:
                 if scanid_valid and teamid_valid:
                     print("INFO: Update the scan record with \"Failed\" Status")
-                    update = updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
+                    update = general_util.updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
                     if update is None:
                         raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"Failed\" status")
                         return None, summary_report
@@ -651,14 +573,14 @@ def main(os_auth_url, project_name, scan_id, team_id):
 
     if scanid_valid and teamid_valid:
         print("INFO: Adding result to Stream")
-        stream_info = add_result_to_stream(session, "P3", str(team_id), tc, params_list)
+        stream_info = general_util.add_result_to_stream(session, "P3", str(team_id), tc, params_list)
         if stream_info is None:
            raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
            return None, summary_report
         seq_nums_list.append(stream_info)
 
         print("INFO: Sending result complete")
-        send_result = send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
+        send_result = general_util.send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
         if send_result:
             print("INFO: Successfully submitted the result to Kinesis")
         else:
@@ -681,7 +603,7 @@ if __name__ == "__main__":
     p_name = args.team
     scan_id = args.scanid
     team_id = args.teamid
-    url_valid = p3_url_validation(url)
+    url_valid = p3_lib.p3_url_validation(url)
     if url and p_name is not None:
         if url_valid:
             compliance_status, summary_report = main(url, p_name, scan_id, team_id)
