@@ -104,8 +104,8 @@ def list_servers(conn, images, volumes_list, project_name, os_auth_url):
             image_ids = []
             for each in volume: 
                 volume_metadata = volumes_list.get(each['id']) if volume else None
-                volume_image_detail = (volume_metadata.get('volume_image_metadata') or None) if volume_metadata else None
-                image_ids.append(volume_image_detail.get('image_id', None)) if volume_image_detail else None
+                volume_image_detail = (volume_metadata.get('volume_image_metadata')) if volume_metadata else None
+                image_ids.append(volume_image_detail.get('image_id')) if volume_image_detail else None
             
             image_ids.append(pull.get('image')['id']) if pull.get('image') else None
             for image_id in image_ids:
