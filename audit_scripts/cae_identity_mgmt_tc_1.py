@@ -120,7 +120,7 @@ def fetch_project_list(dyn_client, project_name):
             project_list.append(project.metadata.name)
             project_name_id_mapping[
                 project.metadata.name] = project.metadata.uid
-
+       
         if project_name is not None:
             if project_name in project_list:
                 project_list = [project_name]
@@ -227,11 +227,10 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                             proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].extend(i['userNames'])
                     if i['userNames'] is not None:
                         users_with_untrusted_roles.extend(i['userNames'])
-                if "admin" == i['roleRef']['name']:
+                if "admin" == i['roleRef']['name']:                    
                     for user in i['userNames']:
                         if user != "citeis-orchadm.gen":
-                            admin_untrusted += 1
-                            proj_role_group_name_untrusted[i['roleRef']['name']]= i['groupNames']
+                            admin_untrusted +=1
                             if i['roleRef']['name'] not in proj_role_bind_untrusted:
                                 proj_role_bind_untrusted[i['roleRef']['name']] = {
                                     'usernames': [user],
@@ -239,17 +238,19 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
                                         'creationTimestamp']}
                                 if i['userNames'] is not None:
                                     admin_untrusted_users = i['userNames']
-                                    if "citeis-orchadm.gen" in admin_untrusted_users:
+                                    if "citeis-orchadm.gen" in admin_untrusted_users: 
                                         admin_untrusted_users.remove("citeis-orchadm.gen")
                                     users_with_untrusted_roles.extend(admin_untrusted_users)
                             else:
+                                users_with_untrusted_roles.extend(i['userNames'])
                                 proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].append(user)
             rolebinding_all[project] = proj_role_bind
             rolebinding_groupName_all[project]=proj_role_group_name
             rolebinding_untrusted[
                 project] = proj_role_bind_untrusted.copy() if bool(
                 proj_role_bind_untrusted) else None
-            rolebinding_groupname_untrusted[project]=proj_role_group_name_untrusted
+            if len(proj_role_group_name_untrusted)!=0:
+                rolebinding_groupname_untrusted[project]=proj_role_group_name_untrusted
         project_app = get_app_project_mapping(projects)
         if not rolebinding_untrusted[project_name]:
             flag = 1
@@ -260,11 +261,10 @@ def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
 
         if not rolebinding_untrusted[project_name]:
             flag = 1
-
-            return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted
+            return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted, rolebinding_groupname_untrusted
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in rolebindings : %s" % str(e))
-    return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted
+    return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted, rolebinding_groupname_untrusted
 
 
 def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, path_url,rolebinding_groupname_untrusted):
@@ -290,12 +290,14 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                     diff = ("%s Days %s Hours %s Mins" % (
                         diff.days, diff.seconds // 3600,
                         (diff.seconds // 60) % 60))
-
-                    groupname = str(rolebinding_groupname_untrusted[project][role])
-                    if type(groupname) == list:
+                    groupname=[]
+                    if len(rolebinding_groupname_untrusted)!=0:
+                        if role in rolebinding_groupname_untrusted[project]:
+                            groupname = rolebinding_groupname_untrusted[project][role]
+                    if type(groupname)==list:
                         groupname = ''.join(groupname)
-
                     if project in project_app:
+
                         if rolebinding_untrusted[project][role]['usernames'] is not None:
                             for user in range(len(set(
                                     rolebinding_untrusted[project][role][
@@ -336,9 +338,8 @@ def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, p
                                    "Group Names", "Role Provisioned Age"
                                    ]
                           )
-
         date = datetime.datetime.now().strftime('%m%d%y')
-        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
+        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv" 
         if os.path.isfile(error_file):
             with open(error_file, 'a') as f:
                 df.to_csv(f, header=False, index=False)
@@ -392,7 +393,6 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                                 else:
                                     compliance_status = "Non-compliant"
                                 if "admin" == role and user != "citeis-orchadm.gen":
-                                    #admin_untrusted +=1
                                     compliance_status = "Non-compliant"
 
                                 data_all.append(
@@ -430,7 +430,6 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
                         else:
                             compliance_status = "Non-compliant"
                         if "admin" == role and user != "citeis-orchadm.gen":
-                            #admin_untrusted +=1
                             compliance_status = "Non-compliant"
                         if rolebinding_all[project][role]['usernames'] is not None:
                             for user in rolebinding_all[project][role]['usernames']:
@@ -475,8 +474,10 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
         print("ERROR: Fail to retrieve the user roles with error in complete_data : %s" % str(e))
 
 
+
+
 def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_roles=[],
-                      rolebinding_untrusted={}, users_with_untrusted_roles=[]):
+                      rolebinding_untrusted={}, users_with_untrusted_roles=[],rolebinding_groupname_untrusted={}):
     """
     :Method to print all required summary of the execution on the screen
     :param trusted_roles:
@@ -501,14 +502,14 @@ def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_rol
             admin_untrusted_role = 0
         else:
             admin_untrusted_role =1
-        print("Total Number of Untrusted Role(s) Found : %s" % (len(untrusted_roles) + admin_untrusted_role))
+        print("Total Number of Untrusted Role(s) Found : %s" % (len(untrusted_roles) + admin_untrusted_role)) 
         projects_with_untrusted_roles = [
                                          i for i in rolebinding_untrusted.keys()
                                          if rolebinding_untrusted[i] is not None
                                         ]
         print("Untrusted role(s) belongs to these many tenant(s): %s" % len(projects_with_untrusted_roles))
         print("Unsecured role(s) belongs to these many user(s) : %s" % (len(set(users_with_untrusted_roles))))
-
+        print("Unsecured role(s) belongs to these many Group(s) : %s" % len(rolebinding_groupname_untrusted))
         summary_report = { "No_of_Tenant(s)_evaluated": len(rolebinding_all.keys()), "No_of_Unique_Role(s)":len(set(all_roles)),
                             "No_of_Untrusted_Role(s)":(len(untrusted_roles) + admin_untrusted_role),
                             "No_of_Tenants_with_untrusted_role(s)":len(projects_with_untrusted_roles),
@@ -516,11 +517,9 @@ def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_rol
                             "No_of_Users_tagged_to_admin_role":admin_untrusted,
                             "No_of_Groups_with_untrusted_role(s)":len(rolebinding_groupname_untrusted)
                         }
-
     except Exception as e:
         print("ERROR: Failed to retrieve the user roles with error in output: %s" % str(e))
     return summary_report
-
 
 def write_metadata_connection_error(path_url,project_name, project_id):
     """
@@ -541,7 +540,7 @@ def write_metadata_connection_error(path_url,project_name, project_id):
                                    "Role Provisioned Age", "Compliant Status","Group Names"
                                    ])
     date = datetime.datetime.now().strftime('%m%d%y')
-    metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
+    metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv" 
     if os.path.isfile(metadata_file):
         with open(metadata_file, 'a') as f:
             df.to_csv(f, header=False, index=False)
@@ -558,15 +557,14 @@ def main(path_url, p_name, scan_id, team_id):
     :param team_id: holds the project/tenant ID
     """
     summary_report = {
-                        "No_of_Tenant(s)_evaluated": 0,
-                        "No_of_Unique_Role(s)": 0,
-                        "No_of_Untrusted_Role(s)": 0,
-                        "No_of_Tenants_with_untrusted_role(s)": 0,
-                        "No_of_Users_with_untrusted_roles": 0,
-                        "No_of_Users_tagged_to_admin_role": 0,
+			            "No_of_Tenant(s)_evaluated": 0,
+			            "No_of_Unique_Role(s)": 0,
+			            "No_of_Untrusted_Role(s)": 0,
+			            "No_of_Tenants_with_untrusted_role(s)": 0,
+			            "No_of_Users_with_untrusted_roles": 0,
+			            "No_of_Users_tagged_to_admin_role": 0,
                         "No_of_Groups_with_untrusted_role(s)": 0
                      }
-#    import pdb; pdb.set_trace()
     try:
         scanid_valid = False
         teamid_valid = False
@@ -597,7 +595,7 @@ def main(path_url, p_name, scan_id, team_id):
                             projects, project_list, project_name_id_mapping = fetch_project_list(
                                 dyn_client, project_name)
                             if projects and project_list:
-                                rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted = get_rolebindings(
+                                rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted, rolebinding_groupname_untrusted = get_rolebindings(
                                     dyn_client, projects, trusted_roles, project_name,
                                     project_name_id_mapping, project_list, scan_id, team_id,
                                     session, path_url, scanid_valid, teamid_valid)
@@ -614,7 +612,7 @@ def main(path_url, p_name, scan_id, team_id):
                                 return None, summary_report
                         summary_report=output_parameters(
                                           trusted_roles, admin_untrusted,rolebinding_all, all_roles,
-                                          rolebinding_untrusted, users_with_untrusted_roles
+                                          rolebinding_untrusted, users_with_untrusted_roles,rolebinding_groupname_untrusted
                                          )
                     else:
                         write_metadata_connection_error(path_url, p_name, team_id)
