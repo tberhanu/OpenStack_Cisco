@@ -59,8 +59,8 @@ def connect(os_auth_url, project_name, region):
         conn = openstack.connect(
             auth_url=os_auth_url,
             project_name=project_name,
-            username=env['USERNAME'],
-            password=env['PASSWORD'],
+            username=env['OS_USERNAME'],
+            password=env['OS_PASSWORD'],
             region_name=region
         )
         return conn
