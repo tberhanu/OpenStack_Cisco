@@ -22,6 +22,7 @@ env_variables = {
     "COUNT_OF_SQS_READ_MSG": "1",
     "SQS_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBRelayQueueCAE",
     "SQS_DEAD_LETTER_QUEUE_URL": "https://sqs.us-east-1.amazonaws.com/283603838660/devCSBDeadLetterQueueCAE",
+    "SQS_MSG_POLL_TIME": "15",
     "SQS_MSG_VISIBILITY_TIMEOUT": "600",
 
     "AUDIT_SCRIPTS_DIR": os.path.expanduser("~") + "/csb_cnt_repo/audit_scripts",
