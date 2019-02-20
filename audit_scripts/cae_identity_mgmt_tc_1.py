@@ -474,37 +474,6 @@ def complete_data(rolebinding_all, project_app, project_name_id_mapping,
     except Exception as e:
         print("ERROR: Fail to retrieve the user roles with error in complete_data : %s" % str(e))
 
-
-# def params_list_update(scan_id, tc, team_id, resource, compliance_status):
-#     """
-#     Method to update the param dictionary key values
-#     :param scan_id:
-#     :param tc:
-#     :param team_id:
-#     :param resource:
-#     :param compliance_status:
-#     :return:
-#     """
-#     audit_time = int(time.time()) * 1000
-#     try:
-#         params = {
-#             "scanid": scan_id,
-#             "testid": tc,
-#             "teamid": str(team_id),
-#             "teamid-testid-resourceName": "{}-{}-{}".format(str(team_id), tc, resource),
-#             "createdAt": audit_time,
-#             "updatedAt": audit_time,
-#             "resourceName": resource,
-#             "complianceStatus": compliance_status
-#         }
-#         params_list.append(params.copy())
-#         return True
-
-#     except KeyError as params_err:
-#         print("ERROR: Issue observed while updating params list - %s" % str(params_err))
-#         return False
-
-
 def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_roles=[],
                       rolebinding_untrusted={}, users_with_untrusted_roles=[],rolebinding_groupname_untrusted={}):
     """
@@ -549,49 +518,6 @@ def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_rol
     except Exception as e:
         print("ERROR: Failed to retrieve the user roles with error in output: %s" % str(e))
     return summary_report
-
-# def scanid_validation(scan_id):
-#     """
-#      Method tovalidate the syntax of the scan ID entered
-#     :param scan_id:
-#     :return:
-#     """
-#     scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-#     if scanid_pattern.match(scan_id):
-#         print("INFO: Received valid ScanID")
-#         return True
-#     else:
-#         print("ERROR: Received ScanID is not valid")
-#         return False
-
-
-# def cae_teamid_validation(team_id):
-#     """"
-#     Method to validate the syntax of the team ID entered
-#     """
-#     teamid_pattern = re.compile(r'^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-#     if teamid_pattern.match(team_id):
-#         print("INFO: Received valid TeamID")
-#         return True
-#     else:
-#         print("ERROR: Received TeamID is not valid")
-#         return False
-
-
-# def cae_url_validation(url):
-#     """
-#      Method tovalidate the syntax of the cluster URL entered
-#     :param url:
-#     :return:
-#     """
-#     cae_url_pattern = re.compile(r'^https://cae-np-.*.cisco.com$')
-#     if cae_url_pattern.match(url):
-#         print("INFO: Received valid Domain URL")
-#         return True
-#     else:
-#         print("ERROR: Received Domain URL is not valid")
-#         return False
-
 
 def write_metadata_connection_error(path_url,project_name, project_id):
     """
