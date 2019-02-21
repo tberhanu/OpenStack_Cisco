@@ -25,12 +25,9 @@ def load_config(url):
     """
     try:
         if url is not None:
-            print("---->url",url)
             region_name = url.split(".")[0].split("-")[-1]
-            print("---->region name",region_name)
             if region_name is not None:
                 path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
-                print("---->path name", path)
             else:
                 raise Exception("ERROR: Region name is None")
             api = pykube.HTTPClient(pykube.KubeConfig.from_file(path))
@@ -70,8 +67,3 @@ def cae_url_validation(url):
     else:
         print("ERROR: Received Domain URL is not valid")
         return False
-
-
-
-
-
