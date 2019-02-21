@@ -49,7 +49,7 @@ def list_images(conn):
             images[out['id']] = out
         return images
     except Exception as err:
-        print("ERROR: Failed to retrieve list of used images due to %s" % str(err))
+        print("ERROR: Failed to retrieve list of images due to %s" % str(err))
         return None
 
 
@@ -66,7 +66,7 @@ def list_volumes(conn):
             volumes_list[volume['id']] = volume
         return volumes_list
     except Exception as err:
-        print("ERROR: Failed to retrieve list of used volume due to %s" % str(err))
+        print("ERROR: Failed to retrieve list of volume due to %s" % str(err))
         return None
 
 
@@ -255,7 +255,7 @@ def list_unused_images(conn, images, servers, project_name, os_auth_url):
             writer.writerows(unused_images)
         return unused_images
     except Exception as err:
-        print("ERROR: Failed to retrieve list of unused images servers list due to %s" % str(err))
+        print("ERROR: Failed to retrieve list of unused images due to %s" % str(err))
         return None
 
 
@@ -350,7 +350,7 @@ def list_all_images(conn, project_name, os_auth_url, team_id):
 
         return all_images_list
     except Exception as err:
-        print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
+        print("ERROR: Failed to retrieve list of images due to %s" % str(err))
         return None
 
 
@@ -403,7 +403,7 @@ def unsecured_images_list(all_images_list, scan_id, team_id, scanid_valid, teami
 
         return all_unsecured_images, flag3
     except Exception as err:
-        print("ERROR: Failed to retrieve list of servers due to %s" % str(err))
+        print("ERROR: Failed to retrieve list of unsecured images due to %s" % str(err))
         return None, None
 
 
