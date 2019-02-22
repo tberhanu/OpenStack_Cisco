@@ -144,11 +144,10 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                     print("INFO: Listing the images in the pods: %s " % pod)
                     pod_image = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
                 except Exception as e:
-                    print("ERROR: Unabled get image for the pod %s" % pod)
+                    pod_image = None
                     print(e)
-                    image_count = 0
-                    unsecured_image_count = 0
-                    return None,image_count,unsecured_image_count
+                    print("ERROR: Unable to get image for the pod %s" % pod)
+                    pass
                 if pod_image is not None:
                     metadata = pod_image.obj['metadata']
                     pod_name = none_check(metadata.get('name', None))
@@ -220,7 +219,12 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                     return image_data, image_count, unsecured_image_count
                 else:
                     print("INFO: No images found")
-                    return None,None,None
+                    image_file_text = [pod, 'Does not exist', 'Does not exist', 'Does not exist', 'Does not exist', 'Does not exist',
+                                       'Does not exist', 'Does not exist', 'Does not exist']
+                    proj_txt = get_projects(project_img, url)
+                    image_data = [image_file_text, proj_txt, 'Does not exist']
+                    build_metadata(image_data, csv_filename)
+                    return image_data,0,0
             except Exception as e:
                 exception_str = str(e)
                 if '429' in exception_str:
@@ -230,7 +234,7 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
             break
     except Exception as e:
         print("ERROR: Failed to retrieve images with error => %s" % str(e))
-        return None, None, None
+        return None, 0, 0
 
 
 def print_metadata(image_file_text, project_file_text, csv_filename):
@@ -362,10 +366,11 @@ def main(url, namespace, scan_id, team_id):
                                 unsecured_image_count_total = unsecured_image_count_total + unsecured_image_count
                                 if unsecured_image_count > 0:
                                     unsecured_pod_count +=1
-                                flag_txt = image_data[2]
-                                if flag_txt.lower() == non_compliant_str.lower():
-                                    flag = non_compliant_str
-                                    unsecured_tenant_count =1
+                                if image_data is not None:
+                                    flag_txt = image_data[2]
+                                    if flag_txt.lower() == non_compliant_str.lower():
+                                        flag = non_compliant_str
+                                        unsecured_tenant_count =1
                             else:
                                 print("ERROR: Exiting after 5 unsuccessful retries")
                                 break
@@ -386,7 +391,7 @@ def main(url, namespace, scan_id, team_id):
                                   "hence ignoring Kinesis part")
                         return compliance_status,summary_dict
                 else:
-                    proj_txt = [namespace] + ["Does not exist"] * 4
+                    proj_txt = [namespace] + ["Does not exist"] * 3
                     image_file_text = ["Does not exist"] * 9
                     print_metadata(image_file_text, proj_txt, csv_filename)
                     return None, summary_dict
