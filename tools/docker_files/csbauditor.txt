@@ -3,9 +3,6 @@ SHELL ["/bin/bash", "-c"]
 USER root
 MAINTAINER amardkum
 
-# Set the localtime as per PST
-RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-
 # Configure username and useremail required for Git
 RUN git config --global user.name csbauditor.gen
 RUN git config --global user.email csbauditor.gen@cisco.com
@@ -17,6 +14,9 @@ RUN chmod -R 775 $HOME
 ADD requirements.txt $HOME
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
+# OC Client to be placed under /usr/bin
+ADD oc /usr/bin
+
 # Create dir for storing the logs and csv files
 RUN mkdir $HOME/logs
 
@@ -24,12 +24,12 @@ RUN mkdir $HOME/logs
 USER default
 
 # Adding required dependency files and limiting the permissions
-ADD env_variables.py $HOME
-ADD csb_credentials.py.enc $HOME
-ADD kube_config_rcdn.enc $HOME
-ADD kube_config_rtp.enc $HOME
-ADD kube_config_alln.enc $HOME
+ADD prod_env_variables.py $HOME
+ADD nonprod_env_variables.py $HOME
+ADD landscape_of_execution.py $HOME
+ADD csb_credentials.py.enc_prod $HOME
+ADD csb_credentials.py.enc_nonprod $HOME
 
 # Adding csb_auditor script and the execution command for the same
 ADD csb_auditor.py $HOME
-CMD python $HOME/csb_auditor.py  | /usr/bin/tee $HOME/logs/csb_audit_log_$(date +"%m%d%y_%H%M%S")
+CMD python $HOME/csb_auditor.py -e nonprod | /usr/bin/tee $HOME/logs/csb_audit_log_$(date +"%m%d%y_%H%M%S")
