@@ -21,7 +21,10 @@ landscape = {
     "CAE_CLUSTER": {
             "https://cae-np-alln.cisco.com",
             "https://cae-np-rcdn.cisco.com",
-            "https://cae-np-rtp.cisco.com"
+            "https://cae-np-rtp.cisco.com",
+            "https://cae-prd-alln.cisco.com",
+            "https://cae-prd-rcdn.cisco.com",
+            "https://cae-prd-rtp.cisco.com"
     }
 }
 
