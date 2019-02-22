@@ -16,14 +16,15 @@ Description: This python script is to
                    are not "None"
 
 Dependencies:
-    csb_credentials.py.enc
-    env_variables.py
-    kube_config_alln.enc
-    kube_config_rcdn.enc
-    kube_config_rtp.enc
+    csb_credentials.py.enc_prod
+    csb_credentials.py.enc_nonprod
+    prod_env_variables.py
+    nonprod_env_variables.py
+    landscape_of_execution.py
+    requirements.txt
 
 Usage:
-    python csb_auditor.py
+    python csb_auditor.py -e [prod|nonprod]
 
 Author: Amardeep Kumar <amardkum@cisco.com>; December 19th, 2018
 
@@ -32,20 +33,24 @@ All rights reserved.
 --------------------------------------------------------------------------------
 """
 
-
+import argparse
 import boto3
 import botocore
 import datetime
+import errno
 import git
 import multiprocessing
 import os
 import re
+import subprocess
 import shutil
 import struct
 import time
 
 from Crypto.Cipher import AES
-from env_variables import env_variables
+from prod_env_variables import prod_env_variables
+from nonprod_env_variables import nonprod_env_variables
+from landscape_of_execution import landscape
 from importlib import import_module
 
 
@@ -296,7 +301,7 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
         if os.path.isfile(script_file):
             tc_script = import_module("." + audit_tc_script, scripts_mod_path)
             try:
-                results[audit_tc_script] = tc_script.main(url, team_name, scan_id, team_id)
+                results[audit_tc_script], summary_report = tc_script.main(url, team_name, scan_id, team_id)
                 if results[audit_tc_script] is None:
                     print("INFO: Result for %s was received as None; retrying..." % audit_tc_script)
                     results[audit_tc_script] = tc_script.main(url, team_name, scan_id, team_id)
@@ -337,39 +342,102 @@ def delete_msg_from_sqs(receipt_handle):
         print("ERROR: Failed to delete the message from SQS Queue: %s" % str(del_err))
 
 
-def set_credentials_env():
+def set_credentials_env(e_type):
     """
     Method to set the environment in terms of credentials to be used during execution
     :return:
     """
     print("INFO: Decrypt credentials file. Then set environment variables w.r.t. required set of credentials")
-    if decrypt_file("csb_credentials.py.enc"):
+    if e_type == "prod":
+        cred_file = "csb_credentials.py.enc_prod"
+    elif e_type == "nonprod":
+        cred_file = "csb_credentials.py.enc_nonprod"
+    else:
+        print("ERROR: Didn't receive the expected value for ENV_TYPE - %s" % e_type)
+
+    if decrypt_file(cred_file):
         print("INFO: Successfully decrypted Credential file")
-        cred_file = import_module("csb_credentials")
-        for var, val in cred_file.csb_credentials.items():
+        cred_file_handle = import_module("csb_credentials")
+        for var, val in cred_file_handle.csb_credentials.items():
             os.environ[var] = val
         return True
     else:
-        raise Exception("ERROR: Failed to decrypt \"csb_credentials.py.enc\" file")
+        raise Exception("ERROR: Failed to decrypt %s file" % cred_file)
         return False
 
 
-def main():
+def generate_kube_config_file():
     """
-    Method to drive the CSB function of auditing the P3 and CAE Cloud based projects
+    Method to generate Kube config file per CAE Cluster listed in landscape_of_execution.py file
+    :return: True|False
+    """
+    kube_config_at_home = os.path.expanduser("~") + "/.kube/config"
+    for cluster in landscape["CAE_CLUSTER"]:
+        try:
+            os.remove(kube_config_at_home)
+        except OSError as rm_err:
+            if rm_err.errno == errno.ENOENT:
+                print("INFO: %s" % str(rm_err))
+            else:
+                print("ERROR: %s" % str(rm_err))
+                return False
+
+        print("INFO: Cluster - %s" % cluster)
+        out = subprocess.Popen([
+                                '/usr/bin/oc', 'login', cluster,
+                                '-u', os.environ["OC_USERNAME"],
+                                '-p', os.environ["OC_PASSWORD"],
+                                '--insecure-skip-tls-verify'
+                                ],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT
+                              )
+        stdout, stderr = out.communicate()
+        print("DEBUG: STDOUT while logging into Cluster: %s - %s" % (cluster, stdout))
+        if stderr:
+            print("ERROR: stderr while logging in to Cluster: %s - %s" % (cluster, stderr))
+            return False
+
+        if "Login successful" in str(stdout):
+            kube_config_rgn = os.path.expanduser("~") + "/kube_config_" + cluster.split(".")[0].split("-")[-1]
+            out = subprocess.Popen(['cp', kube_config_at_home, kube_config_rgn],
+                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, stderr = out.communicate()
+            if stderr:
+                print("ERROR: STDERR while copying the file - %s" % stderr)
+                return False
+            elif os.path.isfile(kube_config_rgn):
+                print("INFO: Generated Kube config file - %s" % kube_config_rgn)
+        else:
+            print("ERROR: Failed to login to Cluster: %s" % cluster)
+            return False
+    return True
+
+
+def main(env_type):
+    """
+    Method to drive the CSB function of auditing the P3 and CAE Cloud based Tenants
     :return:None
     """
-    if set_credentials_env():
-        """ Decrypt the kube config file """
-        if decrypt_file("kube_config_rtp.enc,kube_config_rcdn.enc,kube_config_alln.enc"):
-            print("INFO: Successfully decrypted Kube Config files for CAE required for operations")
-        else:
-            raise Exception("ERROR: Failed to decrypt the .enc version of Kube config file(s)")
-
+    if set_credentials_env(env_type):
         """ Setting environment variables required for execution of CBS-CNT related scripts """
-        print("INFO: Set all required variables as part of ENV")
-        for var, val in env_variables.items():
-            os.environ[var] = val
+        if env_type == "prod":
+            print("INFO: Set all required variables as part of ENV for ENV_TYPE = %s" % env_type)
+            for var, val in prod_env_variables.items():
+                os.environ[var] = val
+        elif env_type == "nonprod":
+            print("INFO: Set all required variables as part of ENV for ENV_TYPE = %s" % env_type)
+            for var, val in nonprod_env_variables.items():
+                os.environ[var] = val
+        else:
+            print("ERROR: Didn't receive the expected value for ENV_TYPE - %s" % env_type)
+
+        if generate_kube_config_file():
+            print("INFO: Successfully generated the required Kube Config file for "
+                  "each cluster listed in landscape_of_execution.py")
+        else:
+            print("ERROR: Issue observed while generating Kube config file.")
+            print("INFO: Overall execution for CAE Tenants will get affected")
 
         """ Clone Git Repo for the audit test-scripts """
         if clone_git_repo():
@@ -397,14 +465,19 @@ def main():
         os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
         os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
 
-        print("INFO: Delete decrypted kube_config file")
-        os.remove(os.path.expanduser("~") + "/" + "kube_config_rtp")
-        os.remove(os.path.expanduser("~") + "/" + "kube_config_rcdn")
-        os.remove(os.path.expanduser("~") + "/" + "kube_config_alln")
-
     else:
         raise Exception("ERROR: Failed to initialize the environment in terms of credentials to use.")
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Pass on the type of execution environment")
+    parser.add_argument("-e", "--env_type", help="Environment Type(\"prod\" or \"nonprod\")", action="store", dest="env")
+    args = parser.parse_args()
+
+    if args.env and (args.env == "prod" or args.env == "nonprod"):
+        env = args.env
+        print("INFO: Execution will continue for %s ENV" % str(env).upper())
+    else:
+        print("ERROR: Received ENV Type is not appropriate. Expected ENV Type is either \"prod\" or \"nonprod\"")
+
+    main(env)
