@@ -1,0 +1,485 @@
+Tenant Id,Tenant Name,Create Role,Create User,Create Domain,List Domain,Change Domain,Compliance Status
+0078be0257474092b960ba92d937098f,IMCDEV-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+03402c0a727e45bc839fe7243f1d54ff,Test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0420524949924489b9b2f5fc2d1ffb49,gslb-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+05ce976d16494da584c7fc402736960e,CX Labs SOC API,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+07373bf58f6d4b16ab5a2ef8d6bc6bb9,SSO-POC-FIP-NET,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+076be8399a6c4f11854e867893019101,isv-multicloud,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+07ab2981925a40f7b9ccb9eaddbb1e98,SSO-HONJO,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+08a58557bf0e4fcf94d4ccd57e2ea0c5,mcmp-dev-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0960d6c9501c4f70b3c2c217d002b9f6,Load Testing - Internal,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0ab21f1ffc4f4334bc727800d6125bbd,drsdev-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0b05b56429914a7a9eef391573c54bb5,CIPS BizMgmt,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0b1cb95bb32b41b2b8bbadcc483f5824,mgd-val-poc,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0b62988751d14f3d9aa1ecd008b0f7db,EB-DEV-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0ce01b6c37b84dadbfe9435573ce3444,eStore Platform DEV RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0d6b83020fbc4f86aa3d188cc4d0bde4,mcmp-reporting-nprd,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0f87af5ba5e8498a97d58ecc9818cbb6,xRM and Customer Care 1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0fa29ed2a2bb46bd895e3ab5ff560e63,CXSP Stage and UAT 1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1012c78279274329bf4c028ad85fdad6,tmx-common-prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1092b829209543ed9163a5b6bf5fe70e,SSO-Private-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+10c6464ca380486c9c2fd77cbbcf7796,modelapp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1213ef3cc4b74a3d8b558e7a50baf51f,fax-order,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+14a951b62bf2414cbf787ff4238ca831,Backup-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+15b4642e604149eda9dd752285b468cd,entitlement base foundation_eb-foundation-sm-02,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+178dd10c1de74228a6c72bcab4c2d2d4,clouddb-automation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+190c8c3e406c480e8c38444537b2b18c,SEE-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1afc9d1b9afb46faaf554696661c4aba,whisk-validation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1b04aae3a81e4cdaafe4cffe01a6828b,trfmdv-npd-rtp-fip,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1be9223c4ad4485a9255fddd2487e4a4,internal-direct-net-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1db2f78888c54c28b9417559c35e175f,impdev-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1e7c7b5a1ef942fbafadebd00cd4cf95,tmx-api-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1ea2fc1e25ac4a82bd9fc239d209e525,BlackBox Testing,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+20a93ec18b5a4a8f89436aae20403093,1be9223c4ad4485a9255fddd2487e4a4-4f91f056-5b95-4763-a682-991da50,,,,,,
+216bd4c0b7584490a3a9847ff6d3408e,Social-Collab-Engineering,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+232b3659b8334235a31f0f2d4bc31bd3,lglstg-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2449d05482b54fd4917c3f51377b2168,CS-OSP-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+24c96710e3cc4d92b5fdb48b291cf54c,MCMPPD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+25faa5f1cc394699904ea392878d00d5,EFM_1-6,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+25fda07478344f3c8ec5dc55b5bbeb14,GDPPRD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+293f6579cfaf4cfb976702b121b5f744,FAST-internal,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2df2440c081e4297a469870259701a96,ACE Plus RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+30ba4a3aba274e0ab31b323380dfb3cf,CAE-NONPROD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+322adcb28232485d8f910953a0adca87,kdn-rtp-project1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+32780f523b7e4484824930fb4e147583,KAAS-ADMIN-IDEV-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+335d1f009ffb42e9af4ac5ba1e7b49c8,cnaap-rtp-001,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3425712059fb45e3abc933cdbe208654,ngcs-whisk-cloud-rtp-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+35c09c5ca1514df78e1d27f37277923a,eStore Platform DEV,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+361159092db640adbe95a057db26a54e,MCMP-STG,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+36da1eaf6c204750ba241c6db1bafea7,mgprod-prd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+379c2325a80a43098a223c1614a4f74b,sto-ccc-hardening-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+37a487cfb4ed4d179beda1b14812bdb7,Cohesity,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+380bff38e6e44de49b252694f7b5abe9,trfmdv-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+38665e2ffc59404fa75ff77cb5035446,CXSP Dev 1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3d0fceaba4544ddd90477e3720030750,jhemric-uatlbaas,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+40aaa2f8eaa6427cbf7ab246343989e0,sto-ccc-hardening,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+42ae32e6aaab40168f94f69dd0ffbc8d,cae_project1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+451d54dc2c974551b760184cb30211b6,EB-STG-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+46ca22d66e514a5a94556037b38014b0,ESGDEV-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+46e372272c274398b43550f4109c8f80,MMSTG-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+49897ff34c4c4bcda42d1d1a881f8c5b,IAM Dashboard,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4a6b1713b688443b9eb456ae4f01a62c,CTBX,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4a7dfadb534d400693ea834a5c4bcd7d,hari-internal-direct-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4c2155c29c7a4a75a8d50d9d2e83be6c,embdev-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4cd2fa18b7eb4106b1201642e041343c,documentation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4ed44a1319c1404680bd722d1a201992,SCISTG-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4f20298910ec4e7f9c893f521f676918,cca2c304398345e589c17f9dab8c92ac-25292a91-d077-4e50-a3c8-b3d22bf,,,,,,
+53971cc3693f4c25a5fab9d271dee70c,EB-DEV-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5409ebbb7265490db89adf88b2353911,OPSMGR-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5a48ad6106e74251a7d05f4a411031ee,LTaaSProjects,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5c86a77505eb4e6da5ef57b1a758ba8c,MCMP-DEV,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5d2758fddc9d4240a0b41ef80a020c5b,mcmp-reporting-db,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5e12ed5cda164b45b2a0d06e6f109bb0,AIMSTG-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+606731457ac149babd8c098f8155886e,ESGNPD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+62e4a56e29f64076a23c9fbd50d89b9c,Spinnaker-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+62fde73f456f4aadb7cebf853203a0ca,dtrool-project,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+661a546e2a1a4ba29eda8a9342dea56a,1be9223c4ad4485a9255fddd2487e4a4-58f0f3c4-973a-45ab-8112-7599d4e,,,,,,
+66cadef7fc1c429aaded7f7e9babbe85,spark-poc,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+68dbcd6bc4ab448eb7ab250bb0a707a3,lglprd-prd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6b779c97264b45f78b77306df81dd2d5,GSLOPC-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6ca1f78596f24c9c8d998efc5791d626,Equinix,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+70128ecb61754de59de794e44850ec06,OPL-App-Stg,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+70229d59183f4bf4bab39d2147178324,Integrity Verification for NSO,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+706419a8e3794fd9a20e3e15c913a89c,cxdp-sandbox,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+70bfe963b6ff46df8a8b23dadd00aade,Coral,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+71096dd42dec49fd9600b9081f9ca997,casapp-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+71b5ad6ad5874db0b38455b67e5f72dc,ngcs-ops-tools,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+724a1b156c5249838044a4308532d893,DCC-OpenStack,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+73e3775f6a9f46e7958b92228978540d,Test- UI,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+743dcc967067402e9447fb87e9719f86,AIRA test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+74739e69f9724f0fa53b8ccd25419b43,kafka-kubernetes-aims,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+75e8be7fa3224f14875eec3d3de42129,mcmp-opstack-nprd,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+77328d4b4c234e74bfa54d1633339d17,ken-internal-direct-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+79642df9985e4738acdb11e4dfa594a2,tagprd-prd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7d9d6f1a0424475db5386bfd595eb795,OPLTS3-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+80c66c846bee411c904b600bdd429e43,OPL-LT,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+83a5414093524251a386b48b996759b1,dcoe,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+83f28036bd034cd6a476dfcd01ec897f,itsaut-dev-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+84690b9cfdce461893e970b71351d316,SCIPRD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+85171a27b0534706836849c3ae75886a,IPCC-SRV,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+86204e5d48714f5385b4468fe173c6bb,bnrtest,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+86b0dadb9ecb4a27a8b425d85bb32d16,deepika-p3,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8701012861c84fea9434ced9ca47fa24,lgldev-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+888ac44268754f50888d5bd0aabe34a7,phuoc_rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+88b5ae8276244d75aae64099618aa2fe,embstg-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+88bbc52dda344c5abc34a6f67ab6b2a1,SSO-Private-0.6-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+891a5c854e8948dd97f83388ef49ca54,OS-Self-Service-Tool,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8942e0f6ec5a4cd796497929e9d8b574,1be9223c4ad4485a9255fddd2487e4a4-fca2a0b4-55de-4512-822d-15ca5b4,,,,,,
+8a0e8ba8db244d6fab2609ff9ec1378b,Helios,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8ad6e6f486a946eda64c3fd0917f753a,Project-freeTrial-Learning-Lab,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8bf9b9ebd9ee49daad2a6a3d24c9f6f2,eds data discovery,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8f158f1d97514bf8a9b4b95019204f90,tmx-common-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8f853773eb2c4a4982138443826536a4,CloudDB-Security-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+9328d829c16c4e3b9acf90e04845a78d,RTP build project,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+93f6d6e0ec9747dfb9b05aec290eca93,1be9223c4ad4485a9255fddd2487e4a4-a6b6ffb6-ffcd-44d2-a34f-fbd6eef,,,,,,
+94bff42d23104dc98377fcf4e8aa86b0,ESGSTG-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+95e28bfe67bc4c59b5bdd1b830967787,CICD-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+96cb90d577224929b65afcc1c96b6bfd,NGCS Billing Calculator,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+99a1c995dfac44dba374fbd97aead531,DBA-Tesla-Automation-Infrastructure,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+99f1f837a8004092926887d46188e726,IAC-Demo,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+9a95bba6d9f4439b85d2e4739a8f234d,OPL-Dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+9ac0db374d2244028b5ef03fe70b64aa,EB-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+9fe81fcf5c7143889629dae0fd2fd17e,demo-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a260f264c7eb470690bdcbc3c08fa877,LTaaS-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a2c4167966474fe3903255e28d0ba813,Entitlement Base Foundation NPRD 2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a46f46882e214a99865b1c08dad6260b,EngIT-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a5267e538614461486b5e4c94af236a6,ECE-NPRD,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a6fe454c716a4eb09c3be408c109ddd9,koen-internal-fip-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a7790159ccf24642a3ffb01d72786732,internal-fip-net-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a817086e3aca44f69c438ae1dd4c01c9,ecn-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+aaf747b91a114a1f827b4e459793786c,AIMPRD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ab2a8be79b704e81aeec6b90c2cdfdd0,CD-Services,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ab777115b97b403d8b70fe746df82ab7,bgladden-internal-direct-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+acfffbb22dbc4e6cbf89c6d4d1e46c7c,VMS-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ae91e9d448054dbb88fd6b47fafa42c8,BCS Apps,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b0281e4b917b4536a731565e5655f7e5,US-AS-ATT,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b4f16a9577c84604843fd2712f995180,GGPOC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b5c2d893a44b435c97e75087f278b561,OPL-PRD-APP-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b8f0e07f065d48faad497a6cd69d3cb7,LTaaS Platform3 Openstack,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ba41923fefa94e378655e4c46e5504e5,ken-internal-fip-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bbbcdfe0a6984dad86ba40d6bf6be04b,openstack-qa-tenant-2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bedcbdecfdea4d3494e97fbf712ae4fd,1be9223c4ad4485a9255fddd2487e4a4-9663c4a3-8744-4cb4-bc1c-ac63282,,,,,,
+c010c70283cd42dc9c33e7157a0387ef,EB-LT-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c0d389a472dc45ff99426043ed87381b,sisaghol-internal-direct-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c18d1d3784d14f1f94f5ff83db761a6f,andrpric-rtp-3,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c21c9bd33ae640cd91fc7a9f1d7dcfb6,PingFed NextGen,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c260b017e3d24b3a939884ef545930db,mgstg-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c28a707172c845f0b5f5b8e2c3f6b3a7,opsctr-prd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c33bb09ff2434ab0b873d9824359d3a7,io,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c3c7d2ec2187475f9cbde80fc92b3da2,tagstg-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c4a0de793b4f4e1ea16b110bc0f8abbd,1be9223c4ad4485a9255fddd2487e4a4-dd40499c-7374-487c-be6d-5477feb,,,,,,
+c4ea34df765d4c4ea44cde445b022bcf,Anitha-internal-fip-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c5d0641ce9a34ed3827c72ec5eccfeae,Test-deepapaw,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c67c004237a144ad82e3b45c51b44faf,CCWPOC-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c752241e2c4d4f8e9929c0b491fe3d72,install base insight,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c7c57be790a64fd691a451cd1c66ec37,EPSDEV-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c8e711ec08454bcfa1f05e1d01e6b91e,CD-Services-STAGE,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c92e597e1f1143d8aeac38cffe6b9eca,poc_service,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c940f25ccd904ea79732a2da04962cbe,OPL-Stage,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c9c63b2ca4f641b9ac21d0cdd2f011ba,XMLDEV-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cab99f68b26e4d538be0ebf89836b4a0,SSO-Devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cb1091fcef1c4ecc997e028841ba2451,tmx-cluster-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cc9e112c5fca4233acb11eea8a7f87eb,CAE-PROD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cca2c304398345e589c17f9dab8c92ac,eng-build-cloud-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cd09271ceb8b4581ad7e645d790a0b48,platform3-demo-app,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cdd36bd44e80474785d4605711458dff,Anitha-internal-direct-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cdfcb85bfc9544be83c2f81d2e3592b2,Cisco Contract Renewal Cloud - Openstack Newton,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+cedb2f6630ea4e70897dda6be7488507,Cisco Contract Renewal Cloud - Openstack 2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d079697506de40d6acfcfb6beccc1399,rajpa-test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d2d6aef3e4f2427f8d2df9f2948ec6f8,ESGNST-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d3155d670da343598a41119a3ae751c8,FINSSE-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d377eb66d59e42c79ff58215129f9080,MMPRD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d3c0cf0fc1b14ac29f62bae338e1f904,DBA-MongoR-Project-Tesla,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d6f3b81470274e098bb4f7fa76ad4e4e,EPS-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d7e33f5f00e44a97a958bf6a93c4edaf,engit-ci-jenkins-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d81c041818624c4381904ab2fe18226c,BCI,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d82a040f0fd84b789fc269813b0c7bfc,ITS-TEST-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d8518c8ddfb14f4baa8e7e1677631594,ngcs-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d86c865ec79e4e8bb37ed67c22b9a6af,EPS-ADMIN-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d96d2a91d09b4c3e93d9062b38dc2e7f,tagdev-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+dab9523e1ef644698edd91b25d0e1b6c,IMCSTG-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+dbe45d66aa00465583732c479b95fc91,koen-internal-direct-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+df47a19b75d4461fa541898175302c00,TestGraph,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+df6103a6292f4327b90e3181344f225a,tmx-cluster-prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e0eb764a434d49268c1f2f59f88d5d18,CoDE-Playground,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e378759301ed41c1925b6be17ffaaf06,openstack-qa-tenant-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e5bcb44f8cca4fe392be775edc5a820f,cmdb-datapump-qa-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e819868bd476487e947e337c3391c3f8,hari-internal-fip-net,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e8b899d8b22c47c0bdd0580f9e3ef3ce,cx-cognitive-labs-elk,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+eaeee0401a3b4877a33dc3548348d4a3,cae-kube-idev-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f082fc393b44408397ebb9eedf487b5d,GDPSTG-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f1facc74fe854834ad388152ff02678e,ESGNDV-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f43981d874714835ad3557bab511d000,SSO-HONJO-PROD,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f43d043e527642c981d919682244c312,Test RTP project creation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f4fd06f574ff4e518834edd3f754632d,MMDEV-NPD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f508f04f485740d496989a1f09699a63,1be9223c4ad4485a9255fddd2487e4a4-a4e8dbb9-9a43-4329-93e3-59d0eaa,,,,,,
+f534abf759a749e593607dcee458b6ce,IMCPRD-PRD-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f67fc909e0364b58bd9ee8c16ce7ec65,OPL-PRD-DB-RTP,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f6a80107dcae40e8b4550eb66ccbe9d4,CNT Learning Demo,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ff2ad64adc61444593911f0e43bbff1c,slrrwd-npd-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0061fb4b0dc74279afe53829e6538ce8,CoDE-Playground,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+01587e63981d44afa5d7ee3123a253a7,InfoSec-CTSA-SA,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+01ebb7c73a11499583d1b0dcd036639a,FTD-Migration,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+03a42582429d4087b66cab62f6c25974,rz-trial-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+03ddb27ca9284d46aed276593b310b80,OPSMGR-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+051c1a662c7a4f9588f3d88af6b77477,testproject1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+067c4502171e48a59bffa179babfe23b,e5e8435a523d43e6bbed40715c228cde-c8da8041-3b19-4fcd-905c-d03a0a2,,,,,,
+079f41b139e44bb88c9eb531b3ad2c1a,cdfapp-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+07a26737fffb419aba830c5c33467095,rohio-001-ans,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+08da71178fd144679c81947bdcf6f212,OPLTS3-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0a95d2300e82420080530f421ac5cc86,casapp-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0f6bd67856c04dd4b1a09d5a04abb20e,ESGPRD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+12176b064b0946e796cfcd4a7e893122,DXEC STAGE RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+12d9ce7f38e94b4691475caff284aa1e,tagdev-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1329ebbc1b9646b890202384beaef2ec,Phuoc,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+144566f84a0b401086c326a6eebf3c65,FNT,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+15a3e2c471334d869caa11e89ce706a5,Entitlement Base Foundation PRD1-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+165b3768bc5f4c4aa0b9eaa80c50d1b8,opl-prd-db-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1844b400795d40b98b415021c57c469d,e5e8435a523d43e6bbed40715c228cde-dd6dbbfa-b5b5-48f4-ac09-fe55398,,,,,,
+1a3339f2af0442eaaac247e406eb70cf,CDB-AUT-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1b2050626b074f6c9e53967c58ead93e,STO Ops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1b46989f8a1946b1bd29b592c1e1fa07,Platform3-Pen-Test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1b78804c77aa4b988985b1835a898ef5,HR-WebServices-Elastic-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+21221f19e4634ffcbafaa4ca93168f28,ITPE-PROD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+218538ef5d82411d86538da6c714348a,e5e8435a523d43e6bbed40715c228cde-b5838869-dc55-4344-82ba-634367f,,,,,,
+228d23cf16dd4a28bda8f4ded22c5a63,Non-Prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+22a4b920bc5c4caf836db57c2c769719,Oracle18c-poc-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+22c13357b97d4cd897675aeaa8c16bd8,lgldev-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+22ed9181b3504b3790f7b41d3c9b0178,whisk-validation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+24cd948b7dcd4b89a7a68a7b7ab3e301,Action Orchestrator BETA- IT Dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+25cde7121b504d68aad92b44cb3eb5f1,DBA-TESLA-AUTOMATION-INFRASTRUCTURE-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+26e08f0aa4074ef9a3ddfefe99f1d567,CAE-NONPROD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+271aa964477349e1a2bb44b826fe9233,test-project,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+288c2a159aa24e3690cf40750de5f7e5,e5e8435a523d43e6bbed40715c228cde-d114b3ad-761f-4af9-8089-5b86da0,,,,,,
+2cf02b0a8fde4816ba3c4389011806f8,e5e8435a523d43e6bbed40715c228cde-01789f2b-bcab-4236-a4a4-6e9ea75,,,,,,
+2edb4c0dfe704aee8d1c63e8a9d96fa8,DNG-POC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2fa2619db6334a6d8e7d6620d77c42aa,demo-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+312450fd90484740bc144f7e84b7a2cb,test os0117-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3266f8b7c09849e389d560c9419ebed8,e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244,,,,,,
+32ebf665868f40c4b789bbe37b239e00,csit-openstack,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+33596a576be34a2aa6f54f4b34f2661b,PostureService,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+34e59945e2cb4ae48837cea457223700,test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3583bfea324f4e4e89075948d749ddd0,mgprod-prd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3a8e66266ebf4848a9216efcd8190220,ngcs-gitlab-backups,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3ac7d92892644a78a3e1bc0b188e6940,lglprd-prd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3c08da09825d43dfa24170c80676656e,ESGNDV-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3c2f8888b1854fd4a18c09a4345497a6,e5e8435a523d43e6bbed40715c228cde-c3beb587-350c-4e7f-a010-9bd8be6,,,,,,
+3dbc38c69c1d4cfe8e5f1959c8741579,XMLDEV-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3f529297b1eb4a65a7e222d293d39583,e5e8435a523d43e6bbed40715c228cde-e80ebe31-e39b-49c2-928f-8e34622,,,,,,
+47ef1aebe8694b3ab64fb10f10e1f28b,ESGNPD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4ab493d4f9c5473395f053a14e46b165,e5e8435a523d43e6bbed40715c228cde-a32f3b4a-5b59-4e81-95ea-ddfed90,,,,,,
+4c02d9fd4c314e8c80ce92886324b7a8,Asset Management,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4dddda2522814b09a3730fc6966fc9a7,AIMSTG-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4f1bc60e82374224b79b9cb1c0fc168f,embstg-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+51929c3cf246484ab2465d76290bef9b,test2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+51b13f282e1b4f3caa6a22884919a26a,CD-Services-STAGE,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5670c5522171400a8740a5e699b73ab6,3DIT QA Automation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+56adc15365454710895e035ed96c0769,SSO-Private-0.6-Pentest,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+56ec4929689f4d628ac1fe59b8556583,tagstg-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+573d2a1c7a6940519c14370b018261dd,nikmitra-poc,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+58573e93cee948138005cb23a99dde3c,GDPPRD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+59506e42cc394890938e4c77baea8e4b,e5e8435a523d43e6bbed40715c228cde-e66e9c98-38b6-4def-b88e-35aa282,,,,,,
+59846d01d9774b34ad920a0dbb87e6d4,e5e8435a523d43e6bbed40715c228cde-526f031f-d9df-4436-931e-58118b8,,,,,,
+5ad9f7d8c57c42b9bd3fd80392ab0ba7,e5e8435a523d43e6bbed40715c228cde-d56788b7-793d-44d1-8963-f6b3b55,,,,,,
+5c46f357a09a4e3fbb4ee68775edb05d,COOL-IT,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5f1b40bdbf3c4f2a98cd21fb20394663,e5e8435a523d43e6bbed40715c228cde-2c78b420-0c9c-400b-9a41-d31b8aa,,,,,,
+61e58852eb13471b81d65081c30f9533,Actions Orchestrator IT-Dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+61eab487120a4c3b8a096b7fa0123c0c,CDFPOC-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6352a281a18445a9aca52895951647d0,ali-new-driver-test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+63dd7d601c8e4530ad6bb812da12d6b4,SSO-Private-0.6-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+644227816afb46e5bad878112f198f6a,MMPRD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+65274be6d0dd4e7cbec6302c66679180,cnaap-rcdn-001,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+653295e37ce745dbb3d9aa59d16160b6,CDX,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+66de8a249404484ca11eb140da106884,e5e8435a523d43e6bbed40715c228cde-c098aebe-1090-4551-885b-94f1ce5,,,,,,
+68c9e2848c36453c829d3e262224b53b,OPL-PRD-APP-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+69d46590f2744dd7a5874eff8fddd908,taas-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6a15cb71730d441995ceb88e7f96a1d5,lnx-hvr-001,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6aabbeb1377a400fbd9dc64853a25d22,advanced-threat-security-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6c86c4acb8d24795b7080eab472fb3e7,IMCSTG-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6c8a8f9afed14c8ea32ab1858ab729c6,SIO-Openstack,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6df933eef43e4e67a274700e10bdf962,ESGDEV-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+70969620e11943178dcfe793376966ee,terraform-automation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+70d976d7fc304bde8f7f043195532ff0,e5e8435a523d43e6bbed40715c228cde-69a44dea-f969-42f4-ab1c-c163ccc,,,,,,
+71dc92c081b9417bae648cf88fcdaea8,andrpric-floating-project,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+742e5798ec3a4c54bb2a7ba0adcfd0dd,isv-openstack,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+745aa5d7cea649b4a491c8b9a071fb72,e5e8435a523d43e6bbed40715c228cde-420bd989-b3e8-435b-b7df-f058e55,,,,,,
+7508e7c0282d4d618c5355c924b31719,ESGNST-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+764aa94a30ae4a4b8af978f2df0abd1c,JonnnTest,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7786d877e200428a9289278338581cf4,CAE-PROD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+781301e477cd4e76bc19b93464fcfb01,Pinnacle,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+78c2ee16da7646538dc5ffed34875ac3,BSFT-FACTORY-IT,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+793a2bdc4c5d49c798b938918bb565d7,e5e8435a523d43e6bbed40715c228cde-6f86e262-8e79-4cca-ac63-f57123e,,,,,,
+79b96b1df80c4c63a4ebddf03ef4d389,B2C Development,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7b39759080924d609f9151444c9f81dc,EB-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+80b7a959573549a9a457da359a425ae7,FINSSE-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+81694ee3e5994022bdcb3f3bcce36903,centos7,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+857b18e1533a4bbba25dac08da6bc97e,gmeo,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+894f4ecd46b64e73a7f0fc2d8a118df4,internal-fip-net-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+89570d9bf2f04bd7b01f9f562e7b7a93,ecn-rtp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+898c100c41864e978bc56db9c26c636d,CCWPOC-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8dc74a91be5f4cbeb363c5c7176024bc,IMCDEV-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8e4263aa0a3740b088f02095cdca1cd2,Astro-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+91f716e0144b41109ae35cfdd67b6be3,cmdb-datapump-qa-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+94216614d2b54f5b892ac3afdd8cb51d,deepika,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+94860363c6c04c9eae97609d5d9cea88,embdev-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+96f2eefa01f34102875aaf033f58d32d,e5e8435a523d43e6bbed40715c228cde-726e299f-4120-4761-9670-39dac9a,,,,,,
+9744c837436b4f04a0a9a5b83fb78c38,DCP-OP WebServices,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+9be683c298904140849763af2ba1a808,e5e8435a523d43e6bbed40715c228cde-afe7cab0-3e01-420f-b093-a2f90e9,,,,,,
+9c39d1d2c36b48c294d5350ce80bceab,Platform3-Pen-Test2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+9d6c9d1ecf9f47fc85c769e232e0b6a2,ngcs-whisk-cloud-rcdn-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a0e976b7b666429088ae97f2d9a13fad,slrrwd-prd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a12daff01f5c4dabac40fdade6fc51de,andrpric-float-onboard,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a583616a02604e6c99bcccb2447f1023,e5e8435a523d43e6bbed40715c228cde-0742ff89-b3f6-4130-92a2-3092684,,,,,,
+a8e3e130264d4728baf1ebed48c66298,e5e8435a523d43e6bbed40715c228cde-600e504b-99fd-4386-b439-a7a4f8c,,,,,,
+ac998af2a685413099ab01d7ad0c69cb,POC_OpenStack,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ad00f80b441a4e52b49a646b3d628d40,mgstg-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+aeae812765724162bbb88c58dae22dc6,CDFPOC-APP-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b26ee9e055784b3aa9d88448751895cd,tagprd-prd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b435cf5439704c7086ed7630ee9e0d52,IMCPRD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b8e219f005e843f5a3a717776655bea3,e5e8435a523d43e6bbed40715c228cde-0e50bef3-b745-4c79-972b-1312775,,,,,,
+bb6df4ae08d34015be50e4d09be8f0f6,SCISTG-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bca49709c8564ef3ad87edeaef062111,SSO-Private-0.6-LT,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bd45042073574e588520fa44bf2ff22e,eStore Platform PROD,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bd689783c1c24f3c89c6455c0377a40a,OpenStack-Project-1-Aleza,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c3f2747d1c3341a79673cd878a8e416b,GDPSTG-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c5082a59549c45c4915d501fc46bb52d,prasamah-ngcs-ops-directnet,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c50bf7e8978243a2b1adedc8f4f5397f,internal-direct-net-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c6b01d3a91334acf8eed2991e4f33c56,whisk-debug-2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c74a703a153144f39052f0522ab542b9,e5e8435a523d43e6bbed40715c228cde-bb7268ec-4a4b-456d-a4e1-dbbcffd,,,,,,
+cb10da5803174ae585fb95623b44ed93,drsdev-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ccb7e9022e4d4913b8102e0cf9357cc1,MMSTG-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d121e3aad5424505a91ffa3f25acb04d,openstack-qa-tenant-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d2832a75df2c43f09d90fc3b1c3f6947,e5e8435a523d43e6bbed40715c228cde-9bfbfe2a-e913-430a-aeae-5eb5335,,,,,,
+d3572c5f9ae3422197446942ed8d0aec,SST,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d465d7197fe74c5db25b3c6b75cdb7ae,whisk-debug-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d48d8965c02d4701a634c5efe6def4c9,Actions Orchestrator Dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+da5b88c4d9334229b4ccab85ce5441ca,MCMP-Free-Tier-Project,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+dae879d2d3cc4e118bb6e7016391aa84,SCIPRD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+dce58d1d8eda46e89c0a53263e39259b,ESGSTG-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+df5b142820c740fb8f785232c69ac7d4,Impact Platform,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e175ce7de9c7431b918713dda7efa1f5,DRS-SANDBOX,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e2367846feea46228dcb4c7f4ba6b1dc,gslb-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e250176d0dc6416a8ac776aae26b3efc,lglstg-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e311fa87c5ac49a384c7a83336deeffe,sb-dev-trfm,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e31e09b6792149eba9c7e354194505eb,opl-lt-db-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e5b6007456ba44ae89feaae321d57366,e5e8435a523d43e6bbed40715c228cde-4826c825-96f5-4ff8-9ff8-0d15241,,,,,,
+e5e8435a523d43e6bbed40715c228cde,eng-build-cloud-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e6386026d8954f998fe32396ad1c1e92,uctg-galway,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e7ed0c3d2df6443b8caca948a6e46257,CSM_latency_Validation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e89559f96854412a9ee1b99fa4ca8ccb,e5e8435a523d43e6bbed40715c228cde-4f4f3ddb-4583-43b1-a9b5-8e1c8ef,,,,,,
+e93eababc0ed4393af59924612d2a2ee,e5e8435a523d43e6bbed40715c228cde-e5725daa-778b-4ec5-a760-f159dd6,,,,,,
+ee435c9c71e4454cb561621697d51e58,AIMPRD-PRD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ef6b0a47fb8f4f008b5b2f7d3fb163db,ArcGIS Enterprise,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f06360fa402c487dabbfcc27fca88c40,spade-onprem-k8s,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f5cc83b11671446a831a75dd52dcf330,CD-Services,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f76b5da082b445a29c42fed993f7dc16,CI-POC-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fc82d279e5a2476a8e4d27eadf7d969a,impdev-npd-rcdn,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fcdd9f31affe4422b0e04b97ea8902d9,CloudDB-Security-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ff6887f14d6346de953cda983b32f7d0,MMDEV-NPD-RCDN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ffa9324795554ee7b6c5cd6182daa9e7,cisco test 1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0083aeba2add4329b0c55886a3905f65,mcmp-reporting-prd,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+055ff5363460478d9fdad267de6d03be,EPSDEV-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0737a19cb3d341f7a77950cfcd4c76d3,test1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0af3da12bdd847bba03d6d526d68b00e,drsdev-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0b96be2e888746c0b0a7ce2ea0f51b48,testing-project-alln1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0ca7d64342c54bc19d3f73793c4cda23,IMCDEV-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+0eb3a1766e9e4cfc87161eac101204e6,CDB-AUT-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+13fef8e0b4b64971915d7bdc28905120,ESGPRD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+15fdabe91c5b49d5b04e08eeb30e2f9b,eStore Platform Stage,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+168ee50c19af4a45a1255cedb526972f,AIMSTG-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+193d1a24512e4079a07626885888e44f,AIMPRD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1a7c0d7f05c04e6db5598e52e655018a,autopods,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1bd50ba264414b62877fc11973f63e86,ESGNDV-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+1ef0a46dea89491885299064b6efebb3,CPO_LH_Production,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2175eedb1e544f4dba39325cffefc010,impdev-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+268dda9085fc453d892e855c59b99157,testing-project-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+28c253be6c914c07b093436e273ecc4c,openfaas,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2ca261fe29744b71b7fefd1ca0812d93,B2C Development - Direct Connect Network,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2cd4e79c5285497a9e9ecda3ea0ba485,OPL-PRD-DB-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+2e7e8c5a212541fd83af446a5f82436a,fb603c9d5038421790fd96f35bdff8bc-b470804a-beaa-4ec7-bf16-a7157d4,,,,,,
+30cdf1be50494500882ca9f09bbc85a9,SDP-Private-int-lt,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+31092de9868f42c2b4cc937990079da5,demo-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+32df01841ba8465880958972d84be9a2,internal-fip-net-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+332c5a26ade141be8d80c047b9a400d6,CCWPOC-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+33b3f005bde44058b99bc577f59ad5a4,BCIPROD,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+3b4b48d7732f4a079c25e6a756d4c49a,ACE Plus ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+410d1feb5e3845978bb6d6456cb2bc0e,hanqiu-onboard-test,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+423f6abb877d4f2e824389cd186e641c,IMCSTG-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+43ce565de42a4aed880305f0811b1b31,CD-Services-STAGE,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+48bc2a58929e42c98400a495ca1cfd8c,MSS-Internal-Cloud-alln-01,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4a470dfea2014a87a08b15680438e6b4,SDP-Private-Prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4a6dfede46ca4b0794e27fb6a9b9a8e8,ce22f840a48e4c6f8ef31e1355168da3-e170fe3f-567e-403e-839d-efaa537,,,,,,
+4b7c1270e9ab48c992f8a38213109db6,MMPRD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+4e10caf7297f47dfaa9f4ba1e016cdec,ESGNST-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+50840c783057458096ee0aa3883ac908,OPSMGR-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+53956f551b19445e9f2e57771c57de82,VanDemo,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+58488d33880844249bf5909378df07a8,cnaap-alln-001,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5d371080cee14d97a240a0ef89892e84,rally-report-backup,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5f19dba60b834bc6b004376d7c37c2a6,US-AS-ATT-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5f3304bc65a643a2855196b7094cad09,SSO-Private-0.6,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+5f827df87c424ce68971cd0a1f43aafc,IMCPRD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6208e08318ac4b10a76e8be9d24dc102,ngcs-whisk-cloud-alln-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6687ac1adc334e07a69a2778f7d7ba17,SDP-Private-int-stg,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+67047670121741189c4962794c5c5888,tagstg-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6863f5a068224b1a86cd733194c72f1e,Oracle18c-poc-Alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6ba1895aefce40348eb2e0143b710cd0,fespana_demo,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6c0055d749364bfaacfc690a28794cb1,GDPPRD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6e88f53bfeee40afac3c153d79dc1750,slrrwd-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+6f54d15487384fe2814e308799c5ac9a,CloudDB-Cassandra-OpsCenter-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+75b7425e5c924a29bea9ed4cb657bf1d,tmx-bd-legacy-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+76bbe0f877ba4879a14eace8b949148a,IAC-Demo,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+77355e0b486046b8868b230986295d60,slrrwd-prd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7829666f1ff34115b4dfd93f890c34b7,DBA-TESLA-AUTOMATION-INFRASTRUCTURE-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7854fdd6253e43cb9bfe55875207c7e9,at-ci-pipeline,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+78be32af44bb469b9a6b52e848266d7c,ISV PoC Multicloud Kube,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7ca8ed4a530a43afb129bd8e38d3b6bc,SSO-Private-0.6-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+7daa4664ac734f34b1c0fb75f8a62067,internal-direct-net-devops,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+81413c640bd447d89a4c62ced7e6f4c9,OPLTS3-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+81b5b2e8566443d688a25efdddad1597,sdp-innovation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+83c53027d95943369817b017f2275d25,embstg-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+85507675847b404ab73a6f9f150ff7d8,openstack-qa-tenant-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+85939dfafbe94529b2cf0b03671bc8c5,CloudDB-Security-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+85e7e85e9cad441b91baba71f8a76a99,whisk-data-backup,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+87e559e6b0b14d45a63b6a58d6038b90,OPL-PRD-APP-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+8b125fc549684b308c0848de54b00bb4,cx-labs-lions,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+90258063181343c29b93e05517e7b748,gslb-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+91f46bcb95bf4d3f954a4ca6fe8f6494,embdev-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+95f7f174418f45439bc78e60ab804741,ESGSTG-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+98f93bc7305d4dcd9a8fa1ee7340a69d,mcmp-opstack-prd,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a334d766e9ec49d5bfd2128f0b0b9c01,mgprod-prd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a641839014b84e8689db8630f1c84212,ESGDEV-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a780049f44c2468fbd3805b32657bdff,casapp-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a878d93ba56f493ea4ce1554a2204d24,spark-k8,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+a8fa4c97ac06473daa4c45312c89c3d4,jvuppu_project,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+aafcaffd270c49ed9bc5e018412f96d6,EPS-ADMIN-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+af34d7597fec4b6bb49138fb52f59714,GSLOPC-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b0a99f3a4850430fa8964fd942181112,data-insights,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b0ac71ca364f42c3ac16e5f431f9d5c4,sdp-lt4,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b0ddc15ab67140e7b31b4557aa8bb34a,SCIPRD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b12a922944a447d79e90bf9eb44e47ab,MCMP-PoC,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b58658aa20ba4682976953f80a2c3b03,terraform-automation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b6c54fc0c2124873bd37966e765eff11,SCISTG-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b8f3cfefc0e5424ba3c9df3cc1ebb350,CAE-NONPROD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+b9dce513bac94e749b18b4b8ace70e62,FINSSE-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ba22019efdad47d1ac3eeb53914e4e2c,lglprd-prd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bac32af33de34ab599f2135d50bce356,CDFPOC-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bd590dab6f4d4b77b13c785d85d5af82,CD-Services,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+be056561293d41458914c44005220b5e,MMDEV-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+bfc605e16b0e4c649e709ec9133f7dd8,SDP-Private-sandbox,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c2b7824e9d604d949e75fa1ab87f150b,CD2.0,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c3877394a9bb416cbc223d37062c505b,OPL-LT-DB-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c4d2287bb0884953999ec4d0999a965a,tmx-alln-api,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c5300522d8634befa38b28aa6259eb0f,install base insight,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c7d73dfd3f1843ca8d562c828952dd4e,PLATFORM-DEPLOY-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c8cb2e46a8f044cda3f069588948a21a,ifw-cisco-cloud,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+c8dd573771ea40a49012afcaa14285a0,lgldev-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ce08c11a184946bb8c997654689d80a3,KAAS-ADMIN-IDEV-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ce22f840a48e4c6f8ef31e1355168da3,tmx-cluster-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d1748bcfe6964f52b629534c857914c6,EB-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d17bfe73ef4b494882e805f0e51b8d84,OPSCTR-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d52b35daf94a4a44bec7b0bd7ee06cae,lglstg-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+d7886dff58dc474e9070f5d10c5a6671,MMSTG-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+db3a4303ac61423b9c6160153b26cb36,ESGNPD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+db56bebdd6f847759655465d897b063b,ali-8-28-18-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+dfdc944bd07c44948e3a7363b14aa059,whisk-validation,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e07f49604d8145c0aa635bc9a5c7c992,sdp-lt3,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e0de23dd8525443489284231f807fcad,mcmp-stg-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e2bec3f5d53441239f044b3663b908f3,MCMPPD-PRD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e70e7dca27524f518c0f324e4764cb05,FINSSE-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+e8f41dcf6ac74654971e3b7a073c32f7,CAE-PROD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ed648c0051ab46d5a196356348b71d23,CX Labs Infra,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f089419f18654d6bab29fde802d36c24,deepa_test_lab,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f111780fe56f410c827cee2a09e0bb77,tmx-bd-legacy-prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f216be8737614ccc8e3da5e05054b68b,GDPSTG-NPD-ALLN,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f383a1db2dec48bea7e5240cabb48bec,modelapp,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f4e23a9168754d19bf1b1a8f07ee256e,API App,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f6109f347b6045af94ae7f65abaf193b,sdp-lt2,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+f6276918eb234496ae787d30912d1e1a,tmx-alln-cicd-prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fa09c28faf2e415297cafe06dd3464f6,tagprd-prd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fa8efba36e604b2788291009d43cccc2,cae-kube-idev-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fb603c9d5038421790fd96f35bdff8bc,tmx-cluster-prod,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fbe020141fe74a1a9589ba5eb09d3a60,Entitlement Base Foundation PRD2-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fc428bb0f0504bfb8e3d0168c6b536c8,tagdev-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fe1007afca5f4ca7ad84f6ac70b4cf35,mgstg-npd-alln,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+ff199db28430420196c6131e4239cf5c,SDP-Private-int-dev,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
+fff674303ec74709b9f90a94b3a41faa,cmdb-datapump-qa-1,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Not Allowed,Compliant
