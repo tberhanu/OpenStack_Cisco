@@ -28,7 +28,7 @@ spec:
       containers:
         -
           name: "csbauditor"
-          image: "containers.cisco.com/csb-cnt-dev/csbauditor:csbauditor_py36_prod"
+          image: "containers.cisco.com/csb-cnt-dev/csbauditor:csbauditor_prod"
 
           volumeMounts:
             - name: "storage"
