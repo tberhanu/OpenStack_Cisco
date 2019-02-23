@@ -52,7 +52,7 @@ def create_connection(url):
     """
     try:
         if url is not None:
-            region_name = url.split(".")[0].split("-")[-1]
+            region_name = url.split("//")[1].split(".")[0].replace("-", "_")
             if region_name is not None:
                 path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
             else:
