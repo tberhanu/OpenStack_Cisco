@@ -25,7 +25,7 @@ def load_config(url):
     """
     try:
         if url is not None:
-            region_name = url.split(".")[0].split("-")[-1]
+            region_name = url.split("//")[1].split(".")[0].replace("-", "_")
             if region_name is not None:
                 path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
             else:
@@ -60,7 +60,7 @@ def cae_url_validation(url):
     :param url: Domain URL
     :return: True or False
     """
-    cae_url_pattern = re.compile(r'^https://cae-np-.*.cisco.com$')
+    cae_url_pattern = re.compile(r'(^https://cae-np-.*.cisco.com$)|(^https://cae-prd-.*.cisco.com$)')
     if cae_url_pattern.match(url):
         print("LOG: Received valid Domain URL")
         return True
