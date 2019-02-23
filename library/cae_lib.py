@@ -17,6 +17,16 @@ import pykube
 import re
 
 
+def get_kube_config_path(url):
+    """
+    Method to determine the path of required Kube config file w.r.t. received Cluster URL
+    :param url: Cluster URL
+    :return: expected path of kube config file
+    """
+    kc_path = os.path.expanduser("~") + "/" + "kube_config_" + url.split("//")[1].split(".")[0].replace("-", "_")
+    return kc_path
+
+
 def load_config(url):
     """
     Method to create API Handle
@@ -25,11 +35,7 @@ def load_config(url):
     """
     try:
         if url is not None:
-            region_name = url.split("//")[1].split(".")[0].replace("-", "_")
-            if region_name is not None:
-                path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
-            else:
-                raise Exception("ERROR: Region name is None")
+            path = get_kube_config_path(url)
             api = pykube.HTTPClient(pykube.KubeConfig.from_file(path))
             return api
         else:
