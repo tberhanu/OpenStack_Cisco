@@ -4,15 +4,15 @@
 -------------------------------- csb_auditor.py --------------------------------
 Description: This python script is to
                 a. set environment in terms of credentials to be used
-                b. decrypt the required encrypted version of kube config files
-                c. set environment w.r.t. other required parameters
-                b. clone git repo
-                c. create connection handle to SQS Queue
-                d. read messages from SQS Queue created for CNT-CSB
-                e. process the required information
-                f. pass the information to audit test-script
-                g. consolidate return values from each audit script per team
-                h. delete message from SQS Queue, if none of the return values
+                b. set environment w.r.t. other required parameters
+                c. generate the kube config files per cluster
+                d. clone git repo
+                e. create connection handle to SQS Queue
+                f. read messages from SQS Queue created for CNT-CSB
+                g. process the required information
+                h. pass the information to audit test-script
+                i. consolidate return values from each audit script per team
+                j. delete message from SQS Queue, if none of the return values
                    are not "None"
 
 Dependencies:
@@ -399,7 +399,8 @@ def generate_kube_config_file():
             return False
 
         if "Login successful" in str(stdout):
-            kube_config_rgn = os.path.expanduser("~") + "/kube_config_" + cluster.split(".")[0].split("-")[-1]
+            kube_config_rgn = os.path.expanduser("~") + "/kube_config_" \
+                              + cluster.split("//")[1].split(".")[0].replace("-", "_")
             out = subprocess.Popen(['cp', kube_config_at_home, kube_config_rgn],
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             stdout, stderr = out.communicate()
@@ -478,6 +479,8 @@ if __name__ == '__main__':
         env = args.env
         print("INFO: Execution will continue for %s ENV" % str(env).upper())
     else:
-        print("ERROR: Received ENV Type is not appropriate. Expected ENV Type is either \"prod\" or \"nonprod\"")
+        env = "nonprod"
+        print("WARNING: Received ENV Type is not appropriate. Expected ENV Type is either \"prod\" or \"nonprod\"")
+        print("INFO: Continuing with ENV Type = \"nonprod\"")
 
     main(env)
