@@ -52,11 +52,7 @@ def create_connection(url):
     """
     try:
         if url is not None:
-            region_name = url.split("//")[1].split(".")[0].replace("-", "_")
-            if region_name is not None:
-                path = os.path.expanduser("~") + "/" + "kube_config_" + region_name
-            else:
-                print("ERROR: No Region found")
+            path = cae_lib.get_kube_config_path(url)
         print("INFO: Kube Config's Path", path)
 
         for i in range(0, 10):
