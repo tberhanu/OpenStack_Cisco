@@ -20,7 +20,6 @@ Dependencies:
     csb_credentials.py.enc_nonprod
     prod_env_variables.py
     nonprod_env_variables.py
-    landscape_of_execution.py
     requirements.txt
 
 Usage:
@@ -37,12 +36,10 @@ import argparse
 import boto3
 import botocore
 import datetime
-import errno
 import git
 import multiprocessing
 import os
 import re
-import subprocess
 import shutil
 import struct
 import time
@@ -50,7 +47,6 @@ import time
 from Crypto.Cipher import AES
 from prod_env_variables import prod_env_variables
 from nonprod_env_variables import nonprod_env_variables
-from landscape_of_execution import landscape
 from importlib import import_module
 
 
@@ -237,7 +233,7 @@ def retrieve_details(msg):
 
     scanid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     teamid_pattern = re.compile(r'(^P3:[0-9a-f]{32}$)|(^CAE:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$)')
-    url_pattern = re.compile(r'^https://((cae-np-.*.cisco.com)|(cloud-.*-1.cisco.com:5000/v3))$')
+    url_pattern = re.compile(r'^https://((cae-np-.*.cisco.com)|(cae-prd-.*.cisco.com)|(cloud-.*-1.cisco.com:5000/v3))$')
     rh_pattern = re.compile(r'([a-zA-Z0-9]*[/]?[+]?[a-zA-Z0-9]*)*=')
     tc_pattern = re.compile(r'^(P3|CAE)[-A-Z0-9]*(, (P3|CAE)[-A-Z0-9]*)*')
 
@@ -366,55 +362,6 @@ def set_credentials_env(e_type):
         return False
 
 
-def generate_kube_config_file():
-    """
-    Method to generate Kube config file per CAE Cluster listed in landscape_of_execution.py file
-    :return: True|False
-    """
-    kube_config_at_home = os.path.expanduser("~") + "/.kube/config"
-    for cluster in landscape["CAE_CLUSTER"]:
-        try:
-            os.remove(kube_config_at_home)
-        except OSError as rm_err:
-            if rm_err.errno == errno.ENOENT:
-                print("INFO: %s" % str(rm_err))
-            else:
-                print("ERROR: %s" % str(rm_err))
-                return False
-
-        print("INFO: Cluster - %s" % cluster)
-        out = subprocess.Popen([
-                                '/usr/bin/oc', 'login', cluster,
-                                '-u', os.environ["OC_USERNAME"],
-                                '-p', os.environ["OC_PASSWORD"],
-                                '--insecure-skip-tls-verify'
-                                ],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT
-                              )
-        stdout, stderr = out.communicate()
-        print("DEBUG: STDOUT while logging into Cluster: %s - %s" % (cluster, stdout))
-        if stderr:
-            print("ERROR: stderr while logging in to Cluster: %s - %s" % (cluster, stderr))
-            return False
-
-        if "Login successful" in str(stdout):
-            kube_config_rgn = os.path.expanduser("~") + "/kube_config_" \
-                              + cluster.split("//")[1].split(".")[0].replace("-", "_")
-            out = subprocess.Popen(['cp', kube_config_at_home, kube_config_rgn],
-                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            stdout, stderr = out.communicate()
-            if stderr:
-                print("ERROR: STDERR while copying the file - %s" % stderr)
-                return False
-            elif os.path.isfile(kube_config_rgn):
-                print("INFO: Generated Kube config file - %s" % kube_config_rgn)
-        else:
-            print("ERROR: Failed to login to Cluster: %s" % cluster)
-            return False
-    return True
-
-
 def main(env_type):
     """
     Method to drive the CSB function of auditing the P3 and CAE Cloud based Tenants
@@ -433,15 +380,23 @@ def main(env_type):
         else:
             print("ERROR: Didn't receive the expected value for ENV_TYPE - %s" % env_type)
 
-        if generate_kube_config_file():
-            print("INFO: Successfully generated the required Kube Config file for "
-                  "each cluster listed in landscape_of_execution.py")
-        else:
-            print("ERROR: Issue observed while generating Kube config file.")
-            print("INFO: Overall execution for CAE Tenants will get affected")
-
         """ Clone Git Repo for the audit test-scripts """
         if clone_git_repo():
+
+            """ Generate Kube config file for cluster listed in landscape_of_execution.py """
+            lib_mod_path = os.environ["CLONED_REPO_DIR"].split("/")[-1] + "." + "library"
+            if os.path.isfile(os.environ["LIBRARY_DIR"] + "/cae_lib.py"):
+                cae_lib_handle = import_module(".cae_lib", lib_mod_path)
+                if cae_lib_handle.generate_kube_config_file():
+                    print("INFO: Successfully generated the required Kube Config file for "
+                          "each cluster listed in landscape_of_execution.py")
+                else:
+                    print("ERROR: Issue observed while generating Kube config file.")
+                    print("WARNING: Overall execution for CAE Tenants will get affected")
+            else:
+                print("ERROR: Required CAE Library is not available")
+                print("WARNING: Execution for CAE audit scripts will get affected")
+
             """ Get the connection handle to AWS SQS """
             sqsclient = sqs_client_handle()
             if sqsclient:
