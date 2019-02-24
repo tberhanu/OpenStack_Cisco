@@ -28,6 +28,7 @@ prod_env_variables = {
   
     "AUDIT_SCRIPTS_DIR": os.path.expanduser("~") + "/csb_cnt_repo/audit_scripts",
     "CLONED_REPO_DIR": os.path.expanduser("~") + "/csb_cnt_repo",
+    "LIBRARY_DIR": os.path.expanduser("~") + "/csb_cnt_repo/library",
     "LOGS_DIR": os.path.expanduser("~") + "/logs",
     "CSB_CNT_REPO": "https://wwwin-github.cisco.com/CiscoIT-CSB/CiscoIT-CSB",
     "GIT_BRANCH_TO_USE": "csb_dev",
