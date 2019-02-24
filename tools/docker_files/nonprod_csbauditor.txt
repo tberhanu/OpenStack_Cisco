@@ -26,7 +26,6 @@ USER default
 # Adding required dependency files and limiting the permissions
 ADD prod_env_variables.py $HOME
 ADD nonprod_env_variables.py $HOME
-ADD landscape_of_execution.py $HOME
 ADD csb_credentials.py.enc_prod $HOME
 ADD csb_credentials.py.enc_nonprod $HOME
 
