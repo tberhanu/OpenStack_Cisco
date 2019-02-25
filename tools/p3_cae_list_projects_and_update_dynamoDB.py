@@ -1,4 +1,4 @@
-#!opt/app-root/bin/python
+#!/opt/app-root/bin/python
 
 """
 --------------------------p3_cae_list_projects_and_update_dynamoDB.py-----------------------
