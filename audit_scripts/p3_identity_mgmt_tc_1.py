@@ -11,6 +11,9 @@ Description: This python script is to validate the negative test cases
                 d. change domain
              in the P3 platform.
 
+Usage:
+python p3_identity_mgmt_tc_1.py -u <Horizon_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
+
 Author: Devaraj Acharya <devaacha@cisco.com>; January 9th, 2019
 
 Copyright (c) 2019 Cisco Systems.
