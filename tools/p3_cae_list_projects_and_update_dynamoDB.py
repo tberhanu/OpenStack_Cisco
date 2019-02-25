@@ -1,4 +1,4 @@
-#!/opt/app-root/bin/python
+#!opt/app-root/bin/python
 
 """
 --------------------------p3_cae_list_projects_and_update_dynamoDB.py-----------------------
@@ -527,8 +527,17 @@ if __name__ == "__main__":
             else:
                 print("ERROR: Issue observed while generating Kube config file.")
                 print("INFO: Overall execution for CAE Tenants will get affected")
+
     except KeyboardInterrupt:
         print("Manually interrupted by user")
         print("INFO: Delete decrypted Credential file")
-        os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
-        os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
+        try:
+            cred_file = os.path.expanduser("~") + "/" + "csb_credentials.py"
+            if os.path.isfile(cred_file):
+                os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
+                os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
+            else:
+                print("INFO: No Credentials file Found")
+        except OSError as e:
+            print("ERROR: Unable to remove csb_credentials file")
+            print(str(e))

@@ -77,7 +77,7 @@ def delete_project(pid,platform):
 		authorization_header = algorithm + ' ' + 'Credential=' + access_key + '/' + credential_scope + ', ' + 'SignedHeaders=' + signed_headers + ', ' + 'Signature=' + signature
 		headers = {'Content-Type': content_type, 'X-Amz-Date': amz_date, 'x-api-key': api_key, 'Authorization': authorization_header}
 
-		print('\nBEGIN REQUEST++++++++++++++++++++++++++++++++++++')
+		print('\nBEGIN REQUEST+++++++++++++ PUT/Updating Database+++++++++++++++++++++++')
 		print('Request URL = ' + endpoint)
 		x= endpoint + '/' + pid
 		r = requests.put(x, data=request_parameters, headers=headers)
@@ -148,7 +148,7 @@ def reading_table(platform,region_url):
 		authorization_header = algorithm + ' ' + 'Credential=' + access_key + '/' + credential_scope + ', ' + 'SignedHeaders=' + signed_headers + ', ' + 'Signature=' + signature
 		headers = {'Content_type':content_type, 'X-Amz-Date': amz_date, 'x-api-key': api_key, 'Authorization': authorization_header}
 
-		print('\nBEGIN REQUEST++++++++++++++++++++++++++++++++++++')
+		print('\nBEGIN REQUEST++++++++++++Reading Database++++++++++++++++++++++++')
 		print('Request URL = ' + endpoint)
 		x = endpoint + '?' + request_parameters
 
@@ -169,6 +169,7 @@ def reading_table(platform,region_url):
 					plist.append(pid)
 		else:
 			plist = False
+		print("INFO: No of projects in database for url %s : %s "%(region_url,len(plist)))
 		return plist
 	except Exception as e:
 		print("ERROR: cannot read dynamoDB table")
@@ -211,6 +212,7 @@ def update_dynamodb(regionfile_name,region_name,region_url,contact,platform):
 	"""
 	#reading project list from database
 	db_plist = reading_table(platform,region_url)
+
 
 	global project_id, project_status
 	global item_success, item_unsuccess, item_unknown, item_success_delete, item_failed_delete, item_unknown_delete
@@ -311,7 +313,7 @@ def update_dynamodb(regionfile_name,region_name,region_url,contact,platform):
 									headers = {'Content-Type': content_type, 'X-Amz-Date': amz_date, 'x-api-key': api_key,
 											   'Authorization': authorization_header}
 
-									print('\nBEGIN REQUEST++++++++++++++++++++++++++++++++++++')
+									print('\nBEGIN REQUEST++++++++++++Posting to Database++++++++++++++++++++++++')
 									print('Request URL = ' + endpoint)
 									r = requests.post(endpoint, data=request_parameters, headers=headers)
 									print('\nRESPONSE++++++++++++++++++++++++++++++++++++')
@@ -369,7 +371,7 @@ def update_dynamodb(regionfile_name,region_name,region_url,contact,platform):
 								headers = {'Content-Type': content_type, 'X-Amz-Date': amz_date, 'x-api-key': api_key,
 										   'Authorization': authorization_header}
 
-								print('\nBEGIN REQUEST++++++++++++++++++++++++++++++++++++')
+								print('\nBEGIN REQUEST++++++++++++++Posting to Database++++++++++++++++++++++')
 								print('Request URL = ' + endpoint)
 								r = requests.post(endpoint, data=request_parameters, headers=headers)
 								print('\nRESPONSE++++++++++++++++++++++++++++++++++++')
