@@ -522,6 +522,11 @@ if __name__ == "__main__":
             print("----NEXT Iteration---------")
             sys.stdout.flush()
             time.sleep(sleep_time)
+            if generate_kube_config_file():
+                print("INFO: Successfully generated the required Kube Config file for each cluster listed in landscape_of_execution.py")
+            else:
+                print("ERROR: Issue observed while generating Kube config file.")
+                print("INFO: Overall execution for CAE Tenants will get affected")
     except KeyboardInterrupt:
         print("Manually interrupted by user")
         print("INFO: Delete decrypted Credential file")
