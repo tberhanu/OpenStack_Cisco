@@ -393,7 +393,7 @@ def main(url, namespace, scan_id, team_id):
                         else:
                             print("INFO: ScanId or TeamId passed to main() method is not valid, "
                                   "hence ignoring Kinesis part")
-                        return compliance_status,summary_dict
+                        
                 else:
                     proj_txt = [namespace] + ["Does not exist"] * 3
                     image_file_text = ["Does not exist"] * 9
