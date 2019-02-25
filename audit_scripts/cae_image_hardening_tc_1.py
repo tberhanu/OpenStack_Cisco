@@ -5,6 +5,8 @@ Description: This python script is to list all the images in the CAE namespace
              and validate if the image used are from the trusted source or not.
 Dependency:
             Kube config files per region
+Usage:
+python cae_image_hardening_tc_1.py -u <Cluster_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
 
 Author: Dharavahani Malepati <dmalepat@cisco.com>; January 8th, 2019
 
