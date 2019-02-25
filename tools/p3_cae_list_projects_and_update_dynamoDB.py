@@ -26,7 +26,9 @@ All rights reserved.
 ------------------------------------------------------------------------------------------
 """
 import pykube
+import argparse
 import datetime
+import os
 import subprocess
 import time
 import struct
@@ -37,78 +39,55 @@ from os import environ as env
 from os import path
 from Crypto.Cipher import AES
 from importlib import import_module
-from env_variables import env_variables
 from teams_db_update_util import *
+from landscape_of_execution import landscape
+from prod_env_variables import prod_env_variables
+from nonprod_env_variables import nonprod_env_variables
 
 
-def decrypt_file(key, in_filename):
+
+def decrypt_file(filenames):
     """
-    Decrypts a file using AES(CBC mode) with the given key.
-    :param key: key to be used for decryption
-    :param in_filename: name of encrypted file
-    :return: decrypted file
+    Decrypts the encrypted files using AES(CBC mode) with the given key.
+    :param filenames: name of encrypted kube config file(s)
+    :return: generate decrypted file and return True/False
     """
-    out_filename = os.path.splitext(in_filename)[0]
-    chunk_size = 64*1024
-    try:
-        print("Decrypt %s file" % in_filename)
-        with open(in_filename, 'rb') as infile:
-            orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
-            iv = infile.read(16)
-            decryptor = AES.new(key, AES.MODE_CBC, iv)
-            try:
-                with open(out_filename, 'wb') as outfile:
-                    while True:
-                        chunk = infile.read(chunk_size)
-                        if len(chunk) == 0:
-                            break
-                        outfile.write(decryptor.decrypt(chunk))
-
-                    outfile.truncate(orig_size)
-            except IOError:
-                print("ERROR: Failed to create the decrypted file %s" % out_filename)
-    except IOError:
-        print("ERROR: File %s was not accessible" % in_filename)
-
-    if os.path.isfile(out_filename):
-        return True
-    else:
-        return False
-
-
-def load_enc_variable():
-    """
-    This method is used to load credential variables into environment variable.
-    To decrypt the config files of CAE regions
-    :param: none
-    :return: none
-    """
+    """ Key to decrypt the encrypted files required for CSB Audit """
     key = "1329ebbc1b9646b890202384beaef2ec"
-    """ Decrypt credentials file. Then set environment variables w.r.t. required set of credentials  """
-    if decrypt_file(key, "csb_credentials.py.enc"):
-        print("LOG: Successfully decrypted Credential file")
-        cred_file = import_module("csb_credentials")
-        for var, val in cred_file.csb_credentials.items():
-            os.environ[var] = val
-    else:
-        raise Exception("ERROR: Failed to decrypt \"csb_credentials.py.enc\" file")
-    """ Decrypt the config files for CAE region"""
 
-    if decrypt_file(key, "kube_config_rtp.enc"):
-        print("Successfully decrypted RTP Config file")
-    else:
-        raise Exception("ERROR: Failed to decrypt \"kube_config_rtp.enc\" file")
+    list_of_enc_files = filenames.split(",")
+    flag = True
+    for in_filename in list_of_enc_files:
+        out_filename = os.path.splitext(in_filename)[0]
+        chunk_size = 64*1024
+        try:
+            print("INFO: Decrypt %s file" % in_filename)
+            with open(in_filename, 'rb') as infile:
+                orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
+                iv = infile.read(16)
+                decryptor = AES.new(key, AES.MODE_CBC, iv)
+                try:
+                    with open(out_filename, 'wb') as outfile:
+                        while True:
+                            chunk = infile.read(chunk_size)
+                            if len(chunk) == 0:
+                                break
+                            outfile.write(decryptor.decrypt(chunk))
+                        outfile.truncate(orig_size)
+                except IOError:
+                    print("ERROR: Failed to create the decrypted file %s" % out_filename)
+                    flag = False
+        except IOError:
+            print("ERROR: File %s was not accessible" % in_filename)
+            flag = False
 
-    if decrypt_file(key, "kube_config_rcdn.enc"):
-        print("Successfully decrypted Kube Config file")
-    else:
-        raise Exception("ERROR: Failed to decrypt \"kube_config_rcdn.enc\" file")
+        if os.path.isfile(out_filename):
+            print("INFO: Decrypted version of %s file is available for use" % in_filename)
+        else:
+            print("ERROR: Decrypted version of %s file is not available for use" % in_filename)
+            flag = False
 
-    if decrypt_file(key, "kube_config_alln.enc"):
-        print("Successfully decrypted Kube Config file")
-    else:
-        raise Exception("ERROR: Failed to decrypt \"kube_config_alln.enc\" file")
-
+    return flag
 
 def write_to_project_file(project_details, regionfile_name, region_name, deltafile):
     """
@@ -177,7 +156,8 @@ def delete_existing_project_details(project_details, regionfile_name):
         print("ERROR: Opening %s isnot accessible for writing" % regionfile_name)
     else:
         for newline in lines:
-            if newline != project_details:
+            if newline.strip().split(",")[0] != project_details.strip().split(",")[0]:
+                #if newline != project_details:
                 f.write(newline)
         f.truncate()
         f.close()
@@ -329,14 +309,19 @@ def main():
                 os.remove(temp_file)
                 print("\n-.-.-.-.-. DynamoDB details-.-.-.-.-")
                 """ calling function to update dynamoDB teams table """
-                db_check, item_success, item_unsuccess, item_unknown = update_dynamodb(regionfile_name, region_name, region_url, contact, cae_platform)
+                db_check, item_success, item_unsuccess, item_unknown, item_success_delete, item_failed_delete, item_unknown_delete  = update_dynamodb(regionfile_name, region_name, region_url, contact, cae_platform)
                 if db_check is True:
                     print("LOG: DynamoDB update is Successfully")
                 else:
                     print("ERROR: DynamoDB update is UnSuccessful")
+
+                print("----------OVERALL SUMMARY FOR REGION %s---------" % region_name)
                 print("Total number of projects successful in adding to Database: %s" % item_success)
                 print("Total number of projects UnSuccessful in adding to Database: %s" % item_unsuccess)
                 print("Total number of projects unknown while adding to Database: %s" % item_unknown)
+                print("Total number of projects successfully UnInstalled in Database: %s" % item_success_delete)
+                print("Total number of projects unsuccessful in UnInstalling in Database: %s" % item_failed_delete)
+                print("Total number of projects unknown while UnInstalling in Database: %s" % item_unknown_delete)
                 print("INFO: -.-.-.-RegionEnd -.-.-.- ")
             else:
                 print("ERROR: cannot connect to cae platform to get project list")
@@ -391,26 +376,134 @@ def main():
             os.remove(temp_file)
             print("\n-.-.-.-.-. DynamoDB details-.-.-.-.-")
             """ calling function to update dynamoDB teams table"""
-            db_check, item_success, item_unsuccess, item_unknown = update_dynamodb(regionfile_name, region_name, region_url, contact, p3_platform)
+            db_check, item_success, item_unsuccess, item_unknown, item_success_delete, item_failed_delete, item_unknown_delete = update_dynamodb(regionfile_name, region_name, region_url, contact, p3_platform)
             if db_check is True:
                 print("LOG: DynamoDB update is Successfully")
             else:
                 print("ERROR: DynamoDB update is UnSuccessful")
+
+            print("----------OVERALL SUMMARY FOR REGION %s---------" % region_name)
             print("Total number of projects successful in adding to Database: %s" % item_success)
             print("Total number of projects UnSuccessful in adding to Database: %s" % item_unsuccess)
             print("Total number of projects unknown while adding to Database: %s" % item_unknown)
-            print("INFO: -.-.-.-RegionEnd -.-.-.- ")
+            print("Total number of projects successfully UnInstalled in Database: %s" % item_success_delete)
+            print("Total number of projects unsuccessful in UnInstalling in Database: %s" % item_failed_delete)
+            print("Total number of projects unknown while UnInstalling in Database: %s" % item_unknown_delete)
+            print("INFO: -.-.-.-RegionEnd -.-.-.- \n")
     except IOError:
         print("ERROR: Cannot access data_p3.xml file for P3 platform")
 
+def set_credentials_env(e_type):
+    """
+    Method to set the environment in terms of credentials to be used during execution
+    :return:
+    """
+    print("INFO: Decrypt credentials file. Then set environment variables w.r.t. required set of credentials")
+    if e_type == "prod":
+        cred_file = "csb_credentials.py.enc_prod"
+    elif e_type == "nonprod":
+        cred_file = "csb_credentials.py.enc_nonprod"
+    else:
+        print("ERROR: Didn't receive the expected value for ENV_TYPE - %s" % e_type)
+
+    if decrypt_file(cred_file):
+        print("INFO: Successfully decrypted Credential file")
+        cred_file_handle = import_module("csb_credentials")
+        for var, val in cred_file_handle.csb_credentials.items():
+            os.environ[var] = val
+        return True
+    else:
+        raise Exception("ERROR: Failed to decrypt %s file" % cred_file)
+        return False
+
+def generate_kube_config_file():
+    """
+    Method to generate Kube config file per CAE Cluster listed in landscape_of_execution.py file
+    :return: True|False
+    """
+    kube_config_at_home = os.path.expanduser("~") + "/.kube/config"
+    for cluster in landscape["CAE_CLUSTER"]:
+        try:
+            if path.exists(kube_config_at_home):
+                os.remove(kube_config_at_home)
+        except OSError as rm_err:
+            if rm_err.errno == errno.ENOENT:
+                print("INFO: %s" % str(rm_err))
+            else:
+                print("ERROR: %s" % str(rm_err))
+                return False
+
+        print("INFO: Cluster - %s" % cluster)
+        out = subprocess.Popen([
+                                '/usr/bin/oc', 'login', cluster,
+                                '-u', os.environ["OC_USERNAME"],
+                                '-p', os.environ["OC_PASSWORD"],
+                                '--insecure-skip-tls-verify'
+                                ],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT
+                              )
+        stdout, stderr = out.communicate()
+        print("DEBUG: STDOUT while logging into Cluster: %s - %s" % (cluster, stdout))
+        if stderr:
+            print("ERROR: stderr while logging in to Cluster: %s - %s" % (cluster, stderr))
+            return False
+
+        if "Login successful" in str(stdout):
+            #kube_config_rgn = os.path.expanduser("~") + "/kube_config_" + cluster.split(".")[0].split("-")[-1]
+            kube_config_rgn = os.path.expanduser("~") + "/" + "kube_config_" + cluster.split("//")[1].split(".")[0].replace("-", "_")
+            out = subprocess.Popen(['cp', kube_config_at_home, kube_config_rgn],
+                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, stderr = out.communicate()
+            if stderr:
+                print("ERROR: STDERR while copying the file - %s" % stderr)
+                return False
+            elif os.path.isfile(kube_config_rgn):
+                print("INFO: Generated Kube config file - %s" % kube_config_rgn)
+        else:
+            print("ERROR: Failed to login to Cluster: %s" % cluster)
+            return False
+    return True
+
+
 
 if __name__ == "__main__":
-    """ loading variables from encrypted credentials file, decrypting config and credentials file"""
-    load_enc_variable()
+    parser = argparse.ArgumentParser(description="Pass on the type of execution environment")
+    parser.add_argument("-e", "--env_type", help="Environment Type(\"prod\" or \"nonprod\")", action="store", dest="env")
+    args = parser.parse_args()
 
-    """Setting environment variables required for execution of CBS-CNT related scripts"""
-    for var, val in env_variables.items():
-        os.environ[var] = val
+    if args.env and (args.env == "prod" or args.env == "nonprod"):
+        env_type = args.env
+        print("INFO: Execution will continue for %s ENV" % str(env_type).upper())
+    else:
+        print("ERROR: Received ENV Type is not appropriate. Expected ENV Type is either \"prod\" or \"nonprod\"")
+
+    #set_credential_env will dectypt the credentials file.
+    if set_credentials_env(env_type):
+        """ Setting environment variables required for execution of CBS-CNT related scripts """
+        if env_type == "prod":
+            print("INFO: Set all required variables as part of ENV for ENV_TYPE = %s" % env_type)
+            for var, val in prod_env_variables.items():
+                os.environ[var] = val
+        elif env_type == "nonprod":
+            print("INFO: Set all required variables as part of ENV for ENV_TYPE = %s" % env_type)
+            for var, val in nonprod_env_variables.items():
+                os.environ[var] = val
+        else:
+            print("ERROR: Didn't receive the expected value for ENV_TYPE - %s" % env_type)
+
+        if generate_kube_config_file():
+            print("INFO: Successfully generated the required Kube Config file for "
+                  "each cluster listed in landscape_of_execution.py")
+
+        else:
+            print("ERROR: Issue observed while generating Kube config file.")
+            print("INFO: Overall execution for CAE Tenants will get affected")
+    else:
+        raise Exception("ERROR: Failed to initialize the environment in terms of credentials to use.")
+
+
+    
     """ assigning env variables to my_env, will be using this in subprocess for getting p3 project list"""
     my_env = os.environ.copy()
 
@@ -422,11 +515,15 @@ if __name__ == "__main__":
     contact = "csbauditor.gen@cisco.com"
 #   for single execution
 #    main()
-#   for scheduling
+#    for scheduling
     try:
         while True:
             main()
             print("----NEXT Iteration---------")
+            sys.stdout.flush()
             time.sleep(sleep_time)
     except KeyboardInterrupt:
         print("Manually interrupted by user")
+        print("INFO: Delete decrypted Credential file")
+        os.remove(os.path.expanduser("~") + "/" + "csb_credentials.py")
+        os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
