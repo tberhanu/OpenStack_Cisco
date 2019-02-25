@@ -1,0 +1,41 @@
+FROM containers.cisco.com/aws_managed/python-2.7:latest
+SHELL ["/bin/bash", "-c"]
+USER root
+MAINTAINER ravi
+
+# Configure username and useremail required for Git
+RUN git config --global user.name csbauditor.gen
+RUN git config --global user.email csbauditor.gen@cisco.com
+
+# Limiting the permissions on home dir
+RUN chmod -R 775 $HOME
+
+# Installing the packages required to support overall execution
+ADD requirements.txt $HOME
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# OC Client to be placed under /usr/bin
+ADD oc /usr/bin
+
+# Create dir for storing the logs and csv files
+RUN mkdir $HOME/logs
+
+# changing user from root to default
+USER default
+
+# Adding required dependency files
+ADD audit_projects.py $HOME
+ADD audit_tc_list.py $HOME
+ADD data_cae.xml $HOME
+ADD data_p3.xml $HOME
+ADD teams_db_update_util.py $HOME
+
+ADD prod_env_variables.py $HOME
+ADD nonprod_env_variables.py $HOME
+ADD landscape_of_execution.py $HOME
+ADD csb_credentials.py.enc_prod $HOME
+ADD csb_credentials.py.enc_nonprod $HOME
+
+# Adding p3_cae_list_projects_and_update_dynamoDB script and the execution command for the same
+ADD p3_cae_list_projects_and_update_dynamoDB.py $HOME
+CMD python $HOME/p3_cae_list_projects_and_update_dynamoDB.py -e prod | /usr/bin/tee $HOME/logs/teamdb_update_log_$(date +"%m%d%y_%H%M%S")
