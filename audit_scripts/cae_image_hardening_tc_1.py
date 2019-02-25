@@ -172,12 +172,14 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                             except KeyError:
                                 container_start_date = 'None'
                             for container_list in pod_image.obj["spec"]["containers"]:
+                                print("INFO:checking the container_list")
                                 image = none_check(container_list.get('image',None))
                                 compliance_status = compliance_status_validation(image)
                                 try:
                                     ports = " "
                                     for container_port in container_list['ports']:
                                         container_exposed_port = str(container_port.get('containerPort',None))
+                                        print("INFO:checking the ports")
                                         ports = container_exposed_port + "/" + ports
                                 except KeyError:
                                         ports = 'None'
@@ -470,6 +472,7 @@ def compliance_status_validation(image):
     :return:
     """
     if re.match(r'^containers.*.cisco.com\/*', image):
+        print("INFO: check for the compliance status")
         compliance_status = "Compliant"
         return compliance_status
     else:
