@@ -6,6 +6,9 @@ Description: This python script is to find out if any user have a role
              that outside the set of the roles defined for the normal user.
 Dependency:
         cae_user_roles
+Usage:
+python cae_identity_mgmt_tc_1.py -u <Cluster_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
+
 Author: Sanjeev Garg <sangarg@cisco.com>; December 21st, 2018
 Copyright (c) 2018 Cisco Systems.
 All rights reserved.
@@ -577,7 +580,8 @@ def main(path_url, p_name, scan_id, team_id):
                 teamid_valid = cae_lib.cae_teamid_validation(team_id)
             else:
                 print("INFO: Valid ScanId or TeamId not found")
-                return None, summary_report
+                print("INFO: Execution will proceed without Kinesis update")
+
             session = general_util.session_handle()
             if session:
                 if scanid_valid and teamid_valid:
@@ -662,7 +666,7 @@ if __name__ == "__main__":
     scan_id = args.scanid
     team_id = args.teamid
     url_valid = cae_lib.cae_url_validation(url)
-    if p_name is not None:
+    if url and p_name is not None:
         if url_valid:
             compliance_status, summary_report = main(url, p_name, scan_id, team_id)
             print("INFO: Process complete with compliance status as ", compliance_status)
