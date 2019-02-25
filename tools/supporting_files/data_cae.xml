@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<data>
+<region>
+	<regionname>CAERTPNP</regionname>
+	<regionurl>https://cae-np-rtp.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_cae_np_rtp</configpath>
+</region>
+<region>
+	<regionname>CAERCDNNP</regionname>
+	<regionurl>https://cae-np-rcdn.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_cae_np_rcdn</configpath>
+</region>
+<region>
+	<regionname>CAEALLNNP</regionname>
+	<regionurl>https://cae-np-alln.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_cae_np_alln</configpath>
+</region>
+<region>
+	<regionname>CAERTPPRD</regionname>
+	<regionurl>https://cae-prd-rtp.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_cae_prd_rtp</configpath>
+</region>
+<region>
+	<regionname>CAERCDNPRD</regionname>
+	<regionurl>https://cae-prd-rcdn.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_cae_prd_rcdn</configpath>
+</region>
+<region>
+	<regionname>CAEALLNPRD</regionname>
+	<regionurl>https://cae-prd-alln.cisco.com</regionurl>
+	<configpath>/opt/app-root/src/kube_config_cae_prd_alln</configpath>
+</region>
+</data>
