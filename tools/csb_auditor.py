@@ -5,8 +5,8 @@
 Description: This python script is to
                 a. set environment in terms of credentials to be used
                 b. set environment w.r.t. other required parameters
-                c. generate the kube config files per cluster
-                d. clone git repo
+                c. clone git repo
+                d. generate the kube config files per cluster
                 e. create connection handle to SQS Queue
                 f. read messages from SQS Queue created for CNT-CSB
                 g. process the required information
@@ -50,46 +50,44 @@ from nonprod_env_variables import nonprod_env_variables
 from importlib import import_module
 
 
-def decrypt_file(filenames):
+def decrypt_file(in_filename):
     """
     Decrypts the encrypted files using AES(CBC mode) with the given key.
-    :param filenames: name of encrypted kube config file(s)
+    :param in_filename: name of encrypted kube config file(s)
     :return: generate decrypted file and return True/False
     """
     """ Key to decrypt the encrypted files required for CSB Audit """
     key = "1329ebbc1b9646b890202384beaef2ec"
 
-    list_of_enc_files = filenames.split(",")
     flag = True
-    for in_filename in list_of_enc_files:
-        out_filename = os.path.splitext(in_filename)[0]
-        chunk_size = 64*1024
-        try:
-            print("INFO: Decrypt %s file" % in_filename)
-            with open(in_filename, 'rb') as infile:
-                orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
-                iv = infile.read(16)
-                decryptor = AES.new(key, AES.MODE_CBC, iv)
-                try:
-                    with open(out_filename, 'wb') as outfile:
-                        while True:
-                            chunk = infile.read(chunk_size)
-                            if len(chunk) == 0:
-                                break
-                            outfile.write(decryptor.decrypt(chunk))
-                        outfile.truncate(orig_size)
-                except IOError:
-                    print("ERROR: Failed to create the decrypted file %s" % out_filename)
-                    flag = False
-        except IOError:
-            print("ERROR: File %s was not accessible" % in_filename)
-            flag = False
+    out_filename = os.path.splitext(in_filename)[0]
+    chunk_size = 64*1024
+    try:
+        print("INFO: Decrypt %s file" % in_filename)
+        with open(in_filename, 'rb') as infile:
+            orig_size = struct.unpack('<Q', infile.read(struct.calcsize('Q')))[0]
+            iv = infile.read(16)
+            decryptor = AES.new(key, AES.MODE_CBC, iv)
+            try:
+                with open(out_filename, 'wb') as outfile:
+                    while True:
+                        chunk = infile.read(chunk_size)
+                        if len(chunk) == 0:
+                            break
+                        outfile.write(decryptor.decrypt(chunk))
+                    outfile.truncate(orig_size)
+            except IOError:
+                print("ERROR: Failed to create the decrypted file %s" % out_filename)
+                flag = False
+    except IOError:
+        print("ERROR: File %s was not accessible" % in_filename)
+        flag = False
 
-        if os.path.isfile(out_filename):
-            print("INFO: Decrypted version of %s file is available for use" % in_filename)
-        else:
-            print("ERROR: Decrypted version of %s file is not available for use" % in_filename)
-            flag = False
+    if os.path.isfile(out_filename):
+        print("INFO: Decrypted version of %s file is available for use" % in_filename)
+    else:
+        print("ERROR: Decrypted version of %s file is not available for use" % in_filename)
+        flag = False
 
     return flag
 
@@ -382,7 +380,6 @@ def main(env_type):
 
         """ Clone Git Repo for the audit test-scripts """
         if clone_git_repo():
-
             """ Generate Kube config file for cluster listed in landscape_of_execution.py """
             lib_mod_path = os.environ["CLONED_REPO_DIR"].split("/")[-1] + "." + "library"
             if os.path.isfile(os.environ["LIBRARY_DIR"] + "/cae_lib.py"):
@@ -395,7 +392,7 @@ def main(env_type):
                     print("WARNING: Overall execution for CAE Tenants will get affected")
             else:
                 print("ERROR: Required CAE Library is not available")
-                print("WARNING: Execution for CAE audit scripts will get affected")
+                print("WARNING: Execution of CAE audit scripts will get affected")
 
             """ Get the connection handle to AWS SQS """
             sqsclient = sqs_client_handle()
@@ -422,7 +419,7 @@ def main(env_type):
         os.remove(os.path.expanduser("~") + "/" + "csb_credentials.pyc")
 
     else:
-        raise Exception("ERROR: Failed to initialize the environment in terms of credentials to use.")
+        print("ERROR: Failed to initialize the environment in terms of credentials to use.")
 
 
 if __name__ == '__main__':
