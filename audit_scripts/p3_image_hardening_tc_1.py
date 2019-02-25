@@ -7,6 +7,9 @@ Description: This python script is to list all the images in the tenant
              This method check the visibility status of the images used in the
              servers and the unused images contain in the tenant account.
 
+Usage:
+python p3_image_hardening_tc_1.py -u <Horizon_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
+
 Author: Devaraj Acharya <devaacha@cisco.com>; January 8th, 2018
 
 Copyright (c) 2019 Cisco Systems.
