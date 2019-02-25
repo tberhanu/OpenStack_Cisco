@@ -486,7 +486,6 @@ def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_rol
     """
     #defining summary_report dictionary valueto 0
     summary_report = {  "No_of_Tenant(s)_evaluated": 0,
-                        "No_of_Unique_Role(s)": 0,
                         "No_of_Untrusted_Role(s)": 0,
                         "No_of_Tenants_with_untrusted_role(s)": 0,
                         "No_of_Users_with_untrusted_roles": 0,
@@ -510,7 +509,7 @@ def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_rol
         print("Untrusted role(s) belongs to these many tenant(s): %s" % len(projects_with_untrusted_roles))
         print("Unsecured role(s) belongs to these many user(s) : %s" % (len(set(users_with_untrusted_roles))))
         print("Unsecured role(s) belongs to these many Group(s) : %s" % len(rolebinding_groupname_untrusted))
-        summary_report = { "No_of_Tenant(s)_evaluated": len(rolebinding_all.keys()), "No_of_Unique_Role(s)":len(set(all_roles)),
+        summary_report = { "No_of_Tenant(s)_evaluated": len(rolebinding_all.keys()), 
                             "No_of_Untrusted_Role(s)":(len(untrusted_roles) + admin_untrusted_role),
                             "No_of_Tenants_with_untrusted_role(s)":len(projects_with_untrusted_roles),
                             "No_of_Users_with_untrusted_roles":(len(set(users_with_untrusted_roles))),
@@ -561,7 +560,6 @@ def main(path_url, p_name, scan_id, team_id):
     """
     summary_report = {
 			            "No_of_Tenant(s)_evaluated": 0,
-			            "No_of_Unique_Role(s)": 0,
 			            "No_of_Untrusted_Role(s)": 0,
 			            "No_of_Tenants_with_untrusted_role(s)": 0,
 			            "No_of_Users_with_untrusted_roles": 0,
