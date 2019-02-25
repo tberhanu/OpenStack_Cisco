@@ -16,9 +16,6 @@ Dependency:
             date_cae.xml
             env_variables.py
             csb_credentials.py.enc
-            kube_config_rtp.enc
-            kube_config_rcdn.enc
-            kube_config_alln.enc
             OpenStack Client
             tenants
             audit_tc_list
