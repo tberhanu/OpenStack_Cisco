@@ -187,7 +187,7 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                                         ports = 'None'
 
                             if scanid_valid and teamid_valid:
-                                if container_id is not None:
+                                if container_id is not None and container_id != 'None':
                                     """"updating params_list with pod name and last 5 digits of container ID"""
                                     resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
                                 else:
