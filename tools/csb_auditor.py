@@ -303,6 +303,8 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
                     print("INFO: Continuing with next Audit Test-Script")
                     if results[audit_tc_script] is None:
                         del_flag = False
+                    else:
+                        print("INFO: Result for %s after retry was received as %s..." % (audit_tc_script, results[audit_tc_script]))
             except Exception as e:
                 del_flag = False
                 print("ERROR: Execution of %s Audit Test-script failed to return expected value - %s"
