@@ -15,7 +15,6 @@ All rights reserved.
 -------------------------------------------------------------------------------
 """
 
-
 import argparse
 import csv
 import datetime
@@ -31,7 +30,6 @@ import cae_lib
 import common_lib
 import general_util
 
-
 """ Translating script name to get the TC Label """
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
@@ -45,7 +43,7 @@ csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + dat
 csv_filename2 = os.path.expanduser("~") + "/logs/cae_image_hardening_Non_Compliant_" + date_stamp + ".csv"
 
 
-def get_projects(project_name,url):
+def get_projects(project_name, url):
     """
     Method to fetch project specific metadata
     :param project_name: Name of the project
@@ -55,8 +53,8 @@ def get_projects(project_name,url):
     project_file_text = None
     try:
         print("INFO: Inside get_project method to collect info about Project")
-        api_handle =cae_lib.load_config(url)
-        for i in range(0,100):
+        api_handle = cae_lib.load_config(url)
+        for i in range(0, 100):
             try:
                 project_met = pykube.Namespace.objects(api_handle).get(name=project_name)
                 metadata_project = project_met.obj['metadata']
@@ -86,7 +84,7 @@ def get_projects(project_name,url):
                 exception_str = str(e)
                 if '429' in str(e):
                     time.sleep(5)
-                    print("LOG:RETRYING When too many requests hit the cluster",exception_str)
+                    print("LOG:RETRYING When too many requests hit the cluster", exception_str)
                     continue
                 else:
                     print("ERROR:HTTP error ", exception_str)
@@ -96,7 +94,7 @@ def get_projects(project_name,url):
     return project_file_text
 
 
-def get_pods(project_pod,url):
+def get_pods(project_pod, url):
     """
     Method to fetch project specific POD info
     :param project_pod: holds project name
@@ -106,7 +104,7 @@ def get_pods(project_pod,url):
     try:
         print("INFO: Checking for Projects => %s" % project_pod)
         api_handle = cae_lib.load_config(url)
-        for i in range(0,100):
+        for i in range(0, 100):
             try:
                 pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
                 if pods is not None and len(pods):
@@ -140,7 +138,7 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
     """
     try:
         api = cae_lib.load_config(url)
-        for i in range(0,100):
+        for i in range(0, 100):
             try:
                 try:
                     print("INFO: Listing the images in the pods: %s " % pod)
@@ -163,7 +161,7 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                             image_name = none_check(container.get('image', None))
                             image_id = none_check(container.get('imageID', None))
                             if image_id is not 'None' and image_id != 'None':
-                                image_count +=1
+                                image_count += 1
                             try:
                                 container_id = none_check(container.get('containerID', None))
                             except KeyError:
@@ -175,16 +173,16 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                                 container_start_date = 'None'
                             for container_list in pod_image.obj["spec"]["containers"]:
                                 print("INFO:checking the container_list")
-                                image = none_check(container_list.get('image',None))
+                                image = none_check(container_list.get('image', None))
                                 compliance_status = compliance_status_validation(image)
                                 try:
                                     ports = " "
                                     for container_port in container_list['ports']:
-                                        container_exposed_port = str(container_port.get('containerPort',None))
+                                        container_exposed_port = str(container_port.get('containerPort', None))
                                         print("INFO:checking the ports")
                                         ports = container_exposed_port + "/" + ports
                                 except KeyError:
-                                        ports = 'None'
+                                    ports = 'None'
 
                             if scanid_valid and teamid_valid:
                                 if container_id is not None and container_id != 'None':
@@ -193,7 +191,8 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                                 else:
                                     """updating params_list with pod name """
                                     resource_name = str(pod)
-                                if general_util.params_list_update(scan_id, tc, team_id, resource_name, compliance_status, params_list):
+                                if general_util.params_list_update(scan_id, tc, team_id, resource_name,
+                                                                   compliance_status, params_list):
                                     print("INFO: Updating params_list")
                                 else:
                                     print("ERROR: Issue observed while updating params_list")
@@ -208,7 +207,7 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                             build_metadata(image_data, csv_filename)
                             non_compliant_str = 'Non-compliant'
                             if compliance_status.lower() == non_compliant_str.lower():
-                                unsecured_image_count +=1
+                                unsecured_image_count += 1
                                 """ Write a new CSV file when the image is Non-compliant """
                                 create_csv_file_headers(csv_filename2)
                                 build_metadata(image_data, csv_filename2)
@@ -217,18 +216,19 @@ def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid
                         image_file_text = [pod_name, pod_namespace, pod_status, 'None', 'None', 'None',
                                            'None', 'None', compliance_status]
                         proj_txt = get_projects(project_img, url)
-                        image_data = [image_file_text, proj_txt,compliance_status]
+                        image_data = [image_file_text, proj_txt, compliance_status]
                         build_metadata(image_data, csv_filename)
 
                     return image_data, image_count, unsecured_image_count
                 else:
                     print("INFO: No images found")
-                    image_file_text = [pod, 'Does not exist', 'Does not exist', 'Does not exist', 'Does not exist', 'Does not exist',
+                    image_file_text = [pod, 'Does not exist', 'Does not exist', 'Does not exist', 'Does not exist',
+                                       'Does not exist',
                                        'Does not exist', 'Does not exist', 'Does not exist']
                     proj_txt = get_projects(project_img, url)
                     image_data = [image_file_text, proj_txt, 'Does not exist']
                     build_metadata(image_data, csv_filename)
-                    return image_data,0,0
+                    return image_data, 0, 0
             except Exception as e:
                 exception_str = str(e)
                 if '429' in exception_str:
@@ -305,12 +305,12 @@ def main(url, namespace, scan_id, team_id):
     """
     try:
         summary_dict = {
-                        'No_of_POD(s)_evaluated': 0,
-                        'No_of_Image(s)_evaluated': 0,
-                        'No_of_Unsecured_Image(s)_found': 0,
-                        'No_of_POD(s)_using_unsecured_image(s)': 0,
-                        'No_of_Tenants_with_unsecure_image(s)': 0
-                       }
+            'No_of_POD(s)_evaluated': 0,
+            'No_of_Image(s)_evaluated': 0,
+            'No_of_Unsecured_Image(s)_found': 0,
+            'No_of_POD(s)_using_unsecured_image(s)': 0,
+            'No_of_Tenants_with_unsecure_image(s)': 0
+        }
 
         flag = "Compliant"
         unsecured_tenant_count = 0
@@ -333,7 +333,7 @@ def main(url, namespace, scan_id, team_id):
                     update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
                     if update is None:
                         raise Exception("INFO: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
-                        return None,summary_dict
+                        return None, summary_dict
                 else:
                     print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
 
@@ -365,36 +365,43 @@ def main(url, namespace, scan_id, team_id):
                                 pod_status_sub_str2 = pod_name[:-5]
                                 unsecured_image_count = 0
                                 image_data, image_count, unsecured_image_count = get_image(namespace, pod, url,
-                                                        compliance_status, scan_id, team_id, scanid_valid,
-                                                        teamid_valid, image_count, unsecured_image_count)
+                                                                                           compliance_status, scan_id,
+                                                                                           team_id, scanid_valid,
+                                                                                           teamid_valid, image_count,
+                                                                                           unsecured_image_count)
                                 unsecured_image_count_total = unsecured_image_count_total + unsecured_image_count
                                 if unsecured_image_count > 0:
-                                    unsecured_pod_count +=1
+                                    unsecured_pod_count += 1
                                 if image_data is not None:
                                     flag_txt = image_data[2]
                                     if flag_txt.lower() == non_compliant_str.lower():
                                         flag = non_compliant_str
-                                        unsecured_tenant_count =1
+                                        unsecured_tenant_count = 1
                             else:
                                 print("ERROR: Exiting after 5 unsuccessful retries")
                                 break
                         summary_dict = build_summary_report(pod_count, image_count, unsecured_image_count_total,
-                                                                unsecured_pod_count, unsecured_tenant_count)
+                                                            unsecured_pod_count, unsecured_tenant_count)
                     else:
                         print("INFO: No Pods running in the project")
-                        empty_metadata(namespace,url, compliance_status)
+                        empty_metadata(namespace, url, compliance_status)
                         pod = 'NULL'
                         if scanid_valid and teamid_valid:
-                            if general_util.params_list_update(scan_id, tc, team_id, pod, compliance_status, params_list):
+                            if general_util.params_list_update(scan_id, tc, team_id, pod, compliance_status,
+                                                               params_list):
                                 print("INFO: Updating params_list")
                             else:
                                 print("ERROR: Issue observed while updating params_list")
-                                return None,summary_dict
+                                return None, summary_dict
                         else:
                             print("INFO: ScanId or TeamId passed to main() method is not valid, "
                                   "hence ignoring Kinesis part")
-                        
+
                 else:
+                    update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
+                    if update is None:
+                        raise Exception("ERROR: Issue observed with updateScanRecord API call in main method")
+                        return None, summary_dict
                     proj_txt = [namespace] + ["Does not exist"] * 3
                     image_file_text = ["Does not exist"] * 9
                     print_metadata(image_file_text, proj_txt, csv_filename)
@@ -407,7 +414,7 @@ def main(url, namespace, scan_id, team_id):
             stream_info = general_util.add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
             if stream_info is None:
                 raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-                return None,summary_dict
+                return None, summary_dict
             seq_nums_list.append(stream_info)
 
             print("INFO: Sending result complete")
@@ -422,11 +429,11 @@ def main(url, namespace, scan_id, team_id):
         return flag, summary_dict
 
     except Exception as e:
-        print("INFO: Failed to retrieve image list and pod list => %s %s" %(str(e),summary_dict))
+        print("INFO: Failed to retrieve image list and pod list => %s %s" % (str(e), summary_dict))
         update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
         if update is None:
             raise Exception("ERROR: Issue observed with updateScanRecord API call")
-            return None,summary_dict
+            return None, summary_dict
         raise Exception("ERROR: Failed to fetch either Projects" % str(e))
         return None, summary_dict
 
@@ -482,7 +489,8 @@ def compliance_status_validation(image):
         return compliance_status
 
 
-def build_summary_report(pod_count, image_count, unsecured_image_count_total, unsecured_pod_count, unsecured_tenant_count):
+def build_summary_report(pod_count, image_count, unsecured_image_count_total, unsecured_pod_count,
+                         unsecured_tenant_count):
     summary_dict = {'No_of_POD(s)_evaluated': pod_count,
                     'No_of_Image(s)_evaluated': image_count,
                     'No_of_Unsecured_Image(s)_found': unsecured_image_count_total,
@@ -494,7 +502,8 @@ def build_summary_report(pod_count, image_count, unsecured_image_count_total, un
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Identify images with insecure source')
     parser.add_argument("-u", "--domain_url", help="Domain/Region specific URL", action="store", dest="domain_url")
-    parser.add_argument('-t', '--namespace', help='name of namespace/project to Search', action="store", dest='namespace')
+    parser.add_argument('-t', '--namespace', help='name of namespace/project to Search', action="store",
+                        dest='namespace')
     parser.add_argument("-s", "--scan_id", help="Scan ID from AWS", action="store", dest="scanid")
     parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="teamid")
 
@@ -512,5 +521,3 @@ if __name__ == '__main__':
             print("ERROR: Failed with validation")
     else:
         print("ERROR:Need Tenant ID and domain url to run the script")
-
-
