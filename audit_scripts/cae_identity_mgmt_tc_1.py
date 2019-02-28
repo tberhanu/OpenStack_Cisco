@@ -1,420 +1,466 @@
 #!/opt/app-root/bin/python
+
 """
---------------------------cae_image_hardening_tc_1.py--------------------------
-Description: This python script is to list all the images in the CAE namespace
-             and validate if the image used are from the trusted source or not.
+------------------------------cae_identity_mgmt_tc_1.py--------------------
+Description: This python script is to find out if any user have a role
+             that outside the set of the roles defined for the normal user.
 Dependency:
-            Kube config files per region
+        cae_user_roles
 Usage:
-python cae_image_hardening_tc_1.py -u <Cluster_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
+python cae_identity_mgmt_tc_1.py -u <Cluster_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
 
-Author: Dharavahani Malepati <dmalepat@cisco.com>; January 8th, 2019
-
-Copyright (c) 2019 Cisco Systems.
+Author: Sanjeev Garg <sangarg@cisco.com>; December 21st, 2018
+Copyright (c) 2018 Cisco Systems.
 All rights reserved.
--------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 """
 
 import argparse
-import csv
 import datetime
-import requests.packages.urllib3
-import pykube
-import re
+import dateutil.parser
 import os
-import time
+import pandas as pd
+import re
+import requests.packages.urllib3
 import sys
+import time
+
+from kubernetes import client, config
+from openshift.dynamic import DynamicClient
 
 sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
 import cae_lib
 import common_lib
 import general_util
 
-""" Translating script name to get the TC Label """
+
+requests.packages.urllib3.disable_warnings()
+
 filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
 tc = filename.replace("_", "-").upper()
 seq_nums_list = []
 params_list = []
-
-""" Creating name of CSV file """
-date_stamp = datetime.datetime.now().strftime('%m%d%y')
-
-csv_filename = os.path.expanduser("~") + "/logs/cae_image_hardening_tc_1_" + date_stamp + ".csv"
-csv_filename2 = os.path.expanduser("~") + "/logs/cae_image_hardening_Non_Compliant_" + date_stamp + ".csv"
+admin_untrusted = 0
 
 
-def get_projects(project_name, url):
+def create_connection(url):
     """
-    Method to fetch project specific metadata
-    :param project_name: Name of the project
-    :param path: holds the path to kube config file
-    :return: project_file_text
-    """
-    project_file_text = None
-    try:
-        print("INFO: Inside get_project method to collect info about Project")
-        api_handle = cae_lib.load_config(url)
-        for i in range(0, 100):
-            try:
-                project_met = pykube.Namespace.objects(api_handle).get(name=project_name)
-                metadata_project = project_met.obj['metadata']
-                if metadata_project is not None:
-                    uid = none_check(metadata_project.get('uid', None))
-                    name = none_check(metadata_project.get('name', None))
-                    annotations = metadata_project.get('annotations', {})
-                    if annotations is not None:
-                        try:
-                            application_id = annotations['citeis.cisco.com/application-id']
-                        except KeyError:
-                            application_id = 'None'
-                            print("INFO: No application Id found ")
-
-                        try:
-                            application_name = annotations['citeis.cisco.com/application-name']
-                        except KeyError:
-                            application_name = 'None'
-                            print("INFO: No application Name found ")
-
-                    project_file_text = [name, uid, application_id, application_name]
-                    print("INFO: Successfully returning the projects")
-                else:
-                    print("INFO: No annotations found")
-                    project_file_text = ['None', 'None', 'None', 'None']
-            except Exception as e:
-                exception_str = str(e)
-                if '429' in str(e):
-                    time.sleep(5)
-                    print("LOG:RETRYING When too many requests hit the cluster", exception_str)
-                    continue
-                else:
-                    print("ERROR:HTTP error ", exception_str)
-            break
-    except Exception as e:
-        print("ERROR: Failed to retrieve project list => %s" % str(e))
-    return project_file_text
-
-
-def get_pods(project_pod, url):
-    """
-    Method to fetch project specific POD info
-    :param project_pod: holds project name
-    :param path: holds path to Kube config file
-    :return: PODs list
+    :Method to create connection with client
+    :param url:URL of each region
+    :return:dyn_client
     """
     try:
-        print("INFO: Checking for Projects => %s" % project_pod)
-        api_handle = cae_lib.load_config(url)
-        for i in range(0, 100):
+        if url is not None:
+            path = cae_lib.get_kube_config_path(url)
+        print("INFO: Kube Config's Path", path)
+        # looping for retrying connection attempts in case of server busy or hit 429 error due to too many requests
+        for i in range(0, 10):
             try:
-                pods = pykube.Pod.objects(api_handle).filter(namespace=project_pod)
-                if pods is not None and len(pods):
-                    print("LOGS: Successfully retreived pods, Pod count is ", len(pods))
-                    return pods, len(pods)
-                else:
-                    print("LOGS: No pods found in the pod list")
-                    return None, None
+                k8s_client = config.new_client_from_config(path)
+                dyn_client = DynamicClient(k8s_client)
             except Exception as e:
                 exception_str = str(e)
                 if '429' in exception_str:
+                    print("LOG: RETRYING upon receiving \"HTTP error 429 (Too Many Requests)\"", str(exception_str))
                     time.sleep(5)
-                    print("LOG:RETRYING When too many requests hit the cluster", exception_str)
                     continue
-                else:
-                    print("ERROR:HTTP error ", str(e))
             break
+
     except Exception as e:
-        print("ERROR: Failed to retrieve pods with error => %s" % str(e))
+        print("ERROR: Fail to create connection handle: %s" % str(e))
         return None
 
+    return dyn_client
 
-def get_image(project_img, pod, url, compliance_status, scan_id, team_id, scanid_valid, teamid_valid, image_count,
-              unsecured_image_count):
+
+def read_trusted_roles(filename):
     """
-    Method to get image details of application running on pod under specified project
-    :param project_img: holds Project Name
-    :param pod: holds POD Name
-    :param path: holds path to Kube config file
-    :return: image_data | None
-    """
-    try:
-        api = cae_lib.load_config(url)
-        for i in range(0, 100):
-            try:
-                try:
-                    print("INFO: Listing the images in the pods: %s " % pod)
-                    pod_image = pykube.Pod.objects(api).filter(namespace=project_img).get(name=pod)
-                except Exception as e:
-                    pod_image = None
-                    print(e)
-                    print("ERROR: Unable to get image for the pod %s" % pod)
-                    pass
-                if pod_image is not None:
-                    metadata = pod_image.obj['metadata']
-                    pod_name = none_check(metadata.get('name', None))
-                    pod_namespace = none_check(metadata.get('namespace', None))
-                    pod_stat = pod_image.obj['status']
-                    pod_status = none_check(pod_stat.get('phase', None))
-                    container_status = pod_image.obj['status']
-                    container_info = container_status.get('containerStatuses', None)
-                    if container_info is not None:
-                        for container in container_info:
-                            image_name = none_check(container.get('image', None))
-                            image_id = none_check(container.get('imageID', None))
-                            if image_id is not 'None' and image_id != 'None':
-                                image_count += 1
-                            try:
-                                container_id = none_check(container.get('containerID', None))
-                            except KeyError:
-                                container_id = 'None'
-                            try:
-                                container_state = container.get('state', {}).get('running', {})
-                                container_start_date = none_check(container_state.get('startedAt', None))
-                            except KeyError:
-                                container_start_date = 'None'
-                            for container_list in pod_image.obj["spec"]["containers"]:
-                                print("INFO:checking the container_list")
-                                image = none_check(container_list.get('image', None))
-                                compliance_status = compliance_status_validation(image)
-                                try:
-                                    ports = " "
-                                    for container_port in container_list['ports']:
-                                        container_exposed_port = str(container_port.get('containerPort', None))
-                                        print("INFO:checking the ports")
-                                        ports = container_exposed_port + "/" + ports
-                                except KeyError:
-                                    ports = 'None'
-
-                            if scanid_valid and teamid_valid:
-                                if container_id is not None and container_id != 'None':
-                                    """"updating params_list with pod name and last 5 digits of container ID"""
-                                    resource_name = str(pod) + "_" + str(container_id.split("//")[1][:7])
-                                else:
-                                    """updating params_list with pod name """
-                                    resource_name = str(pod)
-                                if general_util.params_list_update(scan_id, tc, team_id, resource_name,
-                                                                   compliance_status, params_list):
-                                    print("INFO: Updating params_list")
-                                else:
-                                    print("ERROR: Issue observed while updating params_list")
-                                    return None
-                            else:
-                                print("INFO: ScanId or TeamId passed to main() method is not valid, "
-                                      "hence ignoring Kinesis part")
-                            image_file_text = [pod_name, pod_namespace, pod_status, container_id, image_name, image_id,
-                                               container_start_date, ports, compliance_status]
-                            proj_txt = get_projects(project_img, url)
-                            image_data = [image_file_text, proj_txt, compliance_status]
-                            build_metadata(image_data, csv_filename)
-                            non_compliant_str = 'Non-compliant'
-                            if compliance_status.lower() == non_compliant_str.lower():
-                                unsecured_image_count += 1
-                                """ Write a new CSV file when the image is Non-compliant """
-                                create_csv_file_headers(csv_filename2)
-                                build_metadata(image_data, csv_filename2)
-
-                    else:
-                        image_file_text = [pod_name, pod_namespace, pod_status, 'None', 'None', 'None',
-                                           'None', 'None', compliance_status]
-                        proj_txt = get_projects(project_img, url)
-                        image_data = [image_file_text, proj_txt, compliance_status]
-                        build_metadata(image_data, csv_filename)
-
-                    return image_data, image_count, unsecured_image_count
-                else:
-                    print("INFO: No images found")
-                    image_file_text = [pod, 'Does not exist', 'Does not exist', 'Does not exist', 'Does not exist',
-                                       'Does not exist',
-                                       'Does not exist', 'Does not exist', 'Does not exist']
-                    proj_txt = get_projects(project_img, url)
-                    image_data = [image_file_text, proj_txt, 'Does not exist']
-                    build_metadata(image_data, csv_filename)
-                    return image_data, 0, 0
-            except Exception as e:
-                exception_str = str(e)
-                if '429' in exception_str:
-                    time.sleep(5)
-                    print("LOG:RETRYING When too many requests hit the cluster", exception_str)
-                    continue
-            break
-    except Exception as e:
-        print("ERROR: Failed to retrieve images with error => %s" % str(e))
-        return None, 0, 0
-
-
-def print_metadata(image_file_text, project_file_text, csv_filename):
-    """
-    Method to print the metadata in image_file_text and Project_file_text
-    :param image_file_text: holds pod name,pod status,pod namespace,container id,
-    container status,container exposed port,image name, image id, compliance_status
-    :param project_file_text:holds project id, project name, application_id, application_name
-    :return: None
+    :Method to read roles from text file cae_user_roles
+    :param filename:path of the trusted role file
+    :return:list of trusted roles
     """
     try:
-        print("INFO: Saving the metadata into a file")
-        file_content = []
-        if project_file_text and image_file_text is not None:
-            file_content = [project_file_text + image_file_text]
-        with open(csv_filename, 'a') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerows(file_content)
-        csvFile.close()
+        with open(filename) as f:
+            content = f.readlines()
+        trusted_roles = [x.strip() for x in content]
+    except IOError as e:
+        print("ERROR: An error occurred trying to read the file.: %s" % str(e))
+        return None
     except Exception as e:
-        print("ERROR: Failed to write the output file with error => %s" % str(e))
+        print("ERROR: Fail to retrieve the trusted user roles in method read_trusted_roles with error : %s" % str(e))
+        return None
+    return trusted_roles
 
 
-def empty_metadata(namespace, url, compliance_status):
+def fetch_project_list(dyn_client, project_name):
     """
-
-    :param namespace:
-    :param path:
-    :param compliance_status:
+     Method to fetch the list of all projects in the cluster and verify if the given project name exists in the cluster
+    :param dyn_client:
+    :param project_name:
     :return:
     """
-    proj_txt = get_projects(namespace, url)
-    image_file_text = ["None"] * 8 + [compliance_status]
-    print_metadata(image_file_text, proj_txt, csv_filename)
+    try:
+        project_name_id_mapping = {}
+        project_list = []
+        # Using the API getting the projects metadata from the cluster
+        v1_projects = dyn_client.resources.get(
+            api_version='project.openshift.io/v1', kind='Project')
+        projects = v1_projects.get()
+        print("INFO: Getting list of projects available in the Cluster to validate the existence of %s" % project_name)
+        for project in projects.items:
+            project_list.append(project.metadata.name)
+            project_name_id_mapping[
+                project.metadata.name] = project.metadata.uid
+
+        if project_name is not None:
+            if project_name in project_list:
+                project_list = [project_name]
+            else:
+                raise Exception("ERROR: Project %s is not present" % project_name)
+                return None, None, None
+        else:
+            raise Exception("ERROR: Project name received holds 'None'")
+            return None, None, None
+
+    except Exception as e:
+        print("ERROR: Fail to fetch the project list in fetch_project_list method with error: %s" % str(e))
+        return None, None, None
+
+    return projects, project_list, project_name_id_mapping
 
 
-def build_metadata(image_values, csv_filename):
+def get_app_project_mapping(projects):
     """
-     Method to build the metadata into a file
-    :param namespace: holds name of the project
-    :param pod: hold name of the pod
-    :param path: hold path to the kube config file
-    :param compliance_status: hold the compliant or non compliant status
-    :return:None
+     Method to get application names running in the project
+    :param projects:
+    :return:app_project_mapping
     """
     try:
-        print("INFO: Building the metadata into a file")
-        image_file_text = image_values[0]
-        project_file_text = image_values[1]
-        print_metadata(image_file_text, project_file_text, csv_filename)
+        app_list = projects
+        app_project_mapping = {}
+
+        for i in app_list.items:
+            application_id = "None"
+            application_name = "None"
+            if i.metadata.annotations['citeis.cisco.com/application-id'] is not None:
+                application_id = i.metadata.annotations['citeis.cisco.com/application-id']
+            if i.metadata.annotations['citeis.cisco.com/application-name'] is not None:
+                application_name = i.metadata.annotations['citeis.cisco.com/application-name']
+            app_project_mapping[i.metadata.name] = {
+                                                    'app_id': application_id,
+                                                    'app_name': application_name
+            }
     except Exception as e:
-        print("ERROR: Failed to build metadata with error => %s" % str(e))
+        print("ERROR: Fail to retrieve the application names in get_app_project_mapping with error:  %s" % str(e))
         return None
 
+    return app_project_mapping
 
-def main(url, namespace, scan_id, team_id):
+
+def get_rolebindings(dyn_client, projects, trusted_roles, project_name,
+                     project_name_id_mapping, project_list, scan_id, team_id,
+                     session, path_url, scanid_valid, teamid_valid):
     """
-    Main method to start the audit over images used in the given NameSpace
-    :param url:hold the urls
-    :param namespace:holds the name of the project
+     Method to get rolebindings data dictionaries for untrusted and complete data
+    :param dyn_client:
+    :param projects:
+    :param trusted_roles:
+    :param project_name:
+    :param project_name_id_mapping:
     :param scan_id:
     :param team_id:
-    :return: Compliant | Non-compliant | None
+    :param project_list:
+    :param params_list:
+    :param seq_nums_list:
+    :param session:
+    :return:
     """
     try:
-        summary_dict = {
-            'No_of_POD(s)_evaluated': 0,
-            'No_of_Image(s)_evaluated': 0,
-            'No_of_Unsecured_Image(s)_found': 0,
-            'No_of_POD(s)_using_unsecured_image(s)': 0,
-            'No_of_Tenants_with_unsecure_image(s)': 0
-        }
-
-        flag = "Compliant"
-        unsecured_tenant_count = 0
-        scanid_valid = False
-        teamid_valid = False
-        if scan_id and team_id is not None:
-            scanid_valid = common_lib.scanid_validation(scan_id)
-            teamid_valid = cae_lib.cae_teamid_validation(team_id)
-        else:
-            print("INFO: Valid ScanId or TeamId not found")
-            print("INFO: Execution will proceed without Kinesis update")
-
-        requests.packages.urllib3.disable_warnings()
-        print("INFO: Based on URL accepted, fetching respective Kube config file")
-        if url is not None:
-            session = general_util.session_handle()
-            if session:
-                if scanid_valid and teamid_valid:
-                    print("INFO: Update the scan record with \"InProgress\" Status")
-                    update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
-                    if update is None:
-                        raise Exception("INFO: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
-                        return None, summary_dict
+        admin_untrusted=0
+        flag = 0
+        #Using the API fetching the project's rolebinding metadata
+        roles = dyn_client.resources.get(
+                                            api_version='authorization.openshift.io/v1',
+                                            kind='RoleBinding'
+                                        )
+        rolebinding_all = {}
+        rolebinding_groupName_all = {}
+        rolebinding_untrusted = {}
+        rolebinding_groupname_untrusted = {}
+        all_roles = []
+        users_with_untrusted_roles = []
+        compliance_status = "Non-compliant"
+        # Iterating on the rolebinding metadata for filteration
+        for project in project_list:
+            rolebinding_project = roles.get(namespace=project)
+            rolebinding_dict = rolebinding_project.to_dict()
+            proj_role_bind = {}
+            proj_role_group_name= {}
+            proj_role_bind_untrusted = {}
+            proj_role_group_name_untrusted = {}
+            for i in rolebinding_dict['items']:
+                all_roles.append(i['roleRef']['name'])
+                proj_role_group_name[i['roleRef']['name']]=i['groupNames']
+                if i['roleRef']['name'] not in proj_role_bind:
+                    proj_role_bind[i['roleRef']['name']] = {
+                        'usernames': i['userNames'],
+                        'timecreated': i['metadata']['creationTimestamp']}
                 else:
-                    print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+                    if i['userNames'] is not None:
+                        proj_role_bind[i['roleRef']['name']]['usernames'].extend(i['userNames'])
 
-                create_csv_file_headers(csv_filename)
-                print("INFO: Check whether source of image used is a trusted one")
-                proj_txt = get_projects(namespace, url)
-                compliance_status = "Compliant"
-                non_compliant_str = 'Non-compliant'
-                if proj_txt is not None:
-                    pods_list, pod_count = get_pods(namespace, url)
-                    if pods_list is not None:
-                        temp_pod_count = 0
-                        pod_status_sub_str2 = ""
-                        image_count = 0
-                        unsecured_pod_count = 0
-                        unsecured_image_count_total = 0
-                        for pod in pods_list:
-                            if temp_pod_count < 5:
-                                metadata = pod.obj['metadata']
-                                pod_name = none_check(metadata.get('name', None))
-                                pod_stat = pod.obj['status']
-                                pod_status = none_check(pod_stat.get('phase', None))
-                                pod_status_sub_str = pod_name[:-5]
-                                if pod_status_sub_str.lower() == pod_status_sub_str2.lower() \
-                                        and pod_status.lower() == "failed":
-                                    temp_pod_count += 1
-                                else:
-                                    temp_pod_count -= 1
-                                pod_status_sub_str2 = pod_name[:-5]
-                                unsecured_image_count = 0
-                                image_data, image_count, unsecured_image_count = get_image(namespace, pod, url,
-                                                                                           compliance_status, scan_id,
-                                                                                           team_id, scanid_valid,
-                                                                                           teamid_valid, image_count,
-                                                                                           unsecured_image_count)
-                                unsecured_image_count_total = unsecured_image_count_total + unsecured_image_count
-                                if unsecured_image_count > 0:
-                                    unsecured_pod_count += 1
-                                if image_data is not None:
-                                    flag_txt = image_data[2]
-                                    if flag_txt.lower() == non_compliant_str.lower():
-                                        flag = non_compliant_str
-                                        unsecured_tenant_count = 1
-                            else:
-                                print("ERROR: Exiting after 5 unsuccessful retries")
-                                break
-                        summary_dict = build_summary_report(pod_count, image_count, unsecured_image_count_total,
-                                                            unsecured_pod_count, unsecured_tenant_count)
+                if i['roleRef']['name'] not in trusted_roles:
+                    if i['groupNames'] is not None:
+                        proj_role_group_name_untrusted[i['roleRef']['name']]=i['groupNames']
+                    if i['roleRef']['name'] not in proj_role_bind_untrusted:
+                        proj_role_bind_untrusted[i['roleRef']['name']] = {
+                            'usernames': i['userNames'],
+                            'timecreated': i['metadata']['creationTimestamp']}
                     else:
-                        print("INFO: No Pods running in the project")
-                        empty_metadata(namespace, url, compliance_status)
-                        pod = 'NULL'
-                        if scanid_valid and teamid_valid:
-                            if general_util.params_list_update(scan_id, tc, team_id, pod, compliance_status,
-                                                               params_list):
-                                print("INFO: Updating params_list")
+                        if i['userNames'] is not None:
+                            proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].extend(i['userNames'])
+                    if i['userNames'] is not None:
+                        users_with_untrusted_roles.extend(i['userNames'])
+                #Checking for the admin user role if exists then must be assigned to citeis-orchadm.gen user
+                if "admin" == i['roleRef']['name']:
+                    for user in i['userNames']:
+                        if user != "citeis-orchadm.gen":
+                            admin_untrusted +=1
+                            if i['roleRef']['name'] not in proj_role_bind_untrusted:
+                                proj_role_bind_untrusted[i['roleRef']['name']] = {
+                                    'usernames': [user],
+                                    'timecreated': i['metadata'][
+                                        'creationTimestamp']}
+                                if i['userNames'] is not None:
+                                    admin_untrusted_users = i['userNames']
+                                    if "citeis-orchadm.gen" in admin_untrusted_users:
+                                        admin_untrusted_users.remove("citeis-orchadm.gen")
+                                    users_with_untrusted_roles.extend(admin_untrusted_users)
                             else:
-                                print("ERROR: Issue observed while updating params_list")
-                                return None, summary_dict
-                        else:
-                            print("INFO: ScanId or TeamId passed to main() method is not valid, "
-                                  "hence ignoring Kinesis part")
+                                users_with_untrusted_roles.extend(i['userNames'])
+                                proj_role_bind_untrusted[i['roleRef']['name']]['usernames'].append(user)
+            rolebinding_all[project] = proj_role_bind
+            rolebinding_groupName_all[project]=proj_role_group_name
+            rolebinding_untrusted[
+                project] = proj_role_bind_untrusted.copy() if bool(
+                proj_role_bind_untrusted) else None
+            if len(proj_role_group_name_untrusted)!=0:
+                rolebinding_groupname_untrusted[project]=proj_role_group_name_untrusted
+        project_app = get_app_project_mapping(projects)
+        if not rolebinding_untrusted[project_name]:
+            flag = 1
+        #calling the untrusted_data function to fetch all the untrusted data and send to csv file
+        untrused_data(rolebinding_untrusted, project_app,
+                      project_name_id_mapping, path_url,rolebinding_groupname_untrusted)
+        #calling the complete_data function to fetch all the data and send to csv file
+        complete_data(rolebinding_all, project_app, project_name_id_mapping, trusted_roles, session,
+                      team_id, scan_id, path_url, scanid_valid, teamid_valid,rolebinding_groupName_all)
 
-                else:
-                    update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
-                    if update is None:
-                        raise Exception("ERROR: Issue observed with updateScanRecord API call in main method")
-                        return None, summary_dict
-                    proj_txt = [namespace] + ["Does not exist"] * 3
-                    image_file_text = ["Does not exist"] * 9
-                    print_metadata(image_file_text, proj_txt, csv_filename)
-                    return None, summary_dict
+        if not rolebinding_untrusted[project_name]:
+            flag = 1
+            return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted, rolebinding_groupname_untrusted
+    except Exception as e:
+        print("ERROR: Fail to retrieve the user roles data in get_rolebindings with error : %s" % str(e))
+    return rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted, rolebinding_groupname_untrusted
+
+
+def untrused_data(rolebinding_untrusted, project_app, project_name_id_mapping, path_url,rolebinding_groupname_untrusted):
+    """
+     Method to filter and append untrusted/Non-compliant data from the dictionary to into a csv file
+    :param rolebinding_untrusted:
+    :param project_app:
+    :param project_name_id_mapping:
+    :param path_url:
+    :param rolebinding_groupname_untrusted:
+    :return:
+    """
+    try:
+        data = []
+        for project in rolebinding_untrusted:
+            if rolebinding_untrusted[project] is not None:
+                for role in rolebinding_untrusted[project]:
+                    print("INFO: Calculating the age of role assigned to the user")
+                    dt = dateutil.parser.parse(
+                        rolebinding_untrusted[project][role]['timecreated'])
+                    dt = dt.replace(tzinfo=None)
+                    diff = datetime.datetime.now() - dt
+                    diff = ("%s Days %s Hours %s Mins" % (
+                        diff.days, diff.seconds // 3600,
+                        (diff.seconds // 60) % 60))
+                    groupname=[]
+                    if len(rolebinding_groupname_untrusted)!=0:
+                        if role in rolebinding_groupname_untrusted[project]:
+                            groupname = rolebinding_groupname_untrusted[project][role]
+                    if type(groupname)==list:
+                        groupname = ''.join(groupname)
+                    if project in project_app:
+
+                        if rolebinding_untrusted[project][role]['usernames'] is not None:
+                            for user in range(len(set(
+                                    rolebinding_untrusted[project][role][
+                                        'usernames']))):
+                                data.append(
+                                    [path_url, project, project_name_id_mapping[project],
+                                     project_app[project]['app_id'],
+                                     project_app[project]['app_name'], role,
+                                     rolebinding_untrusted[project][role][
+                                         'usernames'][user], groupname, diff])
+                        else:
+                            data.append(
+                                [path_url, project, project_name_id_mapping[project],
+                                 project_app[project]['app_id'],
+                                 project_app[project]['app_name'], role, "None",
+                                 groupname, diff])
+                    else:
+                        if rolebinding_untrusted[project][role]['usernames'] is not None:
+                            for user in range(len(
+                                    rolebinding_untrusted[project][role][
+                                        'usernames'])):
+                                data.append(
+                                    [path_url,project, project_name_id_mapping[project],
+                                     "None", "None", role,
+                                     rolebinding_untrusted[project][role][
+                                         'usernames'][user], groupname, diff])
+                        else:
+                            data.append(
+                                        [
+                                            path_url, project, project_name_id_mapping[project],
+                                            "None", "None", role, "None", groupname, diff
+                                        ]
+                                       )
+        # Creating the Non-compliant cases file index
+        df = pd.DataFrame(data,
+                          columns=["URL", "Tenant Name" ,"Tenant ID", "Application ID",
+                                   "Application Name", "Role Name",
+                                   "Users with Associate Roles",
+                                   "Group Names", "Role Provisioned Age"
+                                   ]
+                          )
+        date = datetime.datetime.now().strftime('%m%d%y')
+        #creating Non-compliant cases csv file with the date stamp in the name
+        error_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_fail_cases_" + date + ".csv"
+        if os.path.isfile(error_file):
+            with open(error_file, 'a') as f:
+                df.to_csv(f, header=False, index=False)
         else:
-            print("ERROR:URL not found")
-            return None, summary_dict
+            df.to_csv(error_file, index=False)
+
+    except Exception as e:
+        print("ERROR: Fail to retrieve the untrusted user date in untrusted_data with error : %s" % str(e))
+
+
+def complete_data(rolebinding_all, project_app, project_name_id_mapping,
+                  trusted_roles ,session, team_id, scan_id,
+                  path_url, scanid_valid, teamid_valid,rolebinding_groupName_all):
+    """
+     Method to filter and append complete rolebinding data of the given project from metadata dictionay to csv file
+    :param rolebinding_all:
+    :param project_app:
+    :param project_name_id_mapping:
+    :param trusted_roles:
+    :param session:
+    :param team_id:
+    :param scan_id:
+    :param path_url:
+    :param scanid_valid:
+    :param teamid_valid:
+    :param rolebinding_groupName_all:
+    :return:
+    """
+    try:
+
+        data_all = []
+        for project in rolebinding_all:
+            if rolebinding_all[project] is not None:
+                for role in rolebinding_all[project]:
+                    print("INFO: Calculating the age of role assigned to the user")
+                    dt = dateutil.parser.parse(
+                        rolebinding_all[project][role]['timecreated'])
+                    dt = dt.replace(tzinfo=None)
+                    diff = datetime.datetime.now() - dt
+                    diff = ("%s Days %s Hours %s Mins" % (
+                        diff.days, diff.seconds // 3600,
+                        (diff.seconds // 60) % 60))
+                    groupname = rolebinding_groupName_all[project][role]
+                    if type(groupname)==list:
+                        groupname = ''.join(groupname)
+                    if project in project_app:
+
+                        if rolebinding_all[project][role]['usernames'] is not None:
+                            for user in set(rolebinding_all[project][role]['usernames']):
+                                if role in trusted_roles:
+                                    compliance_status = "Compliant"
+                                else:
+                                    compliance_status = "Non-compliant"
+                                if "admin" == role and user != "citeis-orchadm.gen":
+                                    compliance_status = "Non-compliant"
+
+                                data_all.append(
+                                    [path_url, project, project_name_id_mapping[project],
+                                     project_app[project]['app_id'],
+                                     project_app[project]['app_name'], role,
+                                     user, groupname, diff, compliance_status])
+                                role_user = role + "-" + user
+
+                                if scanid_valid and teamid_valid:
+                                    if general_util.params_list_update(scan_id, tc, team_id, role_user, compliance_status, params_list):
+                                        print("INFO: Updating params_list")
+                                    else:
+                                        print("ERROR: Issue observed while updating params_list in complete_data method")
+                                        return None
+                                else:
+                                    print("INFO: ScanId or TeamId passed to main() method is not valid,"
+                                          " hence ignoring Kinesis part")
+
+                        else:
+                            if role in trusted_roles:
+                                compliance_status = "Compliant"
+                            else:
+                                compliance_status = "Non-compliant"
+                            if "admin" == role:
+                                compliance_status = "Non-compliant"
+                            data_all.append(
+                                [path_url, project, project_name_id_mapping[project],
+                                 project_app[project]['app_id'],
+                                 project_app[project]['app_name'], role, "None",
+                                 groupname, diff, compliance_status])
+                    else:
+                        if role in trusted_roles:
+                            compliance_status = "Compliant"
+                        else:
+                            compliance_status = "Non-compliant"
+                        if "admin" == role and user != "citeis-orchadm.gen":
+                            compliance_status = "Non-compliant"
+                        if rolebinding_all[project][role]['usernames'] is not None:
+                            for user in rolebinding_all[project][role]['usernames']:
+                                data_all.append([path_url,project, "None", "None", role, user, groupname, diff, compliance_status])
+                        else:
+                            data_all.append([path_url,project, "None", "None", role, "None", groupname, diff, compliance_status])
+        # Creating the Compliant cases file index
+        df = pd.DataFrame(data_all,
+                          columns=["URL", "Tenant Name","Tenant ID", "Application ID",
+                                   "Application Name", "Role Name",
+                                   "Users with Associate Roles",
+                                   "Group Names", "Role Provisioned Age", "Compliant Status"
+                                   ]
+                          )
+
+        #creating Compliant cases csv file with the date stamp in the name
+        date = datetime.datetime.now().strftime('%m%d%y')
+        metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
+
+        if os.path.isfile(metadata_file):
+            with open(metadata_file, 'a') as f:
+                df.to_csv(f, header=False, index=False)
+        else:
+            df.to_csv(metadata_file, index=False)
 
         if scanid_valid and teamid_valid:
+            print("INFO: Adding result to Stream")
             stream_info = general_util.add_result_to_stream(session, "CAE", str(team_id), tc, params_list)
             if stream_info is None:
-                raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
-                return None, summary_dict
+                raise Exception("ERROR: Issue observed while calling add_result_to_stream() API in complete_data")
+                return None
             seq_nums_list.append(stream_info)
 
             print("INFO: Sending result complete")
@@ -422,102 +468,209 @@ def main(url, namespace, scan_id, team_id):
             if send_result:
                 print("INFO: Successfully submitted the result to Kinesis")
             else:
-                print("INFO: Failed to submit the result to Kinesis")
-                return None, summary_dict
+                print("ERROR: Failed to submit the result to Kinesis in complete_data")
+                return None
         else:
             print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
-        return flag, summary_dict
 
     except Exception as e:
-        print("INFO: Failed to retrieve image list and pod list => %s %s" % (str(e), summary_dict))
-        update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
-        if update is None:
-            raise Exception("ERROR: Issue observed with updateScanRecord API call")
-            return None, summary_dict
-        raise Exception("ERROR: Failed to fetch either Projects" % str(e))
-        return None, summary_dict
+        print("ERROR: Fail to retrieve the complete user data in complete_data with error : %s" % str(e))
 
 
-def none_check(val):
+def output_parameters(trusted_roles, admin_untrusted,rolebinding_all={}, all_roles=[],
+                      rolebinding_untrusted={}, users_with_untrusted_roles=[],rolebinding_groupname_untrusted={}):
     """
+    :Method to print the summary of the execution for specific project on the terminal
+    :param trusted_roles:
+    :param rolebinding_all:
+    :param all_roles:
+    :param rolebinding_untrusted:
+    :param users_with_untrusted_roles:
+    """
+    #defining summary_report dictionary valueto 0
+    summary_report = {  "No_of_Tenant(s)_evaluated": 0,
+                        "No_of_Untrusted_Role(s)": 0,
+                        "No_of_Tenants_with_untrusted_role(s)": 0,
+                        "No_of_Users_with_untrusted_roles": 0,
+                        "No_of_Users_tagged_to_admin_role": 0,
+                        "No_of_Groups_with_untrusted_role(s)": 0
+                     }
+    try:
+        #Printing the summary report of the execution on the user terminal
+        print("Total Number of Tenant(s) Evaluated in Platform : %s" % (len(rolebinding_all.keys())))
+        untrusted_roles = set(all_roles) - set(trusted_roles)
+        print("Total Number of Unique Role(s) found Platform : %s" % len(set(all_roles)))
+        if admin_untrusted == 0:
+            admin_untrusted_role = 0
+        else:
+            admin_untrusted_role =1
+        print("Total Number of Untrusted Role(s) Found : %s" % (len(untrusted_roles) + admin_untrusted_role))
+        projects_with_untrusted_roles = [
+                                         i for i in rolebinding_untrusted.keys()
+                                         if rolebinding_untrusted[i] is not None
+                                        ]
+        print("Untrusted role(s) belongs to these many tenant(s): %s" % len(projects_with_untrusted_roles))
+        print("Unsecured role(s) belongs to these many user(s) : %s" % (len(set(users_with_untrusted_roles))))
+        print("Unsecured role(s) belongs to these many Group(s) : %s" % len(rolebinding_groupname_untrusted))
+        summary_report = { "No_of_Tenant(s)_evaluated": len(rolebinding_all.keys()),
+                            "No_of_Untrusted_Role(s)":(len(untrusted_roles) + admin_untrusted_role),
+                            "No_of_Tenants_with_untrusted_role(s)":len(projects_with_untrusted_roles),
+                            "No_of_Users_with_untrusted_roles":(len(set(users_with_untrusted_roles))),
+                            "No_of_Users_tagged_to_admin_role":admin_untrusted,
+                            "No_of_Groups_with_untrusted_role(s)":len(rolebinding_groupname_untrusted)
+                        }
+    except Exception as e:
+        print("ERROR: Failed to print the user data summary in output_parameters with error: %s" % str(e))
+    return summary_report
 
-    :param val:
+def write_metadata_connection_error(path_url,project_name, project_id):
+    """
+     Method to send least available data into the csv file in case of connection error
+    :param path_url:
+    :param project_name:
+    :param project_id:
     :return:
     """
-    if val is None:
-        val = 'None'
-    return val
-
-
-def create_csv_file_headers(csv_filename):
-    """
-
-    :param csv_filename:
-    :return:
-    """
-    if os.path.isfile(csv_filename):
-        print("INFO: CSV file is available to read")
-        with open(csv_filename, 'r') as csvFile:
-            reader = csv.reader(csvFile, delimiter=",")
-            data = list(reader)
-            row_count = len(data)
+    #defining the data to be sent in the case or connection error
+    data = [path_url, project_name, project_id,
+                                     None,
+                                     None, None,
+                                     None, None, None,None]
+    #arranging the sequence of the data to be append to the all user data csv file
+    df = pd.DataFrame(data,
+                          columns=["URL", "Tenant Name","Tenant ID", "Application ID",
+                                   "Application Name", "Role Name",
+                                   "Users with Associate Roles",
+                                   "Role Provisioned Age", "Compliant Status","Group Names"
+                                   ])
+    date = datetime.datetime.now().strftime('%m%d%y')
+    metadata_file = os.path.expanduser("~") + "/logs/cae_identity_mgmt_tc_1_" + date + ".csv"
+    if os.path.isfile(metadata_file):
+        with open(metadata_file, 'a') as f:
+            df.to_csv(f, header=False, index=False)
     else:
-        print("INFO: CSV file is not available to read, writing new file ")
-        row_count = 0
-    if row_count <= 0:
-        file_headers = ['Tenant Name', 'Tenant ID', 'Application ID', 'Application Name', 'Pod Name',
-                        'Pod Namespace', 'Pod Status', 'Container ID', 'Image Name', 'Image ID',
-                        'Container Start Date', 'Container Exposed Port ', 'Compliance_Status'
-                        ]
-        file_content = [file_headers]
-        with open(csv_filename, 'a') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerows(file_content)
+        df.to_csv(metadata_file, index=False)
 
 
-def compliance_status_validation(image):
+def main(path_url, p_name, scan_id, team_id):
     """
-    :param image:
-    :return:
+    :Method to calculate the roles assigned to the user/groups and their comliant status for a specific project in the cluster
+    :Constructor with project name and url as parameter, scan ID, team ID
+    :param path_url: holds the url of project
+    :param p_name: holds the name of project
+    :param scan_id: holds the ID of the current scan
+    :param team_id: holds the project/tenant ID
     """
-    if re.match(r'^containers.*.cisco.com\/*', image):
-        print("INFO: check for the compliance status")
-        compliance_status = "Compliant"
-        return compliance_status
-    else:
-        compliance_status = "Non-compliant"
-        return compliance_status
+    summary_report = {
+                                    "No_of_Tenant(s)_evaluated": 0,
+                                    "No_of_Untrusted_Role(s)": 0,
+                                    "No_of_Tenants_with_untrusted_role(s)": 0,
+                                    "No_of_Users_with_untrusted_roles": 0,
+                                    "No_of_Users_tagged_to_admin_role": 0,
+                        "No_of_Groups_with_untrusted_role(s)": 0
+                     }
+    try:
+        scanid_valid = False
+        teamid_valid = False
+        project_name = p_name
+        filename = os.environ["CLONED_REPO_DIR"] + "/audit_scripts/cae_user_roles"
+        if os.path.isfile(filename):
+            if scan_id and team_id is not None:
+                scanid_valid = common_lib.scanid_validation(scan_id)
+                teamid_valid = cae_lib.cae_teamid_validation(team_id)
+            else:
+                print("INFO: Valid ScanId or TeamId not found")
+                print("INFO: Execution will proceed without Kinesis update")
+
+            session = general_util.session_handle()
+            if session:
+                if scanid_valid and teamid_valid:
+                    print("INFO: Update the scan record with \"InProgress\" Status")
+                    update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "InProgress")
+                    if update is None:
+                        raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status in main method")
+                        return None, summary_report
+                else:
+                    print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+                try:
+                    dyn_client = create_connection(path_url)
+                    if dyn_client:
+                        try:
+                            trusted_roles = read_trusted_roles(filename)
+                            projects, project_list, project_name_id_mapping = fetch_project_list(
+                                dyn_client, project_name)
+                            if projects and project_list:
+                                rolebinding_all, all_roles, rolebinding_untrusted, users_with_untrusted_roles, flag, admin_untrusted, rolebinding_groupname_untrusted = get_rolebindings(
+                                    dyn_client, projects, trusted_roles, project_name,
+                                    project_name_id_mapping, project_list, scan_id, team_id,
+                                    session, path_url, scanid_valid, teamid_valid)
+                            else:
+                                update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
+                                if update is None:
+                                    raise Exception("ERROR: Issue observed with updateScanRecord API call in main method")
+                                    return None, summary_report
+                                raise Exception(
+                                    "ERROR: Failed to fetch either Project: %s or Project_list: %s  in the main method" % (project_name, project_list))
+                        except Exception as e:
+                                write_metadata_connection_error(path_url, p_name, team_id)
+                                print("ERROR: Fail to retrieve the projects with error in main : %s" % str(e))
+                                return None, summary_report
+                        summary_report=output_parameters(
+                                          trusted_roles, admin_untrusted,rolebinding_all, all_roles,
+                                          rolebinding_untrusted, users_with_untrusted_roles,rolebinding_groupname_untrusted
+                                         )
+                    else:
+                        write_metadata_connection_error(path_url, p_name, team_id)
+                        raise Exception(
+                            "ERROR: Failed to establish connection to CAE Project %s" % project_name)
+                except Exception as e:
+                    print("ERROR: Fail to retrieve the user data in main method with error : %s" % str(e))
+                    return None, summary_report
+
+            else:
+                raise Exception("ERROR: Failed to get the connection handle in main method")
+                return None, summary_report
+
+        else:
+            raise Exception("ERROR: The dependency file %s is not available for use" % filename)
+            return None, summary_report
+
+        if flag == 1:
+            return "Compliant", summary_report
+        else:
+            return "Non-compliant", summary_report
+    except Exception as e:
+        print("ERROR: Fail to retrieve the user data in main method with error : %s" % str(e))
+        if scanid_valid and teamid_valid:
+            print("INFO: Update the scan record with \"Failed\" Status")
+            update = general_util.updateScanRecord(session, "CAE", scan_id, team_id, tc, "Failed")
+            if update is None:
+                raise Exception("ERROR: Issue observed while calling updateScanRecord API in main method")
+                return None, summary_report
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+        return None, summary_report
 
 
-def build_summary_report(pod_count, image_count, unsecured_image_count_total, unsecured_pod_count,
-                         unsecured_tenant_count):
-    summary_dict = {'No_of_POD(s)_evaluated': pod_count,
-                    'No_of_Image(s)_evaluated': image_count,
-                    'No_of_Unsecured_Image(s)_found': unsecured_image_count_total,
-                    'No_of_POD(s)_using_unsecured_image(s)': unsecured_pod_count,
-                    'No_of_Tenants_with_unsecure_image(s)': unsecured_tenant_count}
-    return summary_dict
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Identify images with insecure source')
-    parser.add_argument("-u", "--domain_url", help="Domain/Region specific URL", action="store", dest="domain_url")
-    parser.add_argument('-t', '--namespace', help='name of namespace/project to Search', action="store",
-                        dest='namespace')
-    parser.add_argument("-s", "--scan_id", help="Scan ID from AWS", action="store", dest="scanid")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+                    description="Validate the Roles associated with users listed in OpenShift Project...")
+    parser.add_argument("-u", "--auth_url", help="OpenShift Domain URL", required=True, action="store", dest="url")
+    parser.add_argument("-t", "--team_name", help="Project/Tenant Name", action="store", dest="team")
+    parser.add_argument("-s", "--scan_id", help="Scan Id from AWS", action="store", dest="scanid")
     parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="teamid")
 
     args = parser.parse_args()
-    url = args.domain_url
-    namespace = args.namespace
+    url = args.url
+    p_name = args.team
     scan_id = args.scanid
     team_id = args.teamid
     url_valid = cae_lib.cae_url_validation(url)
-    if url and namespace is not None:
-        if url_valid is not None:
-            compliance_status, summary_report = main(url, namespace, scan_id, team_id)
-            print("INFO: Process complete with compliance status as ", compliance_status, summary_report)
+    if url and p_name is not None:
+        if url_valid:
+            compliance_status, summary_report = main(url, p_name, scan_id, team_id)
+            print("INFO: Process complete with compliance status as ", compliance_status)
         else:
             print("ERROR: Failed with validation")
     else:
-        print("ERROR:Need Tenant ID and domain url to run the script")
+        print("ERROR: Need Tenant ID and domain url to run the script")
