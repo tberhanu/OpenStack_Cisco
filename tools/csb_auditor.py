@@ -160,7 +160,7 @@ def clone_git_repo():
         tcp_protocol, git_url = os.environ["CSB_CNT_REPO"].split("//")
         git_repo_url = tcp_protocol + "//" + os.environ["GITHUB_TOKEN_CSBAUDITOR_GEN"] + "@" + git_url
         repo = git.Repo.clone_from(git_repo_url, os.environ["CLONED_REPO_DIR"])
-        repo.git.checkout(os.environ["GIT_BRANCH_TO_USE"])
+        repo.git.checkout(os.environ["RELEASE_TAG_TO_USE"])
         return True
     except git.exc.GitCommandError as err_clone:
         print("ERROR: Git Clone failed; %s" % str(err_clone))

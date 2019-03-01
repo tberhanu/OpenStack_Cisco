@@ -8,9 +8,9 @@ Description: This script is used to run a Test Script based on script id
             If tenants file contain any data, then the script will run on
             the details that are provided in tenants file, if not it will
             fetch the complete projects list from the platform.
-Execution: 
+Execution:
             Manual: python audit_projects.py -t <testcase-ID>(ex: P3-IDENTITY-MGMT-TC-1)
-            for log: python audit_projects.py -t <testcase-ID> | tee <logFile_name> 
+            for log: python audit_projects.py -t <testcase-ID> | tee <logFile_name>
 Dependency:
             data_p3.xml
             date_cae.xml
@@ -131,7 +131,7 @@ def clone_git_repo():
         tcp_protocol, git_url = os.environ["CSB_CNT_REPO"].split("//")
         git_repo_url = tcp_protocol + "//" + os.environ["GITHUB_TOKEN_CSBAUDITOR_GEN"] + "@" + git_url
         repo = git.Repo.clone_from(git_repo_url, os.environ["CLONED_REPO_DIR"])
-        repo.git.checkout(os.environ["GIT_BRANCH_TO_USE"])
+        repo.git.checkout(os.environ["RELEASE_TAG_TO_USE"])
         return True
     except git.exc.GitCommandError as err_clone:
         print("ERROR: Git Clone failed; %s" % str(err_clone))
@@ -456,7 +456,7 @@ def main(test_id):
                     new_image_hardening_csv_non_compliant = os.environ["LOGS_DIR"] + "/cae_image_hardening_Non_Compliant_" + str(gen_word(8, 4, 4)) + ".csv"
                     os.rename(image_hardening_csv_non_compliant,new_image_hardening_csv_non_compliant)
 
-                 
+
 
         try:
             tenants_file = "tenants"
@@ -842,7 +842,7 @@ if __name__== "__main__":
 
 
     """ clone CSB git repo"""
-    
+
     repo_chk = clone_git_repo()
     if repo_chk:
         my_env = os.environ.copy()
