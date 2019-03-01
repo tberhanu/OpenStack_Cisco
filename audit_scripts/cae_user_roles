@@ -1,0 +1,8 @@
+view
+admin
+sdaas_edit
+basic-user
+project-admin
+system:deployer
+system:image-puller
+system:image-builder

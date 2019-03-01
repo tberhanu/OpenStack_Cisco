@@ -1,0 +1,59 @@
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "prodteamdbupdatep3alln"
+spec:
+  storageClassName: "standard"
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "1Gi"
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "prodteamdbupdatep3alln"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: "prodteamdbupdatep3alln"
+  template:
+    metadata:
+      labels:
+        name: "prodteamdbupdatep3alln"
+    spec:
+      containers:
+        -
+          name: "prodteamdbupdatep3alln"
+          image: "containers.cisco.com/csb-cnt-dev/teamsdbupdate:teamupdateprodalln"
+
+
+          volumeMounts:
+            - name: "storage"
+              mountPath: "/opt/app-root/src/logs"
+
+          imagePullPolicy: "Always"
+
+          securityContext:
+            capabilities: {}
+            privileged: false
+      volumes:
+        -
+          name: "storage"
+          persistentVolumeClaim:
+           claimName: "prodteamdbupdatep3alln"
+
+      restartPolicy: "Always"
+      dnsPolicy: "ClusterFirst"
+  Triggers:
+    -
+      type: "ConfigChange"
+  strategy:
+    type: "RollingUpdate"
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 420

@@ -1,0 +1,2388 @@
+INFO: Execution will continue for PROD ENV
+INFO: Decrypt credentials file. Then set environment variables w.r.t. required set of credentials
+INFO: Decrypt csb_credentials.py.enc_prod file
+INFO: Decrypted version of csb_credentials.py.enc_prod file is available for use
+INFO: Successfully decrypted Credential file
+INFO: Set all required variables as part of ENV for ENV_TYPE = prod
+INFO: Clone GIT Repo
+INFO: [Errno 2] No such file or directory: '/opt/app-root/src/.kube/config'
+INFO: Cluster - https://cae-np-rcdn.cisco.com
+DEBUG: STDOUT while logging into Cluster: https://cae-np-rcdn.cisco.com - b'Login successful.\n\nYou have access to 202 projects, the list has been suppressed. You can list all projects with \'oc projects\'\n\nUsing project "default".\nWelcome! See \'oc help\' to get started.\n'
+INFO: Generated Kube config file - /opt/app-root/src/kube_config_cae_np_rcdn
+INFO: Cluster - https://cae-prd-rcdn.cisco.com
+DEBUG: STDOUT while logging into Cluster: https://cae-prd-rcdn.cisco.com - b'Login successful.\n\nYou have access to 1981 projects, the list has been suppressed. You can list all projects with \'oc projects\'\n\nUsing project "default".\nWelcome! See \'oc help\' to get started.\n'
+INFO: Generated Kube config file - /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Cluster - https://cae-prd-alln.cisco.com
+DEBUG: STDOUT while logging into Cluster: https://cae-prd-alln.cisco.com - b'Login successful.\n\nYou have access to 1958 projects, the list has been suppressed. You can list all projects with \'oc projects\'\n\nUsing project "default".\nWelcome! See \'oc help\' to get started.\n'
+INFO: Generated Kube config file - /opt/app-root/src/kube_config_cae_prd_alln
+INFO: Cluster - https://cae-prd-rtp.cisco.com
+DEBUG: STDOUT while logging into Cluster: https://cae-prd-rtp.cisco.com - b'Login successful.\n\nYou have access to 1016 projects, the list has been suppressed. You can list all projects with \'oc projects\'\n\nUsing project "default".\nWelcome! See \'oc help\' to get started.\n'
+INFO: Generated Kube config file - /opt/app-root/src/kube_config_cae_prd_rtp
+INFO: Cluster - https://cae-np-rtp.cisco.com
+DEBUG: STDOUT while logging into Cluster: https://cae-np-rtp.cisco.com - b'Login successful.\n\nYou have access to 5572 projects, the list has been suppressed. You can list all projects with \'oc projects\'\n\nUsing project "default".\nWelcome! See \'oc help\' to get started.\n'
+INFO: Generated Kube config file - /opt/app-root/src/kube_config_cae_np_rtp
+INFO: Cluster - https://cae-np-alln.cisco.com
+DEBUG: STDOUT while logging into Cluster: https://cae-np-alln.cisco.com - b'Login successful.\n\nYou have access to 190 projects, the list has been suppressed. You can list all projects with \'oc projects\'\n\nUsing project "default".\nWelcome! See \'oc help\' to get started.\n'
+INFO: Generated Kube config file - /opt/app-root/src/kube_config_cae_np_alln
+INFO: Successfully generated the required Kube Config file for each cluster listed in landscape_of_execution.py
+INFO: Create SQS Client Handle
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '37bb670b-699d-4872-9875-8a54096a7772', 'ReceiptHandle': 'AQEB3AOc1cAeKYZGCjawymHJnOHi0MsxHUnVwEEyYDAKDwrLbyaFj69J9/wqd4aIhIQuiVez7K/B4pdu7NtB9fAO7sz6yKLDX4HmfFwxekwzI169Zx9iQgkV5cqZJ0MDgQD2GAVE6jW/O8+A5daOBFhcOQvTqeZ/V67mzRJW30AugdiOCpBpVmWMQlx0Em0RcjR2Ene6em/aPdTBwfHj3T6IZR6FhfWNoeQparApZd6j2i9u8qdQR7+8ThaCBcmIyNehnsd+QY8BhG6uLffLViRzQ0/cEyaUl/IbXkMLUcKnkBA3cgSD526zUWWvY7t/lkKh0DlfrcmT828yxeFpOpPvCAvD+YSxsHkGcoaQX30/ZOEV52gZkNLAhEVReAMSB7MXvDeqKk3Lt63xmKKZi3kRzQ==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127248943', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124380651'}, 'MD5OfMessageAttributes': 'b3d89029af8ef1f62bf93ef12d5688f1', 'MessageAttributes': {'scanid': {'StringValue': 'f49c6c1e-3936-11e9-86de-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:fc8f7ee1-9771-11e8-bb98-fa163eb43b51', 'DataType': 'String'}, 'teamname': {'StringValue': 'cvcm11-prod-ext-rtp', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rtp.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'b80aee45-712f-573a-87ad-baab243f96a7', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'b80aee45-712f-573a-87ad-baab243f96a7', 'date': 'Mon, 25 Feb 2019 20:40:48 GMT', 'content-type': 'text/xml', 'content-length': '2058'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: cvcm11-prod-ext-rtp, TeamID: CAE:fc8f7ee1-9771-11e8-bb98-fa163eb43b51, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rtp.cisco.com, Scan ID = f49c6c1e-3936-11e9-86de-e4b3187a0250, Receipt Handle: AQEB3AOc1cAeKYZGCjawymHJnOHi0MsxHUnVwEEyYDAKDwrLbyaFj69J9/wqd4aIhIQuiVez7K/B4pdu7NtB9fAO7sz6yKLDX4HmfFwxekwzI169Zx9iQgkV5cqZJ0MDgQD2GAVE6jW/O8+A5daOBFhcOQvTqeZ/V67mzRJW30AugdiOCpBpVmWMQlx0Em0RcjR2Ene6em/aPdTBwfHj3T6IZR6FhfWNoeQparApZd6j2i9u8qdQR7+8ThaCBcmIyNehnsd+QY8BhG6uLffLViRzQ0/cEyaUl/IbXkMLUcKnkBA3cgSD526zUWWvY7t/lkKh0DlfrcmT828yxeFpOpPvCAvD+YSxsHkGcoaQX30/ZOEV52gZkNLAhEVReAMSB7MXvDeqKk3Lt63xmKKZi3kRzQ==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: cvcm11-prod-ext-rtp
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is not available to read, writing new file
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => cvcm11-prod-ext-rtp
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rtp
+INFO: Getting list of projects available in the Cluster to validate the existence of cvcm11-prod-ext-rtp
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204058 Execution result for Team: cvcm11-prod-ext-rtp
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'ac0275a7-5d9a-5ff7-acce-214908804555', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'ac0275a7-5d9a-5ff7-acce-214908804555', 'date': 'Mon, 25 Feb 2019 20:40:58 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'b48442c1-3110-48bc-a1bf-e37b6a08cf6a', 'ReceiptHandle': 'AQEBRBcxN98I/CnO46CABJJl3MQC2ircznfGRPDpZ3TjcWagwOIrBo6KTw5Hxjeb93Vg2ymZcerlUFeTveqX1JqoXXsEFRzCYJufPKsCUrGfWp/FheaZGIPADC9E8RIDXYBuua0VQXQtNZY1t4O2B0SArcSmirTZol3xLTvsr/5FUO0acQ1KA6XbYAPljdazSQWjXbzOTmygZoARxamfJvt32qKWO7JTf5Dnm/p9pmPLhB3pktOFDb8tjBb4R6SDYA/1rJCmNgXruak/sTS92Xo9aSl2mXuoVz8loRnOZ9QdGU25L4Pk9rfmcKRZVwNu+AZwWPiX1F8MHvfX5sa5UJmNExUi3G3CYNZ7+O12gmdE+kHQXltPT8D6EFh28LhNGT8wETt0I8dOEDZewfy4BmBuJg==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127258588', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124379399'}, 'MD5OfMessageAttributes': '1afcbc53510d28353aa90a3a43559fad', 'MessageAttributes': {'scanid': {'StringValue': 'f3cd0e30-3936-11e9-84c0-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:523fb1bd-94f3-11e8-bf24-fa163e8ddce3', 'DataType': 'String'}, 'teamname': {'StringValue': 'wprloc-prod-int-alln', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-alln.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '66a4b920-9c60-5091-9b97-edcec97a010c', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '66a4b920-9c60-5091-9b97-edcec97a010c', 'date': 'Mon, 25 Feb 2019 20:40:58 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: wprloc-prod-int-alln, TeamID: CAE:523fb1bd-94f3-11e8-bf24-fa163e8ddce3, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-alln.cisco.com, Scan ID = f3cd0e30-3936-11e9-84c0-e4b3187a0250, Receipt Handle: AQEBRBcxN98I/CnO46CABJJl3MQC2ircznfGRPDpZ3TjcWagwOIrBo6KTw5Hxjeb93Vg2ymZcerlUFeTveqX1JqoXXsEFRzCYJufPKsCUrGfWp/FheaZGIPADC9E8RIDXYBuua0VQXQtNZY1t4O2B0SArcSmirTZol3xLTvsr/5FUO0acQ1KA6XbYAPljdazSQWjXbzOTmygZoARxamfJvt32qKWO7JTf5Dnm/p9pmPLhB3pktOFDb8tjBb4R6SDYA/1rJCmNgXruak/sTS92Xo9aSl2mXuoVz8loRnOZ9QdGU25L4Pk9rfmcKRZVwNu+AZwWPiX1F8MHvfX5sa5UJmNExUi3G3CYNZ7+O12gmdE+kHQXltPT8D6EFh28LhNGT8wETt0I8dOEDZewfy4BmBuJg==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: wprloc-prod-int-alln
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => wprloc-prod-int-alln
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_alln
+INFO: Getting list of projects available in the Cluster to validate the existence of wprloc-prod-int-alln
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204101 Execution result for Team: wprloc-prod-int-alln
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'bbd23f92-8fb7-5f1e-9fd5-6b7cdaaa2aa3', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'bbd23f92-8fb7-5f1e-9fd5-6b7cdaaa2aa3', 'date': 'Mon, 25 Feb 2019 20:41:01 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'a0acae43-0dfa-49dd-bf08-a27543bd6079', 'ReceiptHandle': 'AQEBKcQmmbJ/r0MMqGs43U206kidso+4UqInr6WhwHrgxF80/3wrcK8d8bk40dd57CNnzVwXgO+6EsrUwUZBHv5xwZ6/1nVGKugiJ0azf3slrMoPGbUmsPX3wJG0BWwz5Uke++jryQoiL5McjmwgPDf/KKy0DdAqtgsYPR/6JnViW0y7XE3K2+hO2icPHActhNkpbyda5j0K9kcOLywre5W/6xsUu107whwM/lU3BYlIROULOf69AHYBd52eFD0rgg9d2sdLcQXDFXwnz9gAgZlM6KHwX12zH8ckf2yVZElDat4TI8LW3YlOeRtBwsK7u6K9H637Wc8xQejXr3A8yQm+i7NRUu/Jn9+Li9+eKuXGTMlqy08lHQ2gUczRY3ItCkjR5Og37dSQpfkxQE8UTzveMg==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127261709', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125095523'}, 'MD5OfMessageAttributes': 'cb15628400b01ba57542f345ab339906', 'MessageAttributes': {'scanid': {'StringValue': '9eb2a38f-3938-11e9-a07c-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:3266f8b7c09849e389d560c9419ebed8', 'DataType': 'String'}, 'teamname': {'StringValue': 'e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rcdn-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'cd9dda6f-0f3b-5fd4-bd6d-8e815a263e49', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'cd9dda6f-0f3b-5fd4-bd6d-8e815a263e49', 'date': 'Mon, 25 Feb 2019 20:41:01 GMT', 'content-type': 'text/xml', 'content-length': '2104'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244, TeamID: P3:3266f8b7c09849e389d560c9419ebed8, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rcdn-1.cisco.com:5000/v3, Scan ID = 9eb2a38f-3938-11e9-a07c-e4b3187a0250, Receipt Handle: AQEBKcQmmbJ/r0MMqGs43U206kidso+4UqInr6WhwHrgxF80/3wrcK8d8bk40dd57CNnzVwXgO+6EsrUwUZBHv5xwZ6/1nVGKugiJ0azf3slrMoPGbUmsPX3wJG0BWwz5Uke++jryQoiL5McjmwgPDf/KKy0DdAqtgsYPR/6JnViW0y7XE3K2+hO2icPHActhNkpbyda5j0K9kcOLywre5W/6xsUu107whwM/lU3BYlIROULOf69AHYBd52eFD0rgg9d2sdLcQXDFXwnz9gAgZlM6KHwX12zH8ckf2yVZElDat4TI8LW3YlOeRtBwsK7u6K9H637Wc8xQejXr3A8yQm+i7NRUu/Jn9+Li9+eKuXGTMlqy08lHQ2gUczRY3ItCkjR5Og37dSQpfkxQE8UTzveMg==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244
+INFO: Update the scan record with "InProgress" Status
+ERROR: Issue observed while calling create_role() API - The request you have made requires authentication. (HTTP 401) (Request-ID: req-df8ba3b8-9ccc-4bab-ab0b-1b2d31e15563)
+ERROR: Issue observed while calling create_user() API - The request you have made requires authentication. (HTTP 401) (Request-ID: req-263fea2a-3598-4774-95a5-9b56c3365a5b)
+ERROR: Issue observed while calling create domain() API - The request you have made requires authentication. (HTTP 401) (Request-ID: req-ec663e83-89db-4aed-a6d5-4f9b63744a2c)
+ERROR: Issue observed while calling listing domains() API - The request you have made requires authentication. (HTTP 401) (Request-ID: req-88832371-c4b9-4933-a8b1-9b5751265bcb)
+ERROR: Issue observed while calling create domain() API - The request you have made requires authentication. (HTTP 401) (Request-ID: req-1541aa34-279b-483e-8ce4-3026c8574756)
+ERROR: Issue observed while retrieving compliance status() API - 'NoneType' object is not iterable
+INFO: One of the test returned None
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244
+INFO: Update the scan record with "InProgress" Status
+ERROR: Failed to retrieve list of images due to The request you have made requires authentication. (HTTP 401) (Request-ID: req-6d32286e-96d8-4b2c-bbe7-ddafbf936ee7)
+INFO: Update the scan record with "Failed" Status
+ERROR: Failed to retrieve list of images due to The request you have made requires authentication. (HTTP 401) (Request-ID: req-2d03c4b1-f143-4f5b-b3cf-41e3338ac28d)
+ERROR: Failed to get the list of images
+ERROR: Overall execution got affected due to - local variable 'all_unsecured_images' referenced before assignment
+INFO: Result for p3_image_hardening_tc_1 was received as None; retrying...
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244
+INFO: Update the scan record with "InProgress" Status
+ERROR: Failed to retrieve list of images due to The request you have made requires authentication. (HTTP 401) (Request-ID: req-bdcbdd1a-4723-48d4-a411-6f9dcd122390)
+INFO: Update the scan record with "Failed" Status
+ERROR: Failed to retrieve list of images due to The request you have made requires authentication. (HTTP 401) (Request-ID: req-93ad2f2e-4fc8-45e6-9dbb-79b58a0ede73)
+ERROR: Failed to get the list of images
+ERROR: Overall execution got affected due to - local variable 'all_unsecured_images' referenced before assignment
+ERROR: Execution of not all arguments converted during string formatting Audit Test-script failed to return expected value - p3_image_hardening_tc_1
+INFO: 022519_204105 Execution result for Team: e5e8435a523d43e6bbed40715c228cde-751ee4ae-658a-4189-9e11-732d244
+{'p3_identity_mgmt_tc_1': 'None', 'p3_image_hardening_tc_1': (None, {'No_of_Image(s)_evaluated': 0, 'No_of_Unsecured_Image(s)': 0, 'No_of_Server(s)_evaluated': 0, 'No_of_Unsecured_Server(s)': 0, 'No_of_Unused_Image(s)': 0, 'No_of_Unused_Unsecured_Image(s)': 0})}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '80282a88-1bb2-485b-9bdc-ca75d2fc2f96', 'ReceiptHandle': 'AQEBMdd33bvAK6tw4Z31yESDf6tcIohhsSLcB7VfVN3blsTUBAfg5pIGK2I+dPV0/8m57kq2/8Wu6WzrzFKACxJAe21MUT/770fsrYncbDh+1CUlvIy60WJdR/ZvwNd7rRVX67E93KVtLq8gLFEBc29G0qOFC80KhklMSPMX5ypMxM6YctDfMifvWoBgz8u9+vzI+CFhhafd4B2qBj0TSpWTnoq7rjHltVq5aMPnL1ZqWEHiOU2iQoV5T+cB9yNV4xl8i3Dt0yNhX1jyMJYEBZ+6sH6wvT28ShuspLx1gnYSS6B8MBRb9W0CqJfi0RxHXP3XPUn1QeL6YWGvYSB85Kxd7SmJ/9PUKDfrltP2fXsHQaCczLSvxfz4pTSZBd40FvO1KELSYOd0etqdn3KgpLXE3Q==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127265172', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124381635'}, 'MD5OfMessageAttributes': '234c8b6f7fa7c3bb5866ecb97db0bb11', 'MessageAttributes': {'scanid': {'StringValue': 'f52ec111-3936-11e9-b4e5-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:b5249568-1e45-11e9-9aa8-fa163e6c748f', 'DataType': 'String'}, 'teamname': {'StringValue': 'slrrwd-alln-dev', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-alln.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '235f647c-14d5-588b-8c83-309241f43916', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '235f647c-14d5-588b-8c83-309241f43916', 'date': 'Mon, 25 Feb 2019 20:41:05 GMT', 'content-type': 'text/xml', 'content-length': '2055'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: slrrwd-alln-dev, TeamID: CAE:b5249568-1e45-11e9-9aa8-fa163e6c748f, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-alln.cisco.com, Scan ID = f52ec111-3936-11e9-b4e5-e4b3187a0250, Receipt Handle: AQEBMdd33bvAK6tw4Z31yESDf6tcIohhsSLcB7VfVN3blsTUBAfg5pIGK2I+dPV0/8m57kq2/8Wu6WzrzFKACxJAe21MUT/770fsrYncbDh+1CUlvIy60WJdR/ZvwNd7rRVX67E93KVtLq8gLFEBc29G0qOFC80KhklMSPMX5ypMxM6YctDfMifvWoBgz8u9+vzI+CFhhafd4B2qBj0TSpWTnoq7rjHltVq5aMPnL1ZqWEHiOU2iQoV5T+cB9yNV4xl8i3Dt0yNhX1jyMJYEBZ+6sH6wvT28ShuspLx1gnYSS6B8MBRb9W0CqJfi0RxHXP3XPUn1QeL6YWGvYSB85Kxd7SmJ/9PUKDfrltP2fXsHQaCczLSvxfz4pTSZBd40FvO1KELSYOd0etqdn3KgpLXE3Q==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: slrrwd-alln-dev
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => slrrwd-alln-dev
+LOGS: Successfully retreived pods, Pod count is  2
+INFO: Listing the images in the pods: terracotta-0
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: terracotta-1
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_alln
+INFO: Getting list of projects available in the Cluster to validate the existence of slrrwd-alln-dev
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204108 Execution result for Team: slrrwd-alln-dev
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '0c0e8daa-14ec-5d5d-9b2f-d94441c89515', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '0c0e8daa-14ec-5d5d-9b2f-d94441c89515', 'date': 'Mon, 25 Feb 2019 20:41:08 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'e4aa3bff-d96a-4f83-93a3-7fae79ed15e4', 'ReceiptHandle': 'AQEB7IZvJRWciW7z2Y0KMkbCMXYJtt73q3+LuZgrJ1+J//M2zFb3fEWZHLptsFyOhW3eTw8uujHmkVgEZzkBvTLMJyB4YARsbWh47p27jXfCKHPL0Q9jBjpDWJQ8YnrDFn1PpSf1/+fwwWs9c3Qs4VLIvEO5cJg39An27EuVe5Ush8RC+e9T/yq08eLSQUqoof/GHQS7Tx88Ecw0Rd2YImw9ygzhOk16CoVUA1f+MXGu9NvqgsyLtKsLsXHm2HjO+8a6Dq6CJ0t8p/4FojjxuMvUupw47Pfwa/2gcIOesSDnXLQUzt9MLihm6R8EEIxFIncThzqY2tY1K5z8Bp8erE2329xLoIap6f57fPeaD60JL/tWaSSQ+K7ErtKAeQxQ2r7rEp4Sna9IZsWLRhxJEOLOpw==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127268668', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124381147'}, 'MD5OfMessageAttributes': 'd8b3d3a7892f50dfe3f9e4038aae6e07', 'MessageAttributes': {'scanid': {'StringValue': 'f4e42380-3936-11e9-b68f-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:18b1a995-bc77-11e8-a97f-fa163eb08fb0', 'DataType': 'String'}, 'teamname': {'StringValue': 'veraws-dev-ext-rtp', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-np-rtp.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '68671aef-e13b-5baf-abce-4e01b41f3a32', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '68671aef-e13b-5baf-abce-4e01b41f3a32', 'date': 'Mon, 25 Feb 2019 20:41:08 GMT', 'content-type': 'text/xml', 'content-length': '2056'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: veraws-dev-ext-rtp, TeamID: CAE:18b1a995-bc77-11e8-a97f-fa163eb08fb0, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-np-rtp.cisco.com, Scan ID = f4e42380-3936-11e9-b68f-e4b3187a0250, Receipt Handle: AQEB7IZvJRWciW7z2Y0KMkbCMXYJtt73q3+LuZgrJ1+J//M2zFb3fEWZHLptsFyOhW3eTw8uujHmkVgEZzkBvTLMJyB4YARsbWh47p27jXfCKHPL0Q9jBjpDWJQ8YnrDFn1PpSf1/+fwwWs9c3Qs4VLIvEO5cJg39An27EuVe5Ush8RC+e9T/yq08eLSQUqoof/GHQS7Tx88Ecw0Rd2YImw9ygzhOk16CoVUA1f+MXGu9NvqgsyLtKsLsXHm2HjO+8a6Dq6CJ0t8p/4FojjxuMvUupw47Pfwa/2gcIOesSDnXLQUzt9MLihm6R8EEIxFIncThzqY2tY1K5z8Bp8erE2329xLoIap6f57fPeaD60JL/tWaSSQ+K7ErtKAeQxQ2r7rEp4Sna9IZsWLRhxJEOLOpw==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: veraws-dev-ext-rtp
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => veraws-dev-ext-rtp
+LOGS: Successfully retreived pods, Pod count is  2
+INFO: Listing the images in the pods: veraws-dev-ext-rtp-568856858b-8q2jn
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: veraws-dev-ext-rtp-568856858b-mphmt
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_np_rtp
+INFO: Getting list of projects available in the Cluster to validate the existence of veraws-dev-ext-rtp
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204114 Execution result for Team: veraws-dev-ext-rtp
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'ec1e127f-36a6-5717-a59c-4691638cfb28', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'ec1e127f-36a6-5717-a59c-4691638cfb28', 'date': 'Mon, 25 Feb 2019 20:41:14 GMT', 'content-type': 'text/xml', 'content-length': '215', 'connection': 'close'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'a9a10e46-57cd-434e-8c3b-8704c075a989', 'ReceiptHandle': 'AQEB2VTVKav8vX6RFb8FRJcIJoOhaJgZwBZYOQDkDZLiQs2SiTe1zgVXb16CWoYWOxDZ3m8xX7zwyXeAftmA80aeDaVgL6e3SHP+aUgS0n2wjRokFTRYxPdTkD09UkbgUBfphP3lIHwAN6h/LU6H8VCi5ymT9W9F4zHJEq8nbgs3hMYwLQ8veWPf1x8mcZ5ozenNrUHrkXm9hdTwiUtNwUSNyIJM3Sj2Cw87nfbGNtOZWHHKhuGyV985mIAFcmTmlDA7MhXcp7cUxstFGXyj5wa4sgaetDmQx2ZvoJqjXqEOII/QGpe4Tt89VSPC73d5cks2VPGlrc/aq2+ZwykcSW7y+X3Vd+ldrrjdfCBCrlg1IFZC3RWs2sjQ/M+YhP1AW8dW3UH+quChoraUlo3bG5VxOQ==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127274983', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124380148'}, 'MD5OfMessageAttributes': 'b195488b9623c61e56aa324f7c714c95', 'MessageAttributes': {'scanid': {'StringValue': 'f44d88cf-3936-11e9-8312-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:fc701eb0-7e8e-11e8-8861-fa163e463fb4', 'DataType': 'String'}, 'teamname': {'StringValue': 'scmfla-lt-ext-rtp', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-np-rtp.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '2e805067-d589-5ac3-b175-048980a34b5e', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '2e805067-d589-5ac3-b175-048980a34b5e', 'date': 'Mon, 25 Feb 2019 20:41:15 GMT', 'content-type': 'text/xml', 'content-length': '2055'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: scmfla-lt-ext-rtp, TeamID: CAE:fc701eb0-7e8e-11e8-8861-fa163e463fb4, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-np-rtp.cisco.com, Scan ID = f44d88cf-3936-11e9-8312-e4b3187a0250, Receipt Handle: AQEB2VTVKav8vX6RFb8FRJcIJoOhaJgZwBZYOQDkDZLiQs2SiTe1zgVXb16CWoYWOxDZ3m8xX7zwyXeAftmA80aeDaVgL6e3SHP+aUgS0n2wjRokFTRYxPdTkD09UkbgUBfphP3lIHwAN6h/LU6H8VCi5ymT9W9F4zHJEq8nbgs3hMYwLQ8veWPf1x8mcZ5ozenNrUHrkXm9hdTwiUtNwUSNyIJM3Sj2Cw87nfbGNtOZWHHKhuGyV985mIAFcmTmlDA7MhXcp7cUxstFGXyj5wa4sgaetDmQx2ZvoJqjXqEOII/QGpe4Tt89VSPC73d5cks2VPGlrc/aq2+ZwykcSW7y+X3Vd+ldrrjdfCBCrlg1IFZC3RWs2sjQ/M+YhP1AW8dW3UH+quChoraUlo3bG5VxOQ==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: scmfla-lt-ext-rtp
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => scmfla-lt-ext-rtp
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_np_rtp
+INFO: Getting list of projects available in the Cluster to validate the existence of scmfla-lt-ext-rtp
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204118 Execution result for Team: scmfla-lt-ext-rtp
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '4a27ed37-590a-5dbf-850c-b9d90c2422fd', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '4a27ed37-590a-5dbf-850c-b9d90c2422fd', 'date': 'Mon, 25 Feb 2019 20:41:18 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '2736fd55-8ccf-4186-8c30-10c1d639d2a5', 'ReceiptHandle': 'AQEBZbDozboVnErSPQKguEtyzYPblBsuVzYfk+Uh4CbN4RjmKZun9FKRyCYdTTbWU2Hr2JAu8sSaz5b3VUN2jOOaGiSwlTmIUID5XULevrkejBni3Zalu4KtTUapTqx703z55+ix1Os0+NvI2iqDiKvZaUypCGc6WP/Uf7wv/VcLAYyJyy8UnGbEQi5JkH1IdLxFQAeJePO8gZ84shvWkAHsuTyknTEK7w1Uy/IYstQ8Ajq8WdPM/TOB6LU59BoBYK9zX8WXkC8HHkQ76JqeVoKBRPaIsJ1pXVUm/4FS6Y3zryzPEUO6vMcAKu7oDfVPwsJfoOKotFqTDclavvl+t3a4BmHVgzR3NsZkyM8ttrHyGqGV0dOl6L00Sw/YE2ABihd/Bv9L5kD0dUKGBQpUF/Ur7w==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127278242', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125095020'}, 'MD5OfMessageAttributes': 'ab75eb4a923a203f9177a88dbac8650b', 'MessageAttributes': {'scanid': {'StringValue': '9e656df0-3938-11e9-be19-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:ffa9324795554ee7b6c5cd6182daa9e7', 'DataType': 'String'}, 'teamname': {'StringValue': 'cisco test 1', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rcdn-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '52204017-7192-5a95-a321-14f924bc4b08', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '52204017-7192-5a95-a321-14f924bc4b08', 'date': 'Mon, 25 Feb 2019 20:41:18 GMT', 'content-type': 'text/xml', 'content-length': '2052'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: cisco test 1, TeamID: P3:ffa9324795554ee7b6c5cd6182daa9e7, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rcdn-1.cisco.com:5000/v3, Scan ID = 9e656df0-3938-11e9-be19-e4b3187a0250, Receipt Handle: AQEBZbDozboVnErSPQKguEtyzYPblBsuVzYfk+Uh4CbN4RjmKZun9FKRyCYdTTbWU2Hr2JAu8sSaz5b3VUN2jOOaGiSwlTmIUID5XULevrkejBni3Zalu4KtTUapTqx703z55+ix1Os0+NvI2iqDiKvZaUypCGc6WP/Uf7wv/VcLAYyJyy8UnGbEQi5JkH1IdLxFQAeJePO8gZ84shvWkAHsuTyknTEK7w1Uy/IYstQ8Ajq8WdPM/TOB6LU59BoBYK9zX8WXkC8HHkQ76JqeVoKBRPaIsJ1pXVUm/4FS6Y3zryzPEUO6vMcAKu7oDfVPwsJfoOKotFqTDclavvl+t3a4BmHVgzR3NsZkyM8ttrHyGqGV0dOl6L00Sw/YE2ABihd/Bv9L5kD0dUKGBQpUF/Ur7w==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: cisco test 1
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - cisco test 1
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - cisco test 1
+INFO: Update the scan record with "InProgress" Status
+INFO: VM test: Compliant(Unsecured image is not used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Compliant(Tenant has no unsecured images)
+
+########### SCAN REPORT for Project: cisco test 1###########
+Name of Project under trail: cisco test 1
+Total no. of images found: 4
+Total no. of unsecured images found: 0
+Total no. of servers in tenant account: 0
+Total no. of servers using unsecured image: 0
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204121 Execution result for Team: cisco test 1
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'd9dc6b5e-d436-50e3-a815-3fb08107ecfd', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'd9dc6b5e-d436-50e3-a815-3fb08107ecfd', 'date': 'Mon, 25 Feb 2019 20:41:21 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '17093256-a88d-42c5-87ef-cad3cb101fbe', 'ReceiptHandle': 'AQEBvrQAcr1kyBBbw+aJXWSF9zpOoT+zIDNGsty82GAYZDMA6783G1gIRwgSx3c525cQGkc8QGuCRe0ywwNd9F8cJGkvO54rNAt/cIxGgQtYOOn3KZjlg9SduniAwhoKcYLGUY6k8GG3zgLUiYQrt1Z8+Rtjzwah9TK6WJEjNXfRhUTV+pQAk3H7ebbh7zZRafHroIpAgVVaq+q6KNYcezonlqZIlKXiAIce9zZjI1z8BH0Ksb7CWyx/yW9F6USsfG85RMf2vuxGHnhhjEA9PRhxN2RXkXIkjDt9JT2C81LQ3/pXFciGa3GAgRnw+Qb0M0I2Cd9Xr6jFIGFD4hNdtrZvACH5KcEMP5uHZudyG4s+aIw/gFrAxnBtUVEbv20uVAbs4IqtBgQ9szABBScsTgcV6g==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127281310', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125096479'}, 'MD5OfMessageAttributes': '1b2602e6d1655c076a8f6f41f05a42cb', 'MessageAttributes': {'scanid': {'StringValue': '9f443530-3938-11e9-8281-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:857b18e1533a4bbba25dac08da6bc97e', 'DataType': 'String'}, 'teamname': {'StringValue': 'gmeo', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rcdn-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '85d80076-9e18-56b7-a3f0-5498cb29b72a', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '85d80076-9e18-56b7-a3f0-5498cb29b72a', 'date': 'Mon, 25 Feb 2019 20:41:21 GMT', 'content-type': 'text/xml', 'content-length': '2044'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: gmeo, TeamID: P3:857b18e1533a4bbba25dac08da6bc97e, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rcdn-1.cisco.com:5000/v3, Scan ID = 9f443530-3938-11e9-8281-e4b3187a0250, Receipt Handle: AQEBvrQAcr1kyBBbw+aJXWSF9zpOoT+zIDNGsty82GAYZDMA6783G1gIRwgSx3c525cQGkc8QGuCRe0ywwNd9F8cJGkvO54rNAt/cIxGgQtYOOn3KZjlg9SduniAwhoKcYLGUY6k8GG3zgLUiYQrt1Z8+Rtjzwah9TK6WJEjNXfRhUTV+pQAk3H7ebbh7zZRafHroIpAgVVaq+q6KNYcezonlqZIlKXiAIce9zZjI1z8BH0Ksb7CWyx/yW9F6USsfG85RMf2vuxGHnhhjEA9PRhxN2RXkXIkjDt9JT2C81LQ3/pXFciGa3GAgRnw+Qb0M0I2Cd9Xr6jFIGFD4hNdtrZvACH5KcEMP5uHZudyG4s+aIw/gFrAxnBtUVEbv20uVAbs4IqtBgQ9szABBScsTgcV6g==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: gmeo
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - gmeo
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - gmeo
+INFO: Update the scan record with "InProgress" Status
+INFO: Updating params_list
+INFO: VM test: Non-compliant(Unsecured image is used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Non-compliant(Tenant has unsecured images)
+
+########### SCAN REPORT for Project: gmeo###########
+Name of Project under trail: gmeo
+Total no. of images found: 5
+Total no. of unsecured images found: 1
+Total no. of servers in tenant account: 1
+Total no. of servers using unsecured image: 1
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: One of the test is Non-compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204124 Execution result for Team: gmeo
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '7712842c-22a9-5a5a-8fcc-d0c2779d6841', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '7712842c-22a9-5a5a-8fcc-d0c2779d6841', 'date': 'Mon, 25 Feb 2019 20:41:24 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'bad5686f-e182-40b0-9bc3-36ac8202f8e9', 'ReceiptHandle': 'AQEBMZEMyMlbsx/eboabhHllf0tIx3Tt7vPxkZ/8kOmLsNJtHLykTemGTZF/3PUhbUbnnghL7uzyrt4svEcTx1Ys4KwZtUW8x9YfNgWO1YDZHq7ulNKGTbJX3lEEAnbXnGryNPqVadZEXVQP9mqbJT1L1A7RzjHJztwyWf0EHJv4ZMow7gyX1mmsYH79d1emgI/FlkEK4GeO6d8jNtBl1Hs9sM7hoOyDPhlJSAv40s08THyc7+yWYwk4qhAOVXegeZGa08ATfMukite+GnBwhGhXfxQpG2QMuLxk5wqER17tgyu1UfVpy0Hf6+/yrQo46BHA4BPNOkDZNZsUMtDs+y/76fWnL6pnF1aejMW8Dux9pVEcjY+9jxiWcrOTs3zDD+C/vSpJHBr5JmoFTUTGQMdVzA==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127284852', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124871392'}, 'MD5OfMessageAttributes': 'f88075f6fdc60b54aff1e572e155c796', 'MessageAttributes': {'scanid': {'StringValue': '18f39840-3938-11e9-8461-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:a641839014b84e8689db8630f1c84212', 'DataType': 'String'}, 'teamname': {'StringValue': 'ESGDEV-NPD-ALLN', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-alln-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'b438a1bf-cd64-5d3b-9c68-f55198509ca6', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'b438a1bf-cd64-5d3b-9c68-f55198509ca6', 'date': 'Mon, 25 Feb 2019 20:41:24 GMT', 'content-type': 'text/xml', 'content-length': '2055'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: ESGDEV-NPD-ALLN, TeamID: P3:a641839014b84e8689db8630f1c84212, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-alln-1.cisco.com:5000/v3, Scan ID = 18f39840-3938-11e9-8461-e4b3187a0250, Receipt Handle: AQEBMZEMyMlbsx/eboabhHllf0tIx3Tt7vPxkZ/8kOmLsNJtHLykTemGTZF/3PUhbUbnnghL7uzyrt4svEcTx1Ys4KwZtUW8x9YfNgWO1YDZHq7ulNKGTbJX3lEEAnbXnGryNPqVadZEXVQP9mqbJT1L1A7RzjHJztwyWf0EHJv4ZMow7gyX1mmsYH79d1emgI/FlkEK4GeO6d8jNtBl1Hs9sM7hoOyDPhlJSAv40s08THyc7+yWYwk4qhAOVXegeZGa08ATfMukite+GnBwhGhXfxQpG2QMuLxk5wqER17tgyu1UfVpy0Hf6+/yrQo46BHA4BPNOkDZNZsUMtDs+y/76fWnL6pnF1aejMW8Dux9pVEcjY+9jxiWcrOTs3zDD+C/vSpJHBr5JmoFTUTGQMdVzA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: ESGDEV-NPD-ALLN
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - ESGDEV-NPD-ALLN
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-alln-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-alln-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-alln-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-alln-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-alln-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - ESGDEV-NPD-ALLN
+INFO: Update the scan record with "InProgress" Status
+INFO: Updating params_list
+INFO: VM test: Non-compliant(Unsecured image is used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Non-compliant(Tenant has unsecured images)
+
+########### SCAN REPORT for Project: ESGDEV-NPD-ALLN###########
+Name of Project under trail: ESGDEV-NPD-ALLN
+Total no. of images found: 5
+Total no. of unsecured images found: 1
+Total no. of servers in tenant account: 1
+Total no. of servers using unsecured image: 1
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: One of the test is Non-compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204127 Execution result for Team: ESGDEV-NPD-ALLN
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '8aede7c4-fc0a-5e3e-92e0-b32aa93d1de2', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '8aede7c4-fc0a-5e3e-92e0-b32aa93d1de2', 'date': 'Mon, 25 Feb 2019 20:41:27 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '5feb86cc-df1e-44ed-8586-6b03291aacad', 'ReceiptHandle': 'AQEBkKTvXTo6fBGnfHGlmUcE5HdwgTyk+EWXiudiCPY6pHSQN1GBSNbkf3HSF7S9vcrzdY2NksSnQL8Al3hLw83DaPGVLsZ7Ouv4UTrN+fUHjI7G0BxKt0jIqekS1U0NDC1l58cLBd6ck0tyXDZwyxYDELy83jcb/8eTzOQNmI/DBzTWGImnm7eVijXUvs4VR3CPqh/hnqn7AdVq0uJVRvmLrzIOsystBS9TIH24IofMic4/uUYhOR+pMkcligmb8+zvL59B/uepWPOsq5xgq+ckzohVAV1nGfR0EQJCBLHid42JI926PBRaoTX3cguxGUWIdtj22o1x8SvMReRhybLJeX13QKG00K5GzKUnJncZSB1OIMG9o1+zqNkDC0AhffwGj/e/qCVR11Ir61taL9djsQ==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127288004', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125112071'}, 'MD5OfMessageAttributes': '727c5c275e4c90bedd3b96df6866b6a5', 'MessageAttributes': {'scanid': {'StringValue': 'a8921ad1-3938-11e9-90d1-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:1160a082-7efc-11e8-b8bf-fa163e4fa075', 'DataType': 'String'}, 'teamname': {'StringValue': 'b2cmagentoback-prod-int-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'fa818a8b-331f-5789-a4ce-de656627f614', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'fa818a8b-331f-5789-a4ce-de656627f614', 'date': 'Mon, 25 Feb 2019 20:41:28 GMT', 'content-type': 'text/xml', 'content-length': '2068'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: b2cmagentoback-prod-int-rcdn, TeamID: CAE:1160a082-7efc-11e8-b8bf-fa163e4fa075, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = a8921ad1-3938-11e9-90d1-e4b3187a0250, Receipt Handle: AQEBkKTvXTo6fBGnfHGlmUcE5HdwgTyk+EWXiudiCPY6pHSQN1GBSNbkf3HSF7S9vcrzdY2NksSnQL8Al3hLw83DaPGVLsZ7Ouv4UTrN+fUHjI7G0BxKt0jIqekS1U0NDC1l58cLBd6ck0tyXDZwyxYDELy83jcb/8eTzOQNmI/DBzTWGImnm7eVijXUvs4VR3CPqh/hnqn7AdVq0uJVRvmLrzIOsystBS9TIH24IofMic4/uUYhOR+pMkcligmb8+zvL59B/uepWPOsq5xgq+ckzohVAV1nGfR0EQJCBLHid42JI926PBRaoTX3cguxGUWIdtj22o1x8SvMReRhybLJeX13QKG00K5GzKUnJncZSB1OIMG9o1+zqNkDC0AhffwGj/e/qCVR11Ir61taL9djsQ==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: b2cmagentoback-prod-int-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => b2cmagentoback-prod-int-rcdn
+LOGS: Successfully retreived pods, Pod count is  8
+INFO: Listing the images in the pods: ciscoav-1551126300-88rwt
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: ciscoav-1551126600-zhg62
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: ciscoav-1551126900-jqwhr
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: ciscoav-1551127200-twsqn
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: magereindexall-1551123000-dl6qj
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: magereindexall-1551124800-6cmv8
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: magereindexall-1551126600-ckl4p
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: phpmage-be-16-nzvnr
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of b2cmagentoback-prod-int-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204130 Execution result for Team: b2cmagentoback-prod-int-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'c63e4782-5a47-5663-bc04-136c0f7d049a', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'c63e4782-5a47-5663-bc04-136c0f7d049a', 'date': 'Mon, 25 Feb 2019 20:41:30 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '0ba73a9e-f601-441e-9066-bd8988cff4b2', 'ReceiptHandle': 'AQEBvfT0Iz04SAZsom4pNmsgPKfMPguktKNlMg/M5mTyTleSDDJA2t57yz4zqUbDlajr12Om6TNpslxuoy/1dNNQPXKWch0gp2z+fq5KDsn7pAiudMmvLZbExX6C9t0ETiwNVYI1MiAuuAtXgijvngdjuwFh/IpBQ1EA8xrGYkIdP7GOM0Wvy0XkPMH4Z0UWdqaOpFLkmyViUAVF+SRKRU9m5daHqlr7TCS2eEMcVcbHw9KhWv3nDFK3UBKEjoBtJHODQLPuPQhtRax3eEgKc1MJRm3qYiY12nAngomr6Wiefia39bKx9Qj7apJ5lEHZFI6fa2vt05F2gpaka25GMsJHqIwsLWHyMN32DsbvSmF2mJw3KRmVYrCIrUBVQA9QMqZTeO+uAESCvW/C6xTRGuxrIA==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127290848', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124870261'}, 'MD5OfMessageAttributes': 'a466ba1555bd297961eef60618b868ad', 'MessageAttributes': {'scanid': {'StringValue': '18494e80-3938-11e9-821a-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:706419a8e3794fd9a20e3e15c913a89c', 'DataType': 'String'}, 'teamname': {'StringValue': 'cxdp-sandbox', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rtp-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '0ec8f9fd-75c9-57a4-8f4a-ad1320f3e639', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '0ec8f9fd-75c9-57a4-8f4a-ad1320f3e639', 'date': 'Mon, 25 Feb 2019 20:41:30 GMT', 'content-type': 'text/xml', 'content-length': '2051'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: cxdp-sandbox, TeamID: P3:706419a8e3794fd9a20e3e15c913a89c, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rtp-1.cisco.com:5000/v3, Scan ID = 18494e80-3938-11e9-821a-e4b3187a0250, Receipt Handle: AQEBvfT0Iz04SAZsom4pNmsgPKfMPguktKNlMg/M5mTyTleSDDJA2t57yz4zqUbDlajr12Om6TNpslxuoy/1dNNQPXKWch0gp2z+fq5KDsn7pAiudMmvLZbExX6C9t0ETiwNVYI1MiAuuAtXgijvngdjuwFh/IpBQ1EA8xrGYkIdP7GOM0Wvy0XkPMH4Z0UWdqaOpFLkmyViUAVF+SRKRU9m5daHqlr7TCS2eEMcVcbHw9KhWv3nDFK3UBKEjoBtJHODQLPuPQhtRax3eEgKc1MJRm3qYiY12nAngomr6Wiefia39bKx9Qj7apJ5lEHZFI6fa2vt05F2gpaka25GMsJHqIwsLWHyMN32DsbvSmF2mJw3KRmVYrCIrUBVQA9QMqZTeO+uAESCvW/C6xTRGuxrIA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: cxdp-sandbox
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - cxdp-sandbox
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - cxdp-sandbox
+INFO: Update the scan record with "InProgress" Status
+INFO: VM test: Compliant(Unsecured image is not used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There are unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Non-compliant(Tenant has unsecured images)
+
+########### SCAN REPORT for Project: cxdp-sandbox###########
+Name of Project under trail: cxdp-sandbox
+Total no. of images found: 7
+Total no. of unsecured images found: 3
+Total no. of servers in tenant account: 0
+Total no. of servers using unsecured image: 0
+Total no. of unused images in Tenant account: 7
+Total no. of unused unsecured images in Tenant account: 3
+INFO: One of the test is Non-compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204134 Execution result for Team: cxdp-sandbox
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '48cf84d9-6cb3-5311-9943-d037398dfa6a', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '48cf84d9-6cb3-5311-9943-d037398dfa6a', 'date': 'Mon, 25 Feb 2019 20:41:34 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '1ef7b316-06ef-4285-8126-d955a5fac522', 'ReceiptHandle': 'AQEB05UYm9bMrSG4rdm/pFcAk6LmBhMr3YKF7P3unoNa1Q/oueO6XMbFs5fgSJsyISkttYFvZq2iPQy6eLshRVoqZ1NbWhL7eMhFICDr0mKAxW2lCx+LQYy45BVcg8/ChsIwxxn9GLsisl2WAXwhdGa7LuB5vDLl+PGZt3hSVUNyHZ74sjuMhhuolA/wpT1IKokVoYUqGyL+KU3kPK5EOGPPSk8H878dzSjY5sXQk2PYiKG0MSicn/pWV+T8Qqnmcs9l7MKeOil9sUCKPiWBPaHgd/S3ULssO2uIRIIgbvwFn6+6CcSAY/MVxIFILs9T54AbdhP4hFxDXZLSd72beAeTIiFZ2/8kNGBHjZdMnNsbCqLKQRyxnjvktM/XH2Y2i5yC/txnrsG62FeW9k4dSiik6A==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127294980', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125096005'}, 'MD5OfMessageAttributes': 'b17a315b74bf453d98254b18df797133', 'MessageAttributes': {'scanid': {'StringValue': '9ef9708f-3938-11e9-b184-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:58573e93cee948138005cb23a99dde3c', 'DataType': 'String'}, 'teamname': {'StringValue': 'GDPPRD-PRD-RCDN', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rcdn-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '5a865759-708d-59d3-8164-03b725b3884e', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '5a865759-708d-59d3-8164-03b725b3884e', 'date': 'Mon, 25 Feb 2019 20:41:34 GMT', 'content-type': 'text/xml', 'content-length': '2055'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: GDPPRD-PRD-RCDN, TeamID: P3:58573e93cee948138005cb23a99dde3c, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rcdn-1.cisco.com:5000/v3, Scan ID = 9ef9708f-3938-11e9-b184-e4b3187a0250, Receipt Handle: AQEB05UYm9bMrSG4rdm/pFcAk6LmBhMr3YKF7P3unoNa1Q/oueO6XMbFs5fgSJsyISkttYFvZq2iPQy6eLshRVoqZ1NbWhL7eMhFICDr0mKAxW2lCx+LQYy45BVcg8/ChsIwxxn9GLsisl2WAXwhdGa7LuB5vDLl+PGZt3hSVUNyHZ74sjuMhhuolA/wpT1IKokVoYUqGyL+KU3kPK5EOGPPSk8H878dzSjY5sXQk2PYiKG0MSicn/pWV+T8Qqnmcs9l7MKeOil9sUCKPiWBPaHgd/S3ULssO2uIRIIgbvwFn6+6CcSAY/MVxIFILs9T54AbdhP4hFxDXZLSd72beAeTIiFZ2/8kNGBHjZdMnNsbCqLKQRyxnjvktM/XH2Y2i5yC/txnrsG62FeW9k4dSiik6A==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: GDPPRD-PRD-RCDN
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - GDPPRD-PRD-RCDN
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - GDPPRD-PRD-RCDN
+INFO: Update the scan record with "InProgress" Status
+INFO: Updating params_list
+INFO: VM test: Non-compliant(Unsecured image is used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Non-compliant(Tenant has unsecured images)
+
+########### SCAN REPORT for Project: GDPPRD-PRD-RCDN###########
+Name of Project under trail: GDPPRD-PRD-RCDN
+Total no. of images found: 5
+Total no. of unsecured images found: 1
+Total no. of servers in tenant account: 1
+Total no. of servers using unsecured image: 1
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: One of the test is Non-compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204137 Execution result for Team: GDPPRD-PRD-RCDN
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'b7c123bc-717e-555b-939b-7752243fdf99', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'b7c123bc-717e-555b-939b-7752243fdf99', 'date': 'Mon, 25 Feb 2019 20:41:38 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'b0191fb1-e1ce-4844-ab12-a7c846bf07d3', 'ReceiptHandle': 'AQEBxvviXoynypF9mDa1FJHlu6JMAjLp0Lq5C3sQUJWsEiKltoYGNerPxctqee1ZQxA3a8gymb24vm0wBNSyX7GN6xVk19LTfhCCCW/w4ZvQ6imkAlxjgZPmHrTEfMNXDOcsYsinR5dIZ6ml01fgQQLWNNhhDD5xwZrtKOMG2HrHqtqfVeOuIaKWFek91mjGLBfUingz+r2uzBxzIzqeZbwSXYuOo5A1bSrcNCwayfVlxfPkxDiuQriixtcdPtoYklkcy/V7/C73NNfwJhOImaF+eeDINgAAa8XMnTIvCigOqpdDI2nKBlzK/nnUDA9COpKKOYPlqZCh/MsoaSiOdq6tMhpp2zS5gOd4ETc4EUnvKkixyJcMV1lnwBscc22EifIKJIZLT/1ajjNhOw6La1hcpg==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127298061', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125111142'}, 'MD5OfMessageAttributes': '350576fa525eda56b444f41abf1705f6', 'MessageAttributes': {'scanid': {'StringValue': 'a801c1b0-3938-11e9-8328-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:39ef9015-34b8-11e9-8dcc-fa163ed61dec', 'DataType': 'String'}, 'teamname': {'StringValue': 'validation', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-np-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'bebb749e-4684-58ad-a4ab-207013c66930', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'bebb749e-4684-58ad-a4ab-207013c66930', 'date': 'Mon, 25 Feb 2019 20:41:38 GMT', 'content-type': 'text/xml', 'content-length': '2049'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: validation, TeamID: CAE:39ef9015-34b8-11e9-8dcc-fa163ed61dec, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-np-rcdn.cisco.com, Scan ID = a801c1b0-3938-11e9-8328-e4b3187a0250, Receipt Handle: AQEBxvviXoynypF9mDa1FJHlu6JMAjLp0Lq5C3sQUJWsEiKltoYGNerPxctqee1ZQxA3a8gymb24vm0wBNSyX7GN6xVk19LTfhCCCW/w4ZvQ6imkAlxjgZPmHrTEfMNXDOcsYsinR5dIZ6ml01fgQQLWNNhhDD5xwZrtKOMG2HrHqtqfVeOuIaKWFek91mjGLBfUingz+r2uzBxzIzqeZbwSXYuOo5A1bSrcNCwayfVlxfPkxDiuQriixtcdPtoYklkcy/V7/C73NNfwJhOImaF+eeDINgAAa8XMnTIvCigOqpdDI2nKBlzK/nnUDA9COpKKOYPlqZCh/MsoaSiOdq6tMhpp2zS5gOd4ETc4EUnvKkixyJcMV1lnwBscc22EifIKJIZLT/1ajjNhOw6La1hcpg==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: validation
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: No application Id found
+INFO: No application Name found
+INFO: Successfully returning the projects
+INFO: Checking for Projects => validation
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: No application Id found
+INFO: No application Name found
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_np_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of validation
+INFO: Calculating the age of role assigned to the user
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 4
+Total Number of Untrusted Role(s) Found : 1
+Untrusted role(s) belongs to these many tenant(s): 1
+Unsecured role(s) belongs to these many user(s) : 1
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204139 Execution result for Team: validation
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '6eeb1472-9ddf-5126-9768-409cc89c2c99', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '6eeb1472-9ddf-5126-9768-409cc89c2c99', 'date': 'Mon, 25 Feb 2019 20:41:39 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '143f865f-5e28-4da6-b6bd-3726976822a1', 'ReceiptHandle': 'AQEB9Xy36Ew44JU1tSWdf60d2Gq/+2JU2zggIqLA5T4aoQqi6mQjuFTAUqfvfAlEE1SlrXEiSFY3EVN115gr23Lx0SCfHWecNCac6aRLR654GDvceQ7lOaj1t/HVd/ti+r8NnkA3X/Zi4vbJoPxDOZBYgwK4rVU8Yr8gPX1pgXHvrkY2+IADiN8xaiFNo/kGx8gSdZcJ6Giw5MkT0n8XNsfosH6QYq6E1ymMm/96ZHOtOBlwRDbmF/dPiVnJS3KjQtYHM5XodxCQsTHJFd0MJsDkJe/Ku1mFf68Au9Uyca4P01berx9gMz6Ks4i4TG5Mh2fTxnVDIHexM9jWiqXJFAhFddFajN6Z1cT/WxMixQkAtNUygpCbuG6HWymQ/QffDkQ69rJ/sIgTxuMBCrDGCpq9pA==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127300035', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125111599'}, 'MD5OfMessageAttributes': 'b4a89cb5fcd3fcbfb242c26efc2611d9', 'MessageAttributes': {'scanid': {'StringValue': 'a847cb5e-3938-11e9-b0ef-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:dfa21583-6b57-11e8-97a5-fa163ee36f68', 'DataType': 'String'}, 'teamname': {'StringValue': 'gll001-prod-ext-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'd2669786-777d-542f-b014-c368223925b2', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'd2669786-777d-542f-b014-c368223925b2', 'date': 'Mon, 25 Feb 2019 20:41:40 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: gll001-prod-ext-rcdn, TeamID: CAE:dfa21583-6b57-11e8-97a5-fa163ee36f68, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = a847cb5e-3938-11e9-b0ef-e4b3187a0250, Receipt Handle: AQEB9Xy36Ew44JU1tSWdf60d2Gq/+2JU2zggIqLA5T4aoQqi6mQjuFTAUqfvfAlEE1SlrXEiSFY3EVN115gr23Lx0SCfHWecNCac6aRLR654GDvceQ7lOaj1t/HVd/ti+r8NnkA3X/Zi4vbJoPxDOZBYgwK4rVU8Yr8gPX1pgXHvrkY2+IADiN8xaiFNo/kGx8gSdZcJ6Giw5MkT0n8XNsfosH6QYq6E1ymMm/96ZHOtOBlwRDbmF/dPiVnJS3KjQtYHM5XodxCQsTHJFd0MJsDkJe/Ku1mFf68Au9Uyca4P01berx9gMz6Ks4i4TG5Mh2fTxnVDIHexM9jWiqXJFAhFddFajN6Z1cT/WxMixQkAtNUygpCbuG6HWymQ/QffDkQ69rJ/sIgTxuMBCrDGCpq9pA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: gll001-prod-ext-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => gll001-prod-ext-rcdn
+LOGS: Successfully retreived pods, Pod count is  3
+INFO: Listing the images in the pods: gll001-prod-ext-rcdn-57d7f6d7b9-h9vm4
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: gll001-prod-ext-rcdn-57d7f6d7b9-njhbn
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: gll001-prod-ext-rcdn-57d7f6d7b9-qpdx5
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of gll001-prod-ext-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204142 Execution result for Team: gll001-prod-ext-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'bd3df9e8-2df3-5d82-ad68-ad0678b50946', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'bd3df9e8-2df3-5d82-ad68-ad0678b50946', 'date': 'Mon, 25 Feb 2019 20:41:42 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '63582661-5cac-4bd6-99a9-acfcd9fd8530', 'ReceiptHandle': 'AQEBcuo2dj2ynBnFBy2j/lTbU3QRvydVahv8sOtYsUnvWvnauItp4p0Y/r0AFgvM65jO93HRXN77zKPRk3BSTo/Gna0HsuA3eGcCHKDOKBqzazQ4l3bHOFg4CIrscS3GPmBUqBUxYX7vx7NAYik1NVbxUz6r3tstKxshVAEGFjW7gwOqjlb2qdi1bXh2XQWtectEsq0+mBpY8zY5o9Jqd5O/RzI8c5g/kRAj+rrQooIuwiE6YgxIaFKunculPADVf58itpaKI08YzzHbNVRFnlSb8UFBo95z6Dukja8OI1+gcuRgd7xEUUk9ZS8RrHNzLbVbO4BudIG+qdLP7Yln4833XHIZ/dxmrIHDnHUIkZvTDhfqdPHyxEPagAALRQFXvTzHPfpsMgGg3MAliqVBYPKx4g==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127302599', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124866137'}, 'MD5OfMessageAttributes': '1dfb2e41542c47da035907ba044f4201', 'MessageAttributes': {'scanid': {'StringValue': '15d0ad5e-3938-11e9-bf9f-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:743dcc967067402e9447fb87e9719f86', 'DataType': 'String'}, 'teamname': {'StringValue': 'AIRA test', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rtp-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '6e8551ea-9a52-5814-a02f-0504cf144989', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '6e8551ea-9a52-5814-a02f-0504cf144989', 'date': 'Mon, 25 Feb 2019 20:41:42 GMT', 'content-type': 'text/xml', 'content-length': '2048'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: AIRA test, TeamID: P3:743dcc967067402e9447fb87e9719f86, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rtp-1.cisco.com:5000/v3, Scan ID = 15d0ad5e-3938-11e9-bf9f-e4b3187a0250, Receipt Handle: AQEBcuo2dj2ynBnFBy2j/lTbU3QRvydVahv8sOtYsUnvWvnauItp4p0Y/r0AFgvM65jO93HRXN77zKPRk3BSTo/Gna0HsuA3eGcCHKDOKBqzazQ4l3bHOFg4CIrscS3GPmBUqBUxYX7vx7NAYik1NVbxUz6r3tstKxshVAEGFjW7gwOqjlb2qdi1bXh2XQWtectEsq0+mBpY8zY5o9Jqd5O/RzI8c5g/kRAj+rrQooIuwiE6YgxIaFKunculPADVf58itpaKI08YzzHbNVRFnlSb8UFBo95z6Dukja8OI1+gcuRgd7xEUUk9ZS8RrHNzLbVbO4BudIG+qdLP7Yln4833XHIZ/dxmrIHDnHUIkZvTDhfqdPHyxEPagAALRQFXvTzHPfpsMgGg3MAliqVBYPKx4g==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: AIRA test
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - AIRA test
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - AIRA test
+INFO: Update the scan record with "InProgress" Status
+INFO: VM test: Compliant(Unsecured image is not used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Compliant(Tenant has no unsecured images)
+
+########### SCAN REPORT for Project: AIRA test###########
+Name of Project under trail: AIRA test
+Total no. of images found: 4
+Total no. of unsecured images found: 0
+Total no. of servers in tenant account: 0
+Total no. of servers using unsecured image: 0
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204146 Execution result for Team: AIRA test
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '20b6e1a8-4d23-5c8e-a1a4-b54618696342', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '20b6e1a8-4d23-5c8e-a1a4-b54618696342', 'date': 'Mon, 25 Feb 2019 20:41:46 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '456d1a37-c95e-4cbf-a0ac-75c79fe7daed', 'ReceiptHandle': 'AQEBYQ6TcxINQ5blXROlvhTLvSCC44W49wTGYa6U2ybDRZSpUC+oGHy5yQf0dkvxaHxD0GnNHzA+/8Dh46Fge1pcnhKgryFDyRY3mtuYSq1vKbd4L34o0yVhZy+N2RRMhqiO6RPbAvdNuZ/Upo0LeJREQbWndrxw8r9s631E08p+TQZMFpEkRcXgaZhUmhgIuJWvBWF797E/z36WFyujhFVUiP4+GQunWxZK4V8z3+j6hCw/5PvGsZHXGYyY3maBmUNLH/+cl2KddrXlM1BCcCDp8UnEJf9pOj8+2jZeF0cDZD4x5Wn5amIZE5XKVV8ddBhQxEPtYwzCimuNOHQy7701jTYWRpUIss35jnIKTwMRGqo2srez5n+8xQZ+8OK/ILBex/XnGaAMaDsVl757tgPAZw==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127306786', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124866773'}, 'MD5OfMessageAttributes': 'bf8d5616461dd11624979bf32c7b0145', 'MessageAttributes': {'scanid': {'StringValue': '1631e030-3938-11e9-8076-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:70229d59183f4bf4bab39d2147178324', 'DataType': 'String'}, 'teamname': {'StringValue': 'Integrity Verification for NSO', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rtp-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '0d68fb70-d7ce-59e9-8d44-af9e82841874', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '0d68fb70-d7ce-59e9-8d44-af9e82841874', 'date': 'Mon, 25 Feb 2019 20:41:46 GMT', 'content-type': 'text/xml', 'content-length': '2069'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: Integrity Verification for NSO, TeamID: P3:70229d59183f4bf4bab39d2147178324, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rtp-1.cisco.com:5000/v3, Scan ID = 1631e030-3938-11e9-8076-e4b3187a0250, Receipt Handle: AQEBYQ6TcxINQ5blXROlvhTLvSCC44W49wTGYa6U2ybDRZSpUC+oGHy5yQf0dkvxaHxD0GnNHzA+/8Dh46Fge1pcnhKgryFDyRY3mtuYSq1vKbd4L34o0yVhZy+N2RRMhqiO6RPbAvdNuZ/Upo0LeJREQbWndrxw8r9s631E08p+TQZMFpEkRcXgaZhUmhgIuJWvBWF797E/z36WFyujhFVUiP4+GQunWxZK4V8z3+j6hCw/5PvGsZHXGYyY3maBmUNLH/+cl2KddrXlM1BCcCDp8UnEJf9pOj8+2jZeF0cDZD4x5Wn5amIZE5XKVV8ddBhQxEPtYwzCimuNOHQy7701jTYWRpUIss35jnIKTwMRGqo2srez5n+8xQZ+8OK/ILBex/XnGaAMaDsVl757tgPAZw==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: Integrity Verification for NSO
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - Integrity Verification for NSO
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - Integrity Verification for NSO
+INFO: Update the scan record with "InProgress" Status
+INFO: Updating params_list
+INFO: VM test: Non-compliant(Unsecured image is used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Compliant(Tenant has no unsecured images)
+
+########### SCAN REPORT for Project: Integrity Verification for NSO###########
+Name of Project under trail: Integrity Verification for NSO
+Total no. of images found: 4
+Total no. of unsecured images found: 0
+Total no. of servers in tenant account: 1
+Total no. of servers using unsecured image: 1
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: One of the test is Non-compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204150 Execution result for Team: Integrity Verification for NSO
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '8bc41f4d-2f11-506b-8bcb-4ba37a5e9d56', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '8bc41f4d-2f11-506b-8bcb-4ba37a5e9d56', 'date': 'Mon, 25 Feb 2019 20:41:51 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '6d5f4713-0248-46ef-98c8-8e57210f4304', 'ReceiptHandle': 'AQEBkjW74ZWY7mfQ73IWmTO7xGaw0HhfdcqZp0xxeCRuCKuHdVIJ/BQMXOoRma3uF8qx1nklgG9EapcU3cxDcaCQZHusxWErW9yZhbLc1Vwfar4Ukr8Bo//3BP2xpWFbKvBM5PdM/i4tHi1R4qYHObcrlxptSZu4T1F521E86ezFP8TVb3xB5yw5g87QxAYC1Y9HidpuiESR3TjejmOJuAkJFb+7vAPd9nx9W+nS/OEnTfd/xJLI4hs9munwxPHywg9N4fUqJT26F0ByAvAyeZlasdh63WsuWa6x+Py7gpPotttSKIHONbdp0OUMEz8u9DCcrzxk5GANuZ/tr5qZZKJtoRwdgt2pO/XLqTQtxjN0uu7wIN2rOFxlyROmKr5cgwTfXv+aBfPxLPh7WqvnJ6dhOg==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127311080', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125109905'}, 'MD5OfMessageAttributes': 'f9b67248383b79c270417745ec2c82ce', 'MessageAttributes': {'scanid': {'StringValue': 'a744b340-3938-11e9-ad15-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:799f275d-714a-11e8-947a-fa163e8112c6', 'DataType': 'String'}, 'teamname': {'StringValue': 'xiomapy-pprd-int-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '2c4e90b7-570b-5f9c-af93-c4590244be01', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '2c4e90b7-570b-5f9c-af93-c4590244be01', 'date': 'Mon, 25 Feb 2019 20:41:51 GMT', 'content-type': 'text/xml', 'content-length': '2061'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: xiomapy-pprd-int-rcdn, TeamID: CAE:799f275d-714a-11e8-947a-fa163e8112c6, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = a744b340-3938-11e9-ad15-e4b3187a0250, Receipt Handle: AQEBkjW74ZWY7mfQ73IWmTO7xGaw0HhfdcqZp0xxeCRuCKuHdVIJ/BQMXOoRma3uF8qx1nklgG9EapcU3cxDcaCQZHusxWErW9yZhbLc1Vwfar4Ukr8Bo//3BP2xpWFbKvBM5PdM/i4tHi1R4qYHObcrlxptSZu4T1F521E86ezFP8TVb3xB5yw5g87QxAYC1Y9HidpuiESR3TjejmOJuAkJFb+7vAPd9nx9W+nS/OEnTfd/xJLI4hs9munwxPHywg9N4fUqJT26F0ByAvAyeZlasdh63WsuWa6x+Py7gpPotttSKIHONbdp0OUMEz8u9DCcrzxk5GANuZ/tr5qZZKJtoRwdgt2pO/XLqTQtxjN0uu7wIN2rOFxlyROmKr5cgwTfXv+aBfPxLPh7WqvnJ6dhOg==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: xiomapy-pprd-int-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => xiomapy-pprd-int-rcdn
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of xiomapy-pprd-int-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204152 Execution result for Team: xiomapy-pprd-int-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '37d903b5-c003-5021-b5b7-575b955326a8', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '37d903b5-c003-5021-b5b7-575b955326a8', 'date': 'Mon, 25 Feb 2019 20:41:52 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'f97fe1d2-0029-4d74-9866-4006cd58b85b', 'ReceiptHandle': 'AQEBQUVOWcOh08FBi1oGUMfVXZQF6YFgJMJy8Dg7B9s1nx5jm1nS9AFthx2Ca739hNR13OsYJo7PMWxDqepkptiH0iPd2ZI47qnfhcJ+Nk6oQf2QqYEbncPHwj1dcS2ihZQmjJn/cXQppbCFujQvmDYrYdCxgt51XWp4ijXZ/jtThgGr2u7kYhQbOoO8k+tI3LWZH8K1jQgda9QSPpHK0OqYNd+mTMxToYI5V5FmWhMoHgu9Bglg2LeSsPrs3FK2LVl4E9B6IuLRegTpHmO+XlCgG6IPHJUA9dpJUOEVcnnAzV/BpTQYI1IL/kPBfIjs58/5+k6hsVTm/jTyuwv7Ebsf7XqguA9v6DOSgYtlia7ftq8+M2yYJpxXuulp3qESz4rT66Pm/HxDi6TPY2fzn9gCRA==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127313075', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551124870817'}, 'MD5OfMessageAttributes': '36799020c262553a969ca5d54cc48fdb', 'MessageAttributes': {'scanid': {'StringValue': '189d61f0-3938-11e9-a335-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:d079697506de40d6acfcfb6beccc1399', 'DataType': 'String'}, 'teamname': {'StringValue': 'rajpa-test', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rtp-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '441be81b-35b4-50df-97fa-bcf560e50142', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '441be81b-35b4-50df-97fa-bcf560e50142', 'date': 'Mon, 25 Feb 2019 20:41:53 GMT', 'content-type': 'text/xml', 'content-length': '2049'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: rajpa-test, TeamID: P3:d079697506de40d6acfcfb6beccc1399, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rtp-1.cisco.com:5000/v3, Scan ID = 189d61f0-3938-11e9-a335-e4b3187a0250, Receipt Handle: AQEBQUVOWcOh08FBi1oGUMfVXZQF6YFgJMJy8Dg7B9s1nx5jm1nS9AFthx2Ca739hNR13OsYJo7PMWxDqepkptiH0iPd2ZI47qnfhcJ+Nk6oQf2QqYEbncPHwj1dcS2ihZQmjJn/cXQppbCFujQvmDYrYdCxgt51XWp4ijXZ/jtThgGr2u7kYhQbOoO8k+tI3LWZH8K1jQgda9QSPpHK0OqYNd+mTMxToYI5V5FmWhMoHgu9Bglg2LeSsPrs3FK2LVl4E9B6IuLRegTpHmO+XlCgG6IPHJUA9dpJUOEVcnnAzV/BpTQYI1IL/kPBfIjs58/5+k6hsVTm/jTyuwv7Ebsf7XqguA9v6DOSgYtlia7ftq8+M2yYJpxXuulp3qESz4rT66Pm/HxDi6TPY2fzn9gCRA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: rajpa-test
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - rajpa-test
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rtp-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - rajpa-test
+INFO: Update the scan record with "InProgress" Status
+INFO: VM test: Compliant(Unsecured image is not used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Compliant(Tenant has no unsecured images)
+
+########### SCAN REPORT for Project: rajpa-test###########
+Name of Project under trail: rajpa-test
+Total no. of images found: 4
+Total no. of unsecured images found: 0
+Total no. of servers in tenant account: 0
+Total no. of servers using unsecured image: 0
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204157 Execution result for Team: rajpa-test
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '727094dc-d40e-511d-9898-c032815ba19d', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '727094dc-d40e-511d-9898-c032815ba19d', 'date': 'Mon, 25 Feb 2019 20:41:57 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'f47a848c-9bec-46d9-93dd-c7ea1e969e05', 'ReceiptHandle': 'AQEBtqKPBl1RZLym6f7Y1iQgvqII0+LZdfwKApxhAtdG4aCdNPitXeQmlGbSVPEpOpbwWlCGy2AYyzWwEfvuE0i5H7eIDS1FO2bLT4/IsrE/Ma4AjF+vEj5ZS/V1mmAschnil5K/Y7whX/8dE2m5ljdpZK0Rl8EG2GbC5igiryiPDXxMfZ/BKkJ7ElSo0lhcw4LKE4Cs0Ukwj0z1kfzg1fNlx1EP+qLpzXMgI5jAkRmB5iz/a7BvVV1M4W+psKmRPIYQl2SVcRpCRPSCbfkA6yBtd+ulu0CDQeQxnlaJtDGiV3izvWPUCp/X4Om5S3TBprPVubn+u1R9IVUtf0zd7LyOyDBNPlXM8ARay3XzrcYyxvnV8JvtYNBH6OYFTcDwQdYZqtEB1GuSfv4mKIh0d7vApQ==', 'MD5OfBody': 'bd11537f1bc31e334497ec5463fc575e', 'Body': 'P3', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127317590', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125094366'}, 'MD5OfMessageAttributes': 'a34cfad956102fc14cf48bb56204c48f', 'MessageAttributes': {'scanid': {'StringValue': '9e012de1-3938-11e9-9020-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'P3:e5e8435a523d43e6bbed40715c228cde', 'DataType': 'String'}, 'teamname': {'StringValue': 'eng-build-cloud-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cloud-rcdn-1.cisco.com:5000/v3', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '2b5ecb20-8ba4-5bdf-ba89-9fcedef1ca42', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '2b5ecb20-8ba4-5bdf-ba89-9fcedef1ca42', 'date': 'Mon, 25 Feb 2019 20:41:57 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: eng-build-cloud-rcdn, TeamID: P3:e5e8435a523d43e6bbed40715c228cde, TestIDs: P3-IDENTITY-MGMT-TC-1,P3-IMAGE-HARDENING-TC-1, URL: https://cloud-rcdn-1.cisco.com:5000/v3, Scan ID = 9e012de1-3938-11e9-9020-e4b3187a0250, Receipt Handle: AQEBtqKPBl1RZLym6f7Y1iQgvqII0+LZdfwKApxhAtdG4aCdNPitXeQmlGbSVPEpOpbwWlCGy2AYyzWwEfvuE0i5H7eIDS1FO2bLT4/IsrE/Ma4AjF+vEj5ZS/V1mmAschnil5K/Y7whX/8dE2m5ljdpZK0Rl8EG2GbC5igiryiPDXxMfZ/BKkJ7ElSo0lhcw4LKE4Cs0Ukwj0z1kfzg1fNlx1EP+qLpzXMgI5jAkRmB5iz/a7BvVV1M4W+psKmRPIYQl2SVcRpCRPSCbfkA6yBtd+ulu0CDQeQxnlaJtDGiV3izvWPUCp/X4Om5S3TBprPVubn+u1R9IVUtf0zd7LyOyDBNPlXM8ARay3XzrcYyxvnV8JvtYNBH6OYFTcDwQdYZqtEB1GuSfv4mKIh0d7vApQ==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: eng-build-cloud-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - eng-build-cloud-rcdn
+INFO: Update the scan record with "InProgress" Status
+INFO: Error Received while attempting to create role - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/roles, You are not authorized to perform the requested action: identity:create_role
+INFO: Tenant are not allowed to create a role
+INFO: Updating params_list
+INFO: Error Received while attempting to create user - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/users, You are not authorized to perform the requested action: identity:create_user
+INFO: Tenant are not allowed to create a user
+INFO: Updating params_list
+INFO: Error Received while attempting to create domain - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:create_domain
+INFO: Tenant are not allowed to create a domain
+INFO: Updating params_list
+INFO: Error Received while attempting to list domains - HttpException: 403: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains, You are not authorized to perform the requested action: identity:list_domains
+INFO: Tenant are not allowed to list domains
+INFO: Updating params_list
+INFO: Error Received while attempting to change domain - ResourceNotFound: 404: Client Error for url: https://cloud-rcdn-1.cisco.com:5000/v3/domains/cisco, Could not find domain: cisco
+INFO: Tenant are not allowed to change a domain
+INFO: Updating params_list
+INFO: All checks are Compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+LOG: Creating Connection handle to OpenStack Project - eng-build-cloud-rcdn
+INFO: Update the scan record with "InProgress" Status
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: VM test: Non-compliant(Unsecured image is used in VM)
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: There is no unused unsecured images
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: All images test: Non-compliant(Tenant has unsecured images)
+
+########### SCAN REPORT for Project: eng-build-cloud-rcdn###########
+Name of Project under trail: eng-build-cloud-rcdn
+Total no. of images found: 6
+Total no. of unsecured images found: 2
+Total no. of servers in tenant account: 27
+Total no. of servers using unsecured image: 27
+Total no. of unused images in Tenant account: 4
+Total no. of unused unsecured images in Tenant account: 0
+INFO: One of the test is Non-compliant
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+INFO: 022519_204200 Execution result for Team: eng-build-cloud-rcdn
+{'p3_identity_mgmt_tc_1': 'Compliant', 'p3_image_hardening_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '5b6f0a33-c6f4-5ccd-a085-5edd93ad6982', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '5b6f0a33-c6f4-5ccd-a085-5edd93ad6982', 'date': 'Mon, 25 Feb 2019 20:42:01 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '8a705c48-bc44-414d-a9b2-50e9887ec536', 'ReceiptHandle': 'AQEB7G/QpDQE7pjjIUKMspPBGUPOlQeZLwyMT5dxa5bJax50WApvpeAZeTpzA581ATWqJo3QPtYLMkyvWF8E6FHipsVjwpdsKSu6D6w7Hbrvp8NVjNyrYWWbhRikBNLpzbGxXjYbcUIiOIj/sDO8+RozRVRxnXWbackpJQYxKdsBkFer4HiOiP4MXIEnul9/z0yzA9wBu/+EDWQZ9Hy7rTn4nDULAG6V/TVea/QsqvUJu687Xj1hRB8cKSnlJ0Kd5vHtHv5UVOSaO2ugEBhVRsr+Qa1+yb69nF3RDh4AT2q4r6igcFvG/6uwPzT020G4sCdh/0AexTJXYMPSr8fErkhooN/49xL4kOHcs8Wl8VIOWeJjt/yUbXnpyeSXHi3wQXZiYFf0LnFCIRzr7IVX6m2LlQ==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127321090', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551125110651'}, 'MD5OfMessageAttributes': 'd75d5d33d7d25609f1277b51ac2c51e8', 'MessageAttributes': {'scanid': {'StringValue': 'a7b94700-3938-11e9-aa38-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:72195137-bc67-11e8-927d-fa163e8112c6', 'DataType': 'String'}, 'teamname': {'StringValue': 'drtool-prod-int-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '3889c48b-03a4-536e-8609-906556fd62f3', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '3889c48b-03a4-536e-8609-906556fd62f3', 'date': 'Mon, 25 Feb 2019 20:42:01 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: drtool-prod-int-rcdn, TeamID: CAE:72195137-bc67-11e8-927d-fa163e8112c6, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = a7b94700-3938-11e9-aa38-e4b3187a0250, Receipt Handle: AQEB7G/QpDQE7pjjIUKMspPBGUPOlQeZLwyMT5dxa5bJax50WApvpeAZeTpzA581ATWqJo3QPtYLMkyvWF8E6FHipsVjwpdsKSu6D6w7Hbrvp8NVjNyrYWWbhRikBNLpzbGxXjYbcUIiOIj/sDO8+RozRVRxnXWbackpJQYxKdsBkFer4HiOiP4MXIEnul9/z0yzA9wBu/+EDWQZ9Hy7rTn4nDULAG6V/TVea/QsqvUJu687Xj1hRB8cKSnlJ0Kd5vHtHv5UVOSaO2ugEBhVRsr+Qa1+yb69nF3RDh4AT2q4r6igcFvG/6uwPzT020G4sCdh/0AexTJXYMPSr8fErkhooN/49xL4kOHcs8Wl8VIOWeJjt/yUbXnpyeSXHi3wQXZiYFf0LnFCIRzr7IVX6m2LlQ==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: drtool-prod-int-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => drtool-prod-int-rcdn
+LOGS: Successfully retreived pods, Pod count is  2
+INFO: Listing the images in the pods: drtool-prod-int-rcdn-13-c484b
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: drtool-prod-int-rcdn-13-xl2hq
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of drtool-prod-int-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_204203 Execution result for Team: drtool-prod-int-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'd581fea9-b601-546f-9d4c-aa47e35a250a', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'd581fea9-b601-546f-9d4c-aa47e35a250a', 'date': 'Mon, 25 Feb 2019 20:42:03 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': 'd2aa1954-0042-549f-9625-4dba5519e502', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'd2aa1954-0042-549f-9625-4dba5519e502', 'date': 'Mon, 25 Feb 2019 20:42:18 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': '624b51b2-a962-5e5a-9777-055cfcc43fc7', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '624b51b2-a962-5e5a-9777-055cfcc43fc7', 'date': 'Mon, 25 Feb 2019 20:43:33 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': 'c01379ac-b55a-57ca-9f3a-2d42e0abd657', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'c01379ac-b55a-57ca-9f3a-2d42e0abd657', 'date': 'Mon, 25 Feb 2019 20:44:48 GMT', 'content-type': 'text/xml', 'content-length': '240', 'connection': 'close'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': '944350b3-230c-549a-9a97-045d754d1f17', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '944350b3-230c-549a-9a97-045d754d1f17', 'date': 'Mon, 25 Feb 2019 20:46:08 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': 'fbf3c9a4-e3b0-5702-8b41-9d4ab53ddc8f', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'fbf3c9a4-e3b0-5702-8b41-9d4ab53ddc8f', 'date': 'Mon, 25 Feb 2019 20:47:24 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': 'ee9dbe5b-55a3-52b6-8d68-eab5037bc93b', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'ee9dbe5b-55a3-52b6-8d68-eab5037bc93b', 'date': 'Mon, 25 Feb 2019 20:48:39 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': '71b138e7-82c2-50cd-bfe7-6c09d5e18b40', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '71b138e7-82c2-50cd-bfe7-6c09d5e18b40', 'date': 'Mon, 25 Feb 2019 20:49:54 GMT', 'content-type': 'text/xml', 'content-length': '240', 'connection': 'close'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'a6f470a5-69ed-406a-b905-546cd4e3adba', 'ReceiptHandle': 'AQEBcJIe5jj1UU1rSfq59aMXA9IjwChQPFUPClIOIVBuc4USEvosPw45PFnc8IddsqTOtVCsBDvxcno4tVio5JQwsnx3i8C/jsB5USManeXUa/FR6nHt0x7OMhnCkJFJlRH0+kcvzLl6Ra48rYUsLD3YFEa44J33Wi0q9M4YLt6rxcaOWNQuMZ7IjLwEKb5fZpTpUgQqb35s3lBD+THanHi9Dhi5bVh2dnvr6xUu29rBf7/dRXG2aJx6zSST4zJ2+A4uzDrol2O6Aeh8o0Cs5uPAtEbRijpZIs/JD2sdPdaG0rw07H0Vr1xMu61bxik7w9VGGKxL1OAXTQbqh2AumtRS24z5U1NqORGMMKaDgIHAMGhCtGtUOHOppmwRLIyAYBywbDf3MwB0ZyOhH5MGIdbt+w==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127862385', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127862383'}, 'MD5OfMessageAttributes': '0fe603bbf3d3492cc5924882dd6a8ab4', 'MessageAttributes': {'scanid': {'StringValue': '0fe30591-393f-11e9-a6c6-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:799f275d-714a-11e8-947a-fa163e8112c6', 'DataType': 'String'}, 'teamname': {'StringValue': 'xiomapy-pprd-int-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '1a79f384-0f0d-599c-ae4b-a76a58631cc5', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '1a79f384-0f0d-599c-ae4b-a76a58631cc5', 'date': 'Mon, 25 Feb 2019 20:51:02 GMT', 'content-type': 'text/xml', 'content-length': '2061'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: xiomapy-pprd-int-rcdn, TeamID: CAE:799f275d-714a-11e8-947a-fa163e8112c6, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = 0fe30591-393f-11e9-a6c6-e4b3187a0250, Receipt Handle: AQEBcJIe5jj1UU1rSfq59aMXA9IjwChQPFUPClIOIVBuc4USEvosPw45PFnc8IddsqTOtVCsBDvxcno4tVio5JQwsnx3i8C/jsB5USManeXUa/FR6nHt0x7OMhnCkJFJlRH0+kcvzLl6Ra48rYUsLD3YFEa44J33Wi0q9M4YLt6rxcaOWNQuMZ7IjLwEKb5fZpTpUgQqb35s3lBD+THanHi9Dhi5bVh2dnvr6xUu29rBf7/dRXG2aJx6zSST4zJ2+A4uzDrol2O6Aeh8o0Cs5uPAtEbRijpZIs/JD2sdPdaG0rw07H0Vr1xMu61bxik7w9VGGKxL1OAXTQbqh2AumtRS24z5U1NqORGMMKaDgIHAMGhCtGtUOHOppmwRLIyAYBywbDf3MwB0ZyOhH5MGIdbt+w==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: xiomapy-pprd-int-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => xiomapy-pprd-int-rcdn
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of xiomapy-pprd-int-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205104 Execution result for Team: xiomapy-pprd-int-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'c79902e3-93e8-5ee9-b42b-560dc4906ef0', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'c79902e3-93e8-5ee9-b42b-560dc4906ef0', 'date': 'Mon, 25 Feb 2019 20:51:04 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '07d06fff-dfea-4e16-b1d0-d7cf6e618ac2', 'ReceiptHandle': 'AQEB74mXcBlOz4dWuQ48yKD6kl1sqZRpTceVZlEgvachBMFKZByIH9vi2z3PK0+ot+wuSd5GfZRP/iPWxw4mdLwCiCXbNEsmiLFeo6Wbeq7ftXHUfpeuw0Vlb2NPygbVmISakOnDb6ieFNb91BeSjw7bSf41jg9fZrnBGwS0BWq4TBeZIh/7J784utV3TixSi/M8oL9FR5ZoPk+7rt6yiBdDbkzIcI3FclU7CdP2NQ5pYOmdylvCUv84UERxXlYtm2vT/h/smG3W5YkDOl15vcm9B2U5aXhFwogxykPKC/pgj5TMTw0Yru7wh4aL7l1J1+Ok3nBp217bGYa0tylh2Hwb0PD2j6oUfxj24ZkYrrspVHMcwvpvZpFcx6Il7MVKYCaVkCaeuCfMon+8Dl9Dh7w+1w==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127864425', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127863172'}, 'MD5OfMessageAttributes': '8097e32e96f875630a090ac0161d3b21', 'MessageAttributes': {'scanid': {'StringValue': '1059bc30-393f-11e9-823c-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:72195137-bc67-11e8-927d-fa163e8112c6', 'DataType': 'String'}, 'teamname': {'StringValue': 'drtool-prod-int-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '38e61b16-0ce7-5fec-9a15-4ff85b9f3ab5', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '38e61b16-0ce7-5fec-9a15-4ff85b9f3ab5', 'date': 'Mon, 25 Feb 2019 20:51:04 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: drtool-prod-int-rcdn, TeamID: CAE:72195137-bc67-11e8-927d-fa163e8112c6, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = 1059bc30-393f-11e9-823c-e4b3187a0250, Receipt Handle: AQEB74mXcBlOz4dWuQ48yKD6kl1sqZRpTceVZlEgvachBMFKZByIH9vi2z3PK0+ot+wuSd5GfZRP/iPWxw4mdLwCiCXbNEsmiLFeo6Wbeq7ftXHUfpeuw0Vlb2NPygbVmISakOnDb6ieFNb91BeSjw7bSf41jg9fZrnBGwS0BWq4TBeZIh/7J784utV3TixSi/M8oL9FR5ZoPk+7rt6yiBdDbkzIcI3FclU7CdP2NQ5pYOmdylvCUv84UERxXlYtm2vT/h/smG3W5YkDOl15vcm9B2U5aXhFwogxykPKC/pgj5TMTw0Yru7wh4aL7l1J1+Ok3nBp217bGYa0tylh2Hwb0PD2j6oUfxj24ZkYrrspVHMcwvpvZpFcx6Il7MVKYCaVkCaeuCfMon+8Dl9Dh7w+1w==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: drtool-prod-int-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => drtool-prod-int-rcdn
+LOGS: Successfully retreived pods, Pod count is  2
+INFO: Listing the images in the pods: drtool-prod-int-rcdn-13-c484b
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: drtool-prod-int-rcdn-13-xl2hq
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of drtool-prod-int-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205106 Execution result for Team: drtool-prod-int-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '6377d46f-ed24-584f-8c3b-8081ba5ea9f6', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '6377d46f-ed24-584f-8c3b-8081ba5ea9f6', 'date': 'Mon, 25 Feb 2019 20:51:06 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '48e1435d-dead-40a1-bf15-032dec0ba63a', 'ReceiptHandle': 'AQEBRPB34WXt9kPuYIUehW2yqFwdHW79I83SITpgzFMO6t6C803/WRY08yqCYzz27zisuwS74D+PMnFMW/2fnfL1Oha9ccWHBsJsvobuX987iej7AbpXzWCfHac7XUqu8ebDrHRDi/lenMNibvqG9KLmar6eeuwXsz7VZKSjSaAc73MNGuThhI9rGZdWJae9KSqIpE2vsBQzdDsXVUvHVpR3hjg+dwBN1QE8kDQL/gy/1bfurnAU8LQTms5s3THo2I4XBnD/nwajzSGb8WCZ8toyIurTgkL3dq41gswIBO3/5mZti/p3IJ9klcDbKPeILhqdkdhe8jkZsogfRPKJ0SHpBmSIuRjX9BYbEOOPQRLCgY2mcNztsHze5A1G5zOBHAaruiY/GVg1RVgGqvpPCy9jww==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127867051', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127864340'}, 'MD5OfMessageAttributes': '2022b77f8ebd5f10a7ee0fb979b0986d', 'MessageAttributes': {'scanid': {'StringValue': '110df100-393f-11e9-b3ee-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:dfa21583-6b57-11e8-97a5-fa163ee36f68', 'DataType': 'String'}, 'teamname': {'StringValue': 'gll001-prod-ext-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '0405b81b-e7e9-5ae2-89a2-ecf5b0921fbb', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '0405b81b-e7e9-5ae2-89a2-ecf5b0921fbb', 'date': 'Mon, 25 Feb 2019 20:51:07 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: gll001-prod-ext-rcdn, TeamID: CAE:dfa21583-6b57-11e8-97a5-fa163ee36f68, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = 110df100-393f-11e9-b3ee-e4b3187a0250, Receipt Handle: AQEBRPB34WXt9kPuYIUehW2yqFwdHW79I83SITpgzFMO6t6C803/WRY08yqCYzz27zisuwS74D+PMnFMW/2fnfL1Oha9ccWHBsJsvobuX987iej7AbpXzWCfHac7XUqu8ebDrHRDi/lenMNibvqG9KLmar6eeuwXsz7VZKSjSaAc73MNGuThhI9rGZdWJae9KSqIpE2vsBQzdDsXVUvHVpR3hjg+dwBN1QE8kDQL/gy/1bfurnAU8LQTms5s3THo2I4XBnD/nwajzSGb8WCZ8toyIurTgkL3dq41gswIBO3/5mZti/p3IJ9klcDbKPeILhqdkdhe8jkZsogfRPKJ0SHpBmSIuRjX9BYbEOOPQRLCgY2mcNztsHze5A1G5zOBHAaruiY/GVg1RVgGqvpPCy9jww==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: gll001-prod-ext-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => gll001-prod-ext-rcdn
+LOGS: Successfully retreived pods, Pod count is  3
+INFO: Listing the images in the pods: gll001-prod-ext-rcdn-57d7f6d7b9-h9vm4
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: gll001-prod-ext-rcdn-57d7f6d7b9-njhbn
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: gll001-prod-ext-rcdn-57d7f6d7b9-qpdx5
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of gll001-prod-ext-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205109 Execution result for Team: gll001-prod-ext-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '1e92404a-ead9-5923-96f8-14a4bda48327', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '1e92404a-ead9-5923-96f8-14a4bda48327', 'date': 'Mon, 25 Feb 2019 20:51:09 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '73d2745f-2133-4df0-a810-fabbe6043bd9', 'ReceiptHandle': 'AQEBNBdBF/4jf/wz+lMk+ip9ag7sEHsdlxoXfHwWTjDro7YUlhLlbUDAe75PJYY6enA8vwE0kb8L209aWp9DjWVwfnYsD4BsLDRwkzFuUel7eTLw18F1EGQtIyfjHDxYm3uv4OvezvlgRCnezmMCQAlsuhc4WdvyNxesiq8ThSbLXoLP8TfF6DAwjt6nxF8WKvj843fZRDzcyMoUtOQnb3o/cFz1FMfXejw3brht3VGdC0uRasqWfT6nOV4FdNQQMz7Z7f2bukBI4GxeF4KxKKOJN8gbgYYZQTTJLwnxJ7YfpJfuzKGTFg/IBEQ4Ik1CjLMMTYSS4LR9/RAIKMt37rpHedSxX/L+z4Y3nYeJBvV2iiEX5ikkePJaah4XUPG2V2tu0urUQUIfNlmL2ui1x6Fhgw==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127869576', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127864905'}, 'MD5OfMessageAttributes': 'ac7d0f88fca138cdf664aba62c676869', 'MessageAttributes': {'scanid': {'StringValue': '1164ea9e-393f-11e9-b1ab-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:1160a082-7efc-11e8-b8bf-fa163e4fa075', 'DataType': 'String'}, 'teamname': {'StringValue': 'b2cmagentoback-prod-int-rcdn', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '5609fb6d-2b67-58eb-b847-af837c1a5db2', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '5609fb6d-2b67-58eb-b847-af837c1a5db2', 'date': 'Mon, 25 Feb 2019 20:51:09 GMT', 'content-type': 'text/xml', 'content-length': '2068'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: b2cmagentoback-prod-int-rcdn, TeamID: CAE:1160a082-7efc-11e8-b8bf-fa163e4fa075, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rcdn.cisco.com, Scan ID = 1164ea9e-393f-11e9-b1ab-e4b3187a0250, Receipt Handle: AQEBNBdBF/4jf/wz+lMk+ip9ag7sEHsdlxoXfHwWTjDro7YUlhLlbUDAe75PJYY6enA8vwE0kb8L209aWp9DjWVwfnYsD4BsLDRwkzFuUel7eTLw18F1EGQtIyfjHDxYm3uv4OvezvlgRCnezmMCQAlsuhc4WdvyNxesiq8ThSbLXoLP8TfF6DAwjt6nxF8WKvj843fZRDzcyMoUtOQnb3o/cFz1FMfXejw3brht3VGdC0uRasqWfT6nOV4FdNQQMz7Z7f2bukBI4GxeF4KxKKOJN8gbgYYZQTTJLwnxJ7YfpJfuzKGTFg/IBEQ4Ik1CjLMMTYSS4LR9/RAIKMt37rpHedSxX/L+z4Y3nYeJBvV2iiEX5ikkePJaah4XUPG2V2tu0urUQUIfNlmL2ui1x6Fhgw==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: b2cmagentoback-prod-int-rcdn
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => b2cmagentoback-prod-int-rcdn
+LOGS: Successfully retreived pods, Pod count is  8
+INFO: Listing the images in the pods: ciscoav-1551126900-jqwhr
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: ciscoav-1551127200-twsqn
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: ciscoav-1551127500-ldtq8
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: ciscoav-1551127800-g52sd
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: magereindexall-1551123000-dl6qj
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: magereindexall-1551124800-6cmv8
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: magereindexall-1551126600-ckl4p
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: phpmage-be-16-nzvnr
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of b2cmagentoback-prod-int-rcdn
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205112 Execution result for Team: b2cmagentoback-prod-int-rcdn
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'b837d0e1-d69e-56c5-b562-840f811e15e3', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'b837d0e1-d69e-56c5-b562-840f811e15e3', 'date': 'Mon, 25 Feb 2019 20:51:12 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'a3991b9f-cf45-4766-a06f-0c75a1f1654f', 'ReceiptHandle': 'AQEBNn2qh50xR5lXPX42uIBn0TKOG0LZHNOOkicHRE4msU0T50h/bBKiqX1UVt3ONmU5PBFrHatA7y8O91/6pqvarFSlmBP6snUmh8IPZ0AOV0Ap2sFSZxTHlFT/7WjzwDmRUmy69UjZcpKhGp/Fqr0g688jaAJ/AfMaKPC/o1C4lWcfWqWDnwv/a/U/gOGjspIG9C6NmPeFvEmHT5UkA2NiHFwOGd7wXOgsDlDSQ0Oemy+Veu68qo0LjOOn+gcAk1CeET4Osde183eP/UUwmFxK/SaTjBZ2O0x6YzFVEcC/wv9XUyDXIFnRrU6Lhr3CxjWgAnJvu/6oGN8cAzKJKst7ZrEY115XrYLIJfL5we9rI3z6tgmvleGNdBRqoECN5XhCfFD/kS0Z4O/n8cbQJ/T3ZQ==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551127872554', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127863750'}, 'MD5OfMessageAttributes': '0622cdb6aad966da79b0d1346fdd0fce', 'MessageAttributes': {'scanid': {'StringValue': '10b570c0-393f-11e9-86bf-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:39ef9015-34b8-11e9-8dcc-fa163ed61dec', 'DataType': 'String'}, 'teamname': {'StringValue': 'validation', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-np-rcdn.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '229e32bd-cf86-5d39-a27d-665398066860', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '229e32bd-cf86-5d39-a27d-665398066860', 'date': 'Mon, 25 Feb 2019 20:51:12 GMT', 'content-type': 'text/xml', 'content-length': '2049'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: validation, TeamID: CAE:39ef9015-34b8-11e9-8dcc-fa163ed61dec, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-np-rcdn.cisco.com, Scan ID = 10b570c0-393f-11e9-86bf-e4b3187a0250, Receipt Handle: AQEBNn2qh50xR5lXPX42uIBn0TKOG0LZHNOOkicHRE4msU0T50h/bBKiqX1UVt3ONmU5PBFrHatA7y8O91/6pqvarFSlmBP6snUmh8IPZ0AOV0Ap2sFSZxTHlFT/7WjzwDmRUmy69UjZcpKhGp/Fqr0g688jaAJ/AfMaKPC/o1C4lWcfWqWDnwv/a/U/gOGjspIG9C6NmPeFvEmHT5UkA2NiHFwOGd7wXOgsDlDSQ0Oemy+Veu68qo0LjOOn+gcAk1CeET4Osde183eP/UUwmFxK/SaTjBZ2O0x6YzFVEcC/wv9XUyDXIFnRrU6Lhr3CxjWgAnJvu/6oGN8cAzKJKst7ZrEY115XrYLIJfL5we9rI3z6tgmvleGNdBRqoECN5XhCfFD/kS0Z4O/n8cbQJ/T3ZQ==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: validation
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: No application Id found
+INFO: No application Name found
+INFO: Successfully returning the projects
+INFO: Checking for Projects => validation
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: No application Id found
+INFO: No application Name found
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_np_rcdn
+INFO: Getting list of projects available in the Cluster to validate the existence of validation
+INFO: Calculating the age of role assigned to the user
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 4
+Total Number of Untrusted Role(s) Found : 1
+Untrusted role(s) belongs to these many tenant(s): 1
+Unsecured role(s) belongs to these many user(s) : 1
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205114 Execution result for Team: validation
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Non-compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '4763e956-b87f-51c0-a441-bdb8effd19dc', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '4763e956-b87f-51c0-a441-bdb8effd19dc', 'date': 'Mon, 25 Feb 2019 20:51:14 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': '489ea419-08b2-5c6d-9a35-f0f75f305934', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '489ea419-08b2-5c6d-9a35-f0f75f305934', 'date': 'Mon, 25 Feb 2019 20:51:29 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': '63ba8f99-f41a-5518-b376-db77a3d7e041', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '63ba8f99-f41a-5518-b376-db77a3d7e041', 'date': 'Mon, 25 Feb 2019 20:52:44 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'cae9e6e0-226d-4704-8146-660afc8247a9', 'ReceiptHandle': 'AQEBFeg1FBrNseHhJHmdL0wnNS0asgv0R9Z6J1Z2l6m71cMEc8USN5ZTU9mHCV/7sWuRW4qj9++3YOII632n1VziWAVf6MixaQnxqRuf5wAZ5ODqP+NXoJtAgro6+HKa37irglAnmJdlGvgsYlV9OBP3JqDK+VIH5pbEFHCbLdJtrz98/yG3BHVKmHuGsIXENKzK4zyNsH4S0jmAvQnoekAUQ27JjXSBJ9g8NH4CWUXjxmdEpK9Osajkenn6qNOuDKIleHDOPX7T4TZ65fLDrXc79bcZBoQPURXE+1H45c2SfIhdn1+/MhMxY/tXUmrIeYyVvRWy0LBtBAttkeUiJyFekbqS3Qf/Vc3NHPN0aeykUI95ZNQ4ZfX0FxKmwH5Pd2YOF6Fe1BQbk6qGJvzesEilMA==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551128024672', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127982204'}, 'MD5OfMessageAttributes': '84872d1ada540793166dfcbfe5fa7ce3', 'MessageAttributes': {'scanid': {'StringValue': '5744cb80-393f-11e9-b6ec-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:fc701eb0-7e8e-11e8-8861-fa163e463fb4', 'DataType': 'String'}, 'teamname': {'StringValue': 'scmfla-lt-ext-rtp', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-np-rtp.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '3db01d3f-e608-57bd-88df-49d1be1062e4', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '3db01d3f-e608-57bd-88df-49d1be1062e4', 'date': 'Mon, 25 Feb 2019 20:53:44 GMT', 'content-type': 'text/xml', 'content-length': '2055'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: scmfla-lt-ext-rtp, TeamID: CAE:fc701eb0-7e8e-11e8-8861-fa163e463fb4, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-np-rtp.cisco.com, Scan ID = 5744cb80-393f-11e9-b6ec-e4b3187a0250, Receipt Handle: AQEBFeg1FBrNseHhJHmdL0wnNS0asgv0R9Z6J1Z2l6m71cMEc8USN5ZTU9mHCV/7sWuRW4qj9++3YOII632n1VziWAVf6MixaQnxqRuf5wAZ5ODqP+NXoJtAgro6+HKa37irglAnmJdlGvgsYlV9OBP3JqDK+VIH5pbEFHCbLdJtrz98/yG3BHVKmHuGsIXENKzK4zyNsH4S0jmAvQnoekAUQ27JjXSBJ9g8NH4CWUXjxmdEpK9Osajkenn6qNOuDKIleHDOPX7T4TZ65fLDrXc79bcZBoQPURXE+1H45c2SfIhdn1+/MhMxY/tXUmrIeYyVvRWy0LBtBAttkeUiJyFekbqS3Qf/Vc3NHPN0aeykUI95ZNQ4ZfX0FxKmwH5Pd2YOF6Fe1BQbk6qGJvzesEilMA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: scmfla-lt-ext-rtp
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => scmfla-lt-ext-rtp
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_np_rtp
+INFO: Getting list of projects available in the Cluster to validate the existence of scmfla-lt-ext-rtp
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205347 Execution result for Team: scmfla-lt-ext-rtp
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '6ff38c86-daab-518f-9e5d-d86882b04d1c', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '6ff38c86-daab-518f-9e5d-d86882b04d1c', 'date': 'Mon, 25 Feb 2019 20:53:47 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'be4269a3-f934-43e4-ae28-b808f10f17a4', 'ReceiptHandle': 'AQEBW/eXmBL/pp1NYNP+AnyWFbwiH+nS27SFY3GNw4gkE7aC5HQymTDdXN3GSQUf18F9xjB+WrMHicquneSzdaIcvbtoLEpR/ZZo0/L3dZybMDKFd02bdW8kwrKrzre0gqbB+4C6MDAmmogxrq0mG0mBn0hrrami0OEjkhF/f7bZwQ3WwY2kwAZKsK86BmYBiUO48jCzzgEBSrGP/XiPr0yQpXaVs7qd7tEW2Zf+YsSEQJAMRQ+/B7MN+SsWznkUdA3SLVUTjBpQtg42mm0PArAz+fbyKJunPsxChkKRfzN04ucPCO8s4Dd0jwplX/rV3PdrLuCdPhjx6HofoG1Htg46Wq6f/gEJNEzWpJbbj5KUhfTYyJvtEmutRx9pByacI/VsVMP6lvM4no5xn6oW+eE75g==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551128027903', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127981477'}, 'MD5OfMessageAttributes': '7e38868334325085994cebd84f37b3b1', 'MessageAttributes': {'scanid': {'StringValue': '56df7a00-393f-11e9-a1f4-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:523fb1bd-94f3-11e8-bf24-fa163e8ddce3', 'DataType': 'String'}, 'teamname': {'StringValue': 'wprloc-prod-int-alln', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-alln.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'd73416fa-01f3-5ff4-b471-421459e80aad', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'd73416fa-01f3-5ff4-b471-421459e80aad', 'date': 'Mon, 25 Feb 2019 20:53:47 GMT', 'content-type': 'text/xml', 'content-length': '2060'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: wprloc-prod-int-alln, TeamID: CAE:523fb1bd-94f3-11e8-bf24-fa163e8ddce3, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-alln.cisco.com, Scan ID = 56df7a00-393f-11e9-a1f4-e4b3187a0250, Receipt Handle: AQEBW/eXmBL/pp1NYNP+AnyWFbwiH+nS27SFY3GNw4gkE7aC5HQymTDdXN3GSQUf18F9xjB+WrMHicquneSzdaIcvbtoLEpR/ZZo0/L3dZybMDKFd02bdW8kwrKrzre0gqbB+4C6MDAmmogxrq0mG0mBn0hrrami0OEjkhF/f7bZwQ3WwY2kwAZKsK86BmYBiUO48jCzzgEBSrGP/XiPr0yQpXaVs7qd7tEW2Zf+YsSEQJAMRQ+/B7MN+SsWznkUdA3SLVUTjBpQtg42mm0PArAz+fbyKJunPsxChkKRfzN04ucPCO8s4Dd0jwplX/rV3PdrLuCdPhjx6HofoG1Htg46Wq6f/gEJNEzWpJbbj5KUhfTYyJvtEmutRx9pByacI/VsVMP6lvM4no5xn6oW+eE75g==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: wprloc-prod-int-alln
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => wprloc-prod-int-alln
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_alln
+INFO: Getting list of projects available in the Cluster to validate the existence of wprloc-prod-int-alln
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205349 Execution result for Team: wprloc-prod-int-alln
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'a6fe1af6-26be-5f6d-81e2-4e187ea3c91e', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'a6fe1af6-26be-5f6d-81e2-4e187ea3c91e', 'date': 'Mon, 25 Feb 2019 20:53:49 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '655500e5-303e-49a3-880c-9592fae09a95', 'ReceiptHandle': 'AQEB6oSCr+XI2+9iVfCPwjVnE3EA6ZB7u0znl+TDG15uDWsjbSWuQQSdC+1160Q6qhhJy139W+IHvNCOnH0nL7hIJipFyGPbYx33PAVYUT7Et7iWOTz76N8AQHmACZ/PR6Ebt9x6/WLnO2u2ddC7kY+e7Q9TKxc+O7cHR3sbS3hJJEL9bex4YRb53Eg3EsF/kN9urNyufe0SYHr1GJ0fAlq1ZqyxrNNU7iOkAZFL4nKwfqBa4I1vurSQ+XVWK8g8eBB0FNKKEfW1j/fLZmvOoT2Si09PfzH3mM1My2S1wSIlSRRKzGTGD30/6JdjsVk/3jYNQ6qLfTtxmveY1dtlAITMb2d7xVbcsygrWxJAt8UmIo/tOW23DCBTue43M5OREqgfxGlYts2L4aF9WiYHOAUtjA==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551128029986', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127983742'}, 'MD5OfMessageAttributes': '6e2f04e46f10a9369299a9261ee68d66', 'MessageAttributes': {'scanid': {'StringValue': '5839b2cf-393f-11e9-87d6-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:b5249568-1e45-11e9-9aa8-fa163e6c748f', 'DataType': 'String'}, 'teamname': {'StringValue': 'slrrwd-alln-dev', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-alln.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'c79704a8-d7a2-5c29-bd7f-50468fbf1970', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'c79704a8-d7a2-5c29-bd7f-50468fbf1970', 'date': 'Mon, 25 Feb 2019 20:53:49 GMT', 'content-type': 'text/xml', 'content-length': '2055'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: slrrwd-alln-dev, TeamID: CAE:b5249568-1e45-11e9-9aa8-fa163e6c748f, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-alln.cisco.com, Scan ID = 5839b2cf-393f-11e9-87d6-e4b3187a0250, Receipt Handle: AQEB6oSCr+XI2+9iVfCPwjVnE3EA6ZB7u0znl+TDG15uDWsjbSWuQQSdC+1160Q6qhhJy139W+IHvNCOnH0nL7hIJipFyGPbYx33PAVYUT7Et7iWOTz76N8AQHmACZ/PR6Ebt9x6/WLnO2u2ddC7kY+e7Q9TKxc+O7cHR3sbS3hJJEL9bex4YRb53Eg3EsF/kN9urNyufe0SYHr1GJ0fAlq1ZqyxrNNU7iOkAZFL4nKwfqBa4I1vurSQ+XVWK8g8eBB0FNKKEfW1j/fLZmvOoT2Si09PfzH3mM1My2S1wSIlSRRKzGTGD30/6JdjsVk/3jYNQ6qLfTtxmveY1dtlAITMb2d7xVbcsygrWxJAt8UmIo/tOW23DCBTue43M5OREqgfxGlYts2L4aF9WiYHOAUtjA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: slrrwd-alln-dev
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => slrrwd-alln-dev
+LOGS: Successfully retreived pods, Pod count is  2
+INFO: Listing the images in the pods: terracotta-0
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: terracotta-1
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_alln
+INFO: Getting list of projects available in the Cluster to validate the existence of slrrwd-alln-dev
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205352 Execution result for Team: slrrwd-alln-dev
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '9a6699da-9bfc-5a5d-bf23-cd34c3dcc878', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '9a6699da-9bfc-5a5d-bf23-cd34c3dcc878', 'date': 'Mon, 25 Feb 2019 20:53:52 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': '93795967-ffc7-444f-9943-1686830ce6b5', 'ReceiptHandle': 'AQEBAiKBIcSin5bePwY8IF62PSd+NZ1sEhCv6SnxrwGT3+eMZM0yUsx87wwthacRZLAPGTHBITVTZFokfh9uldxeITxXuCpqUJdoXD/a8y37tkzIh94SZUtbMn2/PQeF//gud6ZxbrGVYIF2Q4/eq9jK9on8TTnYRWvbrmT3xxeLEon6ApD9i2Phj2C13aMfGTxAGOhzUQgJI8z8h+sNVsnS/e1spqWpI/L1u2Bl7YA3cmM5yD2+we0kCE7EV+ShT4lXDKNRQEaWLe4g8hm+6+USNfIedKBermNGoXx0EuUkk7rWR8eilhlAeV6LMg8TtuGbMp8z0nDnDb1da0tQdL4uo+LNhqC2v/jqaE+1NkXCfgVwSS9gkf+mcZ5tPQKH+f0yllDCve0WL1xUxVWiJn8bDw==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551128032570', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127982702'}, 'MD5OfMessageAttributes': '3fc8ea6ed82e18512a1b8a398f209a6c', 'MessageAttributes': {'scanid': {'StringValue': '579c3a51-393f-11e9-afba-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:fc8f7ee1-9771-11e8-bb98-fa163eb43b51', 'DataType': 'String'}, 'teamname': {'StringValue': 'cvcm11-prod-ext-rtp', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-prd-rtp.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': 'ffde6891-969c-5b62-a740-3c7fcebc0e3b', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'ffde6891-969c-5b62-a740-3c7fcebc0e3b', 'date': 'Mon, 25 Feb 2019 20:53:52 GMT', 'content-type': 'text/xml', 'content-length': '2058'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: cvcm11-prod-ext-rtp, TeamID: CAE:fc8f7ee1-9771-11e8-bb98-fa163eb43b51, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-prd-rtp.cisco.com, Scan ID = 579c3a51-393f-11e9-afba-e4b3187a0250, Receipt Handle: AQEBAiKBIcSin5bePwY8IF62PSd+NZ1sEhCv6SnxrwGT3+eMZM0yUsx87wwthacRZLAPGTHBITVTZFokfh9uldxeITxXuCpqUJdoXD/a8y37tkzIh94SZUtbMn2/PQeF//gud6ZxbrGVYIF2Q4/eq9jK9on8TTnYRWvbrmT3xxeLEon6ApD9i2Phj2C13aMfGTxAGOhzUQgJI8z8h+sNVsnS/e1spqWpI/L1u2Bl7YA3cmM5yD2+we0kCE7EV+ShT4lXDKNRQEaWLe4g8hm+6+USNfIedKBermNGoXx0EuUkk7rWR8eilhlAeV6LMg8TtuGbMp8z0nDnDb1da0tQdL4uo+LNhqC2v/jqaE+1NkXCfgVwSS9gkf+mcZ5tPQKH+f0yllDCve0WL1xUxVWiJn8bDw==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: cvcm11-prod-ext-rtp
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => cvcm11-prod-ext-rtp
+LOGS: No pods found in the pod list
+INFO: No Pods running in the project
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Saving the metadata into a file
+INFO: Updating params_list
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_prd_rtp
+INFO: Getting list of projects available in the Cluster to validate the existence of cvcm11-prod-ext-rtp
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205356 Execution result for Team: cvcm11-prod-ext-rtp
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': 'b0b39db9-9ca1-5b2d-aeea-c957c4840317', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'b0b39db9-9ca1-5b2d-aeea-c957c4840317', 'date': 'Mon, 25 Feb 2019 20:53:57 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'Messages': [{'MessageId': 'af686529-df83-401f-ae59-190f5dfae218', 'ReceiptHandle': 'AQEBahYVZCihpxvOI4BmFAUkgmS8pBLAQcSmpHAF63RCHlD0xqFKxQVt3NOUAc2tGnoBeSk5nWHq+ZuEflJU1u4i06LIfNL3Q2vTKdEfdVV0I3I1DmesjrJ36rTjXu8gkQ1uHSEmIY2DE7zLvIf9ayZfH4MgjYtFtV4qKZadDVLfTFpldZ3ko/Q3uxjZxJILaRCzA15rMIobNta90bZDqAg2MGTJeXoxlBPeud/h93JzT4EhM/KAP2xd66enDNh39VdpNkn5Rfn/eSWUteSzkzjQHYPCcrIAeY97+Awo8N0ABfe0G3yN1Pn17rsCUgK6jNWRVWJeZ47Gx1/116UGwMaPqY07S1ibJzDaaAEqYw+b+vX5SWiitmmBJVujybtV6JCy+Klbir9+vNR5aO8a5si6wA==', 'MD5OfBody': 'b4d45708de4ddb301ffd4666a5949344', 'Body': 'CAE', 'Attributes': {'SenderId': 'AIDAJWN6GQPLMRF5572ZC', 'ApproximateFirstReceiveTimestamp': '1551128037362', 'ApproximateReceiveCount': '1', 'SentTimestamp': '1551127983252'}, 'MD5OfMessageAttributes': '8392cd7d20732542d41fa35e436ca2ba', 'MessageAttributes': {'scanid': {'StringValue': '57f09be1-393f-11e9-9bd0-e4b3187a0250', 'DataType': 'String'}, 'teamid': {'StringValue': 'CAE:18b1a995-bc77-11e8-a97f-fa163eb08fb0', 'DataType': 'String'}, 'teamname': {'StringValue': 'veraws-dev-ext-rtp', 'DataType': 'String'}, 'testid': {'StringValue': 'CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1', 'DataType': 'String'}, 'url': {'StringValue': 'https://cae-np-rtp.cisco.com', 'DataType': 'String'}}}], 'ResponseMetadata': {'RequestId': '07669d66-2d55-5ec6-b979-c98875707b9f', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '07669d66-2d55-5ec6-b979-c98875707b9f', 'date': 'Mon, 25 Feb 2019 20:53:57 GMT', 'content-type': 'text/xml', 'content-length': '2056'}, 'RetryAttempts': 0}}
+INFO: Initiate processing of the messages received from SQS
+INFO: Process the messages read from SQS
+INFO: Retrieve individual information available per message
+INFO: Received valid TestID
+INFO: Received valid ScanID
+INFO: Received valid TeamID
+INFO: Received valid URL
+INFO: Received valid Receipt Handle
+INFO: TeamName: veraws-dev-ext-rtp, TeamID: CAE:18b1a995-bc77-11e8-a97f-fa163eb08fb0, TestIDs: CAE-IMAGE-HARDENING-TC-1,CAE-IDENTITY-MGMT-TC-1, URL: https://cae-np-rtp.cisco.com, Scan ID = 57f09be1-393f-11e9-9bd0-e4b3187a0250, Receipt Handle: AQEBahYVZCihpxvOI4BmFAUkgmS8pBLAQcSmpHAF63RCHlD0xqFKxQVt3NOUAc2tGnoBeSk5nWHq+ZuEflJU1u4i06LIfNL3Q2vTKdEfdVV0I3I1DmesjrJ36rTjXu8gkQ1uHSEmIY2DE7zLvIf9ayZfH4MgjYtFtV4qKZadDVLfTFpldZ3ko/Q3uxjZxJILaRCzA15rMIobNta90bZDqAg2MGTJeXoxlBPeud/h93JzT4EhM/KAP2xd66enDNh39VdpNkn5Rfn/eSWUteSzkzjQHYPCcrIAeY97+Awo8N0ABfe0G3yN1Pn17rsCUgK6jNWRVWJeZ47Gx1/116UGwMaPqY07S1ibJzDaaAEqYw+b+vX5SWiitmmBJVujybtV6JCy+Klbir9+vNR5aO8a5si6wA==
+INFO: Start the thread for execution of Audit test-scripts per team
+INFO: Execute individual Audit test-scripts per team: veraws-dev-ext-rtp
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Based on URL accepted, fetching respective Kube config file
+INFO: Update the scan record with "InProgress" Status
+INFO: CSV file is available to read
+INFO: Check whether source of image used is a trusted one
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Checking for Projects => veraws-dev-ext-rtp
+LOGS: Successfully retreived pods, Pod count is  2
+INFO: Listing the images in the pods: veraws-dev-ext-rtp-568856858b-8q2jn
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Listing the images in the pods: veraws-dev-ext-rtp-568856858b-mphmt
+INFO:checking the container_list
+INFO: check for the compliance status
+INFO:checking the ports
+INFO: Updating params_list
+INFO: Inside get_project method to collect info about Project
+INFO: Successfully returning the projects
+INFO: Building the metadata into a file
+INFO: Saving the metadata into a file
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+LOG: Received valid ScanID
+LOG: Received valid TeamID
+INFO: Update the scan record with "InProgress" Status
+INFO: Kube Config's Path /opt/app-root/src/kube_config_cae_np_rtp
+INFO: Getting list of projects available in the Cluster to validate the existence of veraws-dev-ext-rtp
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Updating params_list
+INFO: Calculating the age of role assigned to the user
+INFO: Adding result to Stream
+INFO: Sending result complete
+INFO: Successfully submitted the result to Kinesis
+Total Number of Tenant(s) Evaluated in Platform : 1
+Total Number of Unique Role(s) found Platform : 6
+Total Number of Untrusted Role(s) Found : 0
+Untrusted role(s) belongs to these many tenant(s): 0
+Unsecured role(s) belongs to these many user(s) : 0
+Unsecured role(s) belongs to these many Group(s) : 0
+INFO: 022519_205402 Execution result for Team: veraws-dev-ext-rtp
+{'cae_image_hardening_tc_1': 'Compliant', 'cae_identity_mgmt_tc_1': 'Compliant'}
+INFO: Delete message from SQS
+INFO: Create SQS Client Handle
+INFO: Response while attempting to delete the message: {'ResponseMetadata': {'RequestId': '27a94fde-2a3f-5fbd-bcb9-1b307215158c', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '27a94fde-2a3f-5fbd-bcb9-1b307215158c', 'date': 'Mon, 25 Feb 2019 20:54:02 GMT', 'content-type': 'text/xml', 'content-length': '215'}, 'RetryAttempts': 0}}
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': 'b2b3fe5a-5ca4-5522-b76f-aab4048ed07b', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'b2b3fe5a-5ca4-5522-b76f-aab4048ed07b', 'date': 'Mon, 25 Feb 2019 20:54:17 GMT', 'content-type': 'text/xml', 'content-length': '240'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue
+INFO: Read message from SQS
+INFO: Response received as part of "receive_message" request to SQS: {'ResponseMetadata': {'RequestId': 'd04528f9-0b38-520c-bac1-7c17534d0755', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'd04528f9-0b38-520c-bac1-7c17534d0755', 'date': 'Mon, 25 Feb 2019 20:55:32 GMT', 'content-type': 'text/xml', 'content-length': '240', 'connection': 'close'}, 'RetryAttempts': 0}}
+INFO: Didn't receive any message from SQS to process
+INFO: Waiting for 60 secs. before re-polling SQS Queue

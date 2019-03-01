@@ -1,0 +1,473 @@
+#!/opt/app-root/bin/python
+
+"""
+--------------------------p3_identity_mgmt_tc_1.py-----------------------
+Description: This python script is to validate the negative test cases
+             for P3 identity management. This script validates if the
+             tenant are allowed to:
+                a. create users
+                b. create roles
+                c. create domain
+                d. change domain
+             in the P3 platform.
+
+Usage:
+python p3_identity_mgmt_tc_1.py -u <Horizon_URL> -t <team name> [-i <CAE:teamID> -s <ScanID>]
+
+Author: Devaraj Acharya <devaacha@cisco.com>; January 9th, 2019
+
+Copyright (c) 2019 Cisco Systems.
+All rights reserved.
+-------------------------------------------------------------------------
+"""
+
+import argparse
+import csv
+import datetime
+import json
+import openstack
+import os
+import re
+import sys
+import time
+
+from os import environ as env
+sys.path.append(os.environ["CLONED_REPO_DIR"] + "/library")
+import common_lib
+import general_util
+import p3_lib
+
+filename = os.path.abspath(__file__).split("/")[-1].split(".py")[0]
+tc = filename.replace("_", "-").upper()
+seq_nums_list = list()
+params_list = list()
+
+
+def create_new_role(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
+    """
+    This method is to validate that tenant are not allowed to create the new role in
+    P3 platform.
+    :param conn: connection handle to OpenStack project
+    :param project_name: project name
+    :param seq_nums_list: empty list
+    :param params_list: empty list
+    :param scan_id: ScanID received from AWS SQS
+    :param team_id: TeamID
+    :param session: session handle to Kinesis
+    :return: Compliant | Non-Compliant | None
+    """
+    try:
+        role = []
+        for new_role in conn.identity.create_role():
+            role = new_role
+        print("ERROR: Tenant are being allowed to create a role")
+        compliance_status = "Non-compliant"
+        return compliance_status
+
+    except openstack.exceptions.HttpException as exp_err:
+        print("INFO: Error Received while attempting to create role - %s" % str(exp_err))
+        if str(exp_err).find("You are not authorized"):
+            print("INFO: Tenant are not allowed to create a role")
+            compliance_status = "Compliant"
+        else:
+            compliance_status = "Non-compliant"
+
+        resource = project_name + "-" + "create_role"
+        if scanid_valid and teamid_valid:
+            if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+                print("INFO: Updating params_list")
+            else:
+                print("ERROR: Issue observed while updating params_list")
+                return None
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid,"
+                  " hence ignoring Kinesis part")
+
+        return compliance_status
+
+    except Exception as e:
+        print("ERROR: Issue observed while calling create_role() API - %s" % str(e))
+        return None
+
+
+def create_new_user(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
+    """
+    This method is to validate that tenant are not allowed to create the new user
+    in P3 platform.
+    :param conn: connection handle to OpenStack project
+    :param project_name: project name
+    :param seq_nums_list: empty list
+    :param params_list: empty list
+    :param scan_id: ScanID received from AWS SQS
+    :param team_id: TeamID
+    :return: Compliant | Non-Compliant | None
+    """
+    try:
+        user = []
+        audit_time = int(time.time()) * 1000
+        for new_user in conn.identity.create_user():
+            user = new_user
+        print("ERROR: Tenant are being allowed to create a user")
+        compliance_status = "Non-compliant"
+        return compliance_status
+    except openstack.exceptions.HttpException as exp_err:
+        print("INFO: Error Received while attempting to create user - %s" % str(exp_err))
+        if str(exp_err).find("You are not authorized"):
+            print("INFO: Tenant are not allowed to create a user")
+            compliance_status = "Compliant"
+        else:
+            compliance_status = "Non-compliant"
+
+        resource = project_name + "-" + "create_user"
+        if scanid_valid and teamid_valid:
+            if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+                print("INFO: Updating params_list")
+            else:
+                print("ERROR: Issue observed while updating params_list")
+                return None
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
+        return compliance_status
+    except Exception as e:
+        print("ERROR: Issue observed while calling create_user() API - %s" % str(e))
+        return None
+
+
+def create_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
+    """
+    This method is to validate that tenant are not allowed to create the new domain
+    in P3 platform.
+    :param conn: connection handle to OpenStack project
+    :param project_name: project name
+    :param seq_nums_list: empty list
+    :param params_list: empty list
+    :param scan_id: ScanID received from AWS SQS
+    :param team_id: TeamID
+    :return: Compliant | Non-Compliant | None
+    """
+    try:
+        domain = []
+        audit_time = int(time.time()) * 1000
+        for create_domain in conn.identity.create_domain():
+            new_domain = create_domain
+        print("ERROR: Tenant are being allowed to create a domain")
+        compliance_status = "Non-compliant"
+        return compliance_status
+
+    except openstack.exceptions.HttpException as exp_err:
+        print("INFO: Error Received while attempting to create domain - %s" % str(exp_err))
+        if str(exp_err).find("You are not authorized"):
+            print("INFO: Tenant are not allowed to create a domain")
+            compliance_status = "Compliant"
+        else:
+            compliance_status = "Non-compliant"
+
+        resource = project_name + "-" + "create_domain"
+        if scanid_valid and teamid_valid:
+            if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+               print("INFO: Updating params_list")
+            else:
+               print("ERROR: Issue observed while updating params_list")
+               return None
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
+        return compliance_status
+
+    except Exception as e:
+        print("ERROR: Issue observed while calling create domain() API - %s" % str(e))
+        return None
+
+
+def list_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid):
+    """
+    This method is to validate that tenant are not allowed to list/read the domains
+    in P3 platform.
+    :param conn: connection handle to OpenStack project
+    :param project_name: project name
+    :param seq_nums_list: empty list
+    :param params_list: empty list
+    :param scan_id: ScanID received from AWS SQS
+    :param team_id: TeamID
+    :return: Compliant | Non-Compliant | None
+    """
+    try:
+        domain_list = []
+        audit_time = int(time.time()) * 1000
+        for list_domain in conn.identity.domains():
+            domain = json.dumps(list_domain)
+        print("ERROR: Tenant are being allowed to list domain")
+        compliance_status = "Non-compliant"
+        return compliance_status
+    except openstack.exceptions.HttpException as exp_err:
+        print("INFO: Error Received while attempting to list domains - %s" % str(exp_err))
+        if str(exp_err).find("You are not authorized"):
+            print("INFO: Tenant are not allowed to list domains")
+            compliance_status = "Compliant"
+        else:
+            compliance_status = "Non-compliant"
+
+        resource = project_name + "-" + "list_domain"
+        if scanid_valid and teamid_valid:
+            if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+               print("INFO: Updating params_list")
+            else:
+               print("ERROR: Issue observed while updating params_list")
+               return None
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
+        return compliance_status
+    except Exception as e:
+        print("ERROR: Issue observed while calling listing domains() API - %s" % str(e))
+        return None
+
+
+def change_domain(conn, domain_name, project_name, scan_id, team_id, scanid_valid, teamid_valid):
+    """
+    This method is to validate that tenant are not allowed to change the domain
+    in P3 platform.
+    :param conn: Connection handle to OpenStack project
+    :param domain_name: current domain name
+    :param project_name: Project Name
+    :param seq_nums_list: empty list
+    :param params_list: empty list
+    :param scan_id: ScanID received from AWS SQS
+    :param team_id: TeamID
+    :return: Compliant | Non-Compliant | None
+    """
+    try:
+        domain_change = []
+        audit_time = int(time.time()) * 1000
+        for change_domain in conn.identity.update_domain(domain_name, name="admin", description=None, enabled=None):
+            new_domain = change_domain
+        print("ERROR: Tenant are being allowed to change a domain")
+        compliance_status = "Non-compliant"
+        return compliance_status
+    except openstack.exceptions.ResourceNotFound as exp_err:
+        print("INFO: Error Received while attempting to change domain - %s" % str(exp_err))
+        if str(exp_err).find("Could not find domain"):
+            print("INFO: Tenant are not allowed to change a domain")
+            compliance_status = "Compliant"
+        else:
+            compliance_status = "Non-compliant"
+
+        resource = project_name + "-" + "change_domain"
+        if scanid_valid and teamid_valid:
+            if general_util.params_list_update(scan_id, tc, team_id, resource, compliance_status, params_list):
+               print("INFO: Updating params_list")
+            else:
+               print("ERROR: Issue observed while updating params_list")
+               return None
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
+        return compliance_status
+
+    except Exception as e:
+        print("ERROR: Issue observed while calling create domain() API - %s" % str(e))
+        return None
+
+
+def compliant_status_of_tenant(project_name, role, user, domain, domain_list, domain_change, team_id):
+    """
+    This method is to summarize compliant status of P3 identity management.
+    :param project_name:
+    :param role:
+    :param user:
+    :param domain_change:
+    :param team_id:
+    :return:
+    """
+    try:
+        compliant_status =[]
+        for compliance_status in role:
+            if compliance_status in role == 'Compliant':
+                create_role = "Not Allowed"
+            else:
+                create_role = "Allowed"
+        for compliance_status in user:
+            if compliance_status in user == 'Compliant':
+                create_user = "Not Allowed"
+            else:
+                create_user = "Allowed"
+        for compliance_status in domain:
+            if compliance_status in domain == 'Compliant':
+                domain_create = "Not Allowed"
+            else:
+                domain_create = "Allowed"
+        for compliance_status in domain_list:
+            if compliance_status in domain_list == 'Compliant':
+                domain_lists = "Not Allowed"
+            else:
+                domain_lists = "Allowed"
+        for compliance_status in domain_change:
+            if compliance_status in domain_change == 'Compliant':
+                change_domain = "Not Allowed"
+            else:
+                change_domain = "Allowed"
+
+        if role == user == domain == domain_list == domain_change == "Compliant":
+            compliance_status = "Compliant"
+        else:
+            compliance_status = "Non-compliant"
+
+        compliant_status.append([
+                                team_id,
+                                project_name,
+                                create_role,
+                                create_user,
+                                domain_create,
+                                domain_lists,
+                                change_domain,
+                                compliance_status
+                              ])
+
+        headers = ["Tenant Id", "Tenant Name", "Create Role", "Create User", "Create Domain", "List Domain", "Change Domain", "Compliance Status"]
+        date_stamp = datetime.datetime.now().strftime('%m%d%y')
+        csv_filename = os.path.expanduser("~") + "/logs/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
+        with open(csv_filename, 'a') as f:
+            file_is_empty = os.stat(csv_filename).st_size == 0
+            writer = csv.writer(f, lineterminator='\n')
+            if file_is_empty:
+                writer.writerow(headers)
+            writer.writerows(compliant_status)
+        f.close()
+    except Exception as e:
+        print("ERROR: Issue observed while retrieving compliance status() API - %s" % str(e))
+        if str(e):
+            headers = ["Tenant Id", "Tenant Name", "Create Role", "Create User", "Create Domain", "List Domain", "Change Domain", "Compliance Status"]
+            Exception_list = [team_id, project_name, "", "", "", "", "", ""]
+            date_stamp = datetime.datetime.now().strftime('%m%d%y')
+            csv_filename = os.path.expanduser("~") + "/logs/p3_identity_mgmt_tc_1_" + date_stamp + ".csv"
+            with open(csv_filename, 'a') as f:
+                file_is_empty = os.stat(csv_filename).st_size == 0
+                writer = csv.writer(f, lineterminator='\n')
+                if file_is_empty:
+                    writer.writerow(headers)
+                writer.writerows([Exception_list])
+
+
+def main(os_auth_url, project_name, scan_id, team_id):
+    """
+    This main method is to validate the tenant are not allowed to create the users, roles and
+    the domain in the P3 platform.
+    :param os_auth_url: OpenStack's Horizon URL
+    :param project_name: Project name
+    :param scan_id: Scan ID received from AWS, required for Kinesis update
+    :param team_id: required during Kinesis Update
+    :return: Compliant or Non-compliant
+    """
+    summary_report = {
+        "No_of_Compliant_Tenant(s)": 0,
+        "No_of_Non_compliant_Tenant(s)": 0
+    }
+    try:
+        scanid_valid = False
+        teamid_valid = False
+        if scan_id and team_id is not None:
+            scanid_valid = common_lib.scanid_validation(scan_id)
+            teamid_valid = p3_lib.p3_teamid_validation(team_id)
+        else:
+            print("INFO: Valid ScanId or TeamId not found")
+            print("INFO: Execution will proceed without Kinesis update")
+
+        domain_name = env["OS_PROJECT_DOMAIN_NAME"]
+        region = os_auth_url.split(".")[0].split("//")[1]
+        conn = p3_lib.connect(os_auth_url, project_name, region)
+
+    except Exception as e:
+        print("ERROR: Connection failed with error => %s" % str(e))
+        return None, summary_report
+
+    session = general_util.session_handle()
+    if session:
+        if scanid_valid and teamid_valid:
+            print("INFO: Update the scan record with \"InProgress\" Status")
+            update = general_util.updateScanRecord(session, "P3", scan_id, team_id, tc, "InProgress")
+            if update is None:
+                raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"InProgress\" status")
+                return None, summary_report
+        else:
+            print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
+        try:
+            role = create_new_role(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            user = create_new_user(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            domain = create_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            domain_list = list_domain(conn, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            domain_change = change_domain(conn, domain_name, project_name, scan_id, team_id, scanid_valid, teamid_valid)
+            compliant_status_of_tenant(project_name, role, user, domain, domain_list, domain_change, team_id)
+
+            list_of_return_vals = [role, user, domain, domain_list, domain_change]
+            if any(val == "Non-compliant" for val in list_of_return_vals):
+                print("INFO: One of the test is Non-compliant")
+                compliance_status = "Non-compliant"
+                summary_report["No_of_Non_compliant_Tenant(s)"] = 1
+
+            elif any(val is None for val in list_of_return_vals):
+                print("INFO: One of the test returned None")
+                compliance_status = "None"
+            else:
+                print("INFO: All checks are Compliant")
+                compliance_status = "Compliant"
+                summary_report["No_of_Compliant_Tenant(s)"] = 1
+
+        except Exception as e:
+            print("ERROR: Issue observed during execution - %s" % str(e))
+            if scanid_valid and teamid_valid:
+                print("INFO: Update the scan record with \"Failed\" Status")
+                update = general_util.updateScanRecord(session, "P3", scan_id, team_id, tc, "Failed")
+                if update is None:
+                    raise Exception("ERROR: Issue observed with UpdateScanRecord API call for \"Failed\" status")
+                    return None, summary_report
+
+            return None, summary_report
+    else:
+        raise Exception("ERROR: Failed to get the connection handle")
+        return None, summary_report
+
+    if scanid_valid and teamid_valid:
+        print("INFO: Adding result to Stream")
+        stream_info = general_util.add_result_to_stream(session, "P3", str(team_id), tc, params_list)
+        if stream_info is None:
+           raise Exception("ERROR: Issue observed while calling add_result_to_stream() API")
+           return None, summary_report
+        seq_nums_list.append(stream_info)
+
+        print("INFO: Sending result complete")
+        send_result = general_util.send_result_complete(session, "P3", scan_id, team_id, tc, seq_nums_list)
+        if send_result:
+            print("INFO: Successfully submitted the result to Kinesis")
+        else:
+            raise Exception("ERROR: Failed to submit the result to Kinesis")
+            return None, summary_report
+    else:
+        print("INFO: ScanId or TeamId passed to main() method is not valid, hence ignoring Kinesis part")
+
+    conn.close()
+    return compliance_status, summary_report
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Validate the negative test cases w.r.t. Identity Services in P3 platform...")
+    parser.add_argument("-u", "--auth_url", help="OpenStack Horizon URL", action="store", dest="url")
+    parser.add_argument("-t", "--team_name", help="Project/Tenant Name", action="store", dest="team")
+    parser.add_argument("-s", "--scan_id", help="Scan ID from AWS", action="store", dest="scanid")
+    parser.add_argument("-i", "--team_id", help="Project/Tenant ID", action="store", dest="teamid")
+    args = parser.parse_args()
+    url = args.url
+    p_name = args.team
+    scan_id = args.scanid
+    team_id = args.teamid
+    url_valid = p3_lib.p3_url_validation(url)
+    if url and p_name is not None:
+        if url_valid:
+            compliance_status, summary_report = main(url, p_name, scan_id, team_id)
+            print("INFO: Process completed with:\nCompliance Status as - %s\nSummary_report as - %s"
+                  % (compliance_status, summary_report))
+        else:
+            print("ERROR: Failed with validation")
+    else:
+        print("ERROR:Need Tenant ID and Horizon URL to run the script")

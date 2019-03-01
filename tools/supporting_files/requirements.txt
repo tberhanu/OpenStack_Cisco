@@ -1,0 +1,9 @@
+boto3
+gitpython
+kubernetes
+pandas
+pykube
+pycrypto
+openshift
+openstackclient
+openstacksdk

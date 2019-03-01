@@ -1,0 +1,87 @@
+URL,Tenant Name,Tenant ID,Application ID,Application Name,Role Name,Users with Associate Roles,Group Names,Role Provisioned Age
+https://cae-np-rtp.cisco.com,appd-agent,78f94e2d-7396-11e8-ae80-fa163eb08fb0,None,None,admin,system:admin,,246 Days 15 Hours 29 Mins
+https://cae-np-rtp.cisco.com,cae-monitoring,5760bc1c-a9c6-11e8-a97f-fa163eb08fb0,None,None,admin,system:admin,,177 Days 16 Hours 35 Mins
+https://cae-np-rtp.cisco.com,cae-serve-static,91b2ab7d-568e-11e8-8598-fa163e463fb4,None,None,admin,system:serviceaccount:cae-serve-static:admin,,283 Days 14 Hours 14 Mins
+https://cae-np-rtp.cisco.com,chrisk2,25360b26-588d-11e8-aa39-fa163eb08fb0,None,None,admin,chrisk2,,225 Days 5 Hours 43 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,tiller-manager,system:serviceaccount:daicdev:tiller,,79 Days 7 Hours 31 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,linkerd-linkerd-prometheus,system:serviceaccount:daicdev:linkerd-prometheus,,69 Days 1 Hours 33 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,ctrl-role,system:serviceaccount:daicdev:ctrl-serviceaccount,,62 Days 21 Hours 38 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,ambassador-role,system:serviceaccount:default:ambassador-sa,,92 Days 10 Hours 21 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,airflow-webserver-v1-svc-acct,system:serviceaccount:daicdev:airflow-webserver-v1-svc-acct,,41 Days 6 Hours 52 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,linkerd-linkerd-controller,system:serviceaccount:daicdev:linkerd-controller,,69 Days 1 Hours 28 Mins
+https://cae-np-rtp.cisco.com,daicdev,b07d15a8-a008-11e8-8176-fa163e463fb4,b5506088-ba91-49cd-94c2-e106508b27ec,DCE Cloud,airflow-webserver-role,system:serviceaccount:daicdev:airflow-webserver-svc-acct,,41 Days 8 Hours 10 Mins
+https://cae-np-rtp.cisco.com,deepika-cae-1,3f4ab18e-f43e-11e8-84c5-fa163eb08fb0,4f5e0959-1cca-47e1-95c5-2413b03c77a7,Continuous Security Buddy - IT,cluster-reader,None,test-group,9 Days 6 Hours 18 Mins
+https://cae-np-rtp.cisco.com,default,7b314519-568c-11e8-af1d-fa163e463fb4,None,None,cluster-reader-2,kabolla,,251 Days 0 Hours 21 Mins
+https://cae-np-rtp.cisco.com,default,7b314519-568c-11e8-af1d-fa163e463fb4,None,None,cluster-reader,kabolla,,251 Days 0 Hours 22 Mins
+https://cae-np-rtp.cisco.com,henry-playground,213edb1d-5eef-11e8-a81a-fa163e463fb4,None,None,admin,poyang,,272 Days 22 Hours 55 Mins
+https://cae-np-rtp.cisco.com,kube-public,7b3c27db-568c-11e8-bc29-fa163e177b2b,None,None,system:controller:bootstrap-signer,system:serviceaccount:kube-system:bootstrap-signer,,283 Days 15 Hours 6 Mins
+https://cae-np-rtp.cisco.com,kube-system,7b3a02f1-568c-11e8-bc29-fa163e177b2b,None,None,system:controller:bootstrap-signer,system:serviceaccount:kube-system:bootstrap-signer,,283 Days 15 Hours 7 Mins
+https://cae-np-rtp.cisco.com,kube-system,7b3a02f1-568c-11e8-bc29-fa163e177b2b,None,None,system:controller:cloud-provider,system:serviceaccount:kube-system:cloud-provider,,283 Days 15 Hours 6 Mins
+https://cae-np-rtp.cisco.com,kube-system,7b3a02f1-568c-11e8-bc29-fa163e177b2b,None,None,system::leader-locking-kube-scheduler,system:serviceaccount:kube-system:kube-scheduler,,283 Days 15 Hours 7 Mins
+https://cae-np-rtp.cisco.com,kube-system,7b3a02f1-568c-11e8-bc29-fa163e177b2b,None,None,system:controller:token-cleaner,system:serviceaccount:kube-system:token-cleaner,,283 Days 15 Hours 6 Mins
+https://cae-np-rtp.cisco.com,kube-system,7b3a02f1-568c-11e8-bc29-fa163e177b2b,None,None,system::leader-locking-kube-controller-manager,system:serviceaccount:kube-system:kube-controller-manager,,283 Days 15 Hours 7 Mins
+https://cae-np-rtp.cisco.com,largefile-dev-int-rtp,c9185fbe-9227-11e8-b471-fa163e463fb4,9a3d3c5a-935d-4bea-9ef3-cdfc9e42b854,Cisco Storage Connect,registry-viewer,sudragha,,131 Days 14 Hours 28 Mins
+https://cae-np-rtp.cisco.com,logging,8b1bbd79-568d-11e8-bab4-fa163e463fb4,None,None,prometheus-metrics-viewer,system:serviceaccount:openshift-metrics:prometheus,,283 Days 14 Hours 57 Mins
+https://cae-np-rtp.cisco.com,management-infra,a4ab6b3f-568c-11e8-bab4-fa163e463fb4,None,None,admin,management-admin,,283 Days 15 Hours 7 Mins
+https://cae-np-rtp.cisco.com,management-infra,a4ab6b3f-568c-11e8-bab4-fa163e463fb4,None,None,admin,system:serviceaccount:management-infra:management-admin,,283 Days 15 Hours 7 Mins
+https://cae-np-rtp.cisco.com,mcmp-deva-rtp,11483689-8c10-11e8-8862-fa163e463fb4,a47f4f25-39e2-4739-aa8b-e781aec0d99b,MCMP,hawkular-metrics,system:serviceaccount:mcmp-deva-rtp:metrics,,215 Days 9 Hours 37 Mins
+https://cae-np-rtp.cisco.com,mcmp-stga-rtp,303f235b-8c11-11e8-8862-fa163e463fb4,a47f4f25-39e2-4739-aa8b-e781aec0d99b,MCMP,hawkular-metrics,system:serviceaccount:mcmp-stga-rtp:metrics,,173 Days 8 Hours 49 Mins
+https://cae-np-rtp.cisco.com,noroute-test,a5f23e8d-f211-11e8-9e0e-fa163e177b2b,None,None,admin,kgunturu,,85 Days 17 Hours 20 Mins
+https://cae-np-rtp.cisco.com,openshift,7bbd3464-568c-11e8-bc29-fa163e177b2b,None,None,shared-resource-viewer,None,system:authenticated,283 Days 15 Hours 16 Mins
+https://cae-np-rtp.cisco.com,openshift-node,7eb073b6-568c-11e8-afc5-fa163eb08fb0,None,None,system:node-config-reader,None,system:nodes,283 Days 15 Hours 16 Mins
+https://cae-np-rtp.cisco.com,punpatil-playgroud,605e15ca-5eff-11e8-a994-fa163e177b2b,None,None,admin,punpatil,,272 Days 21 Hours 21 Mins
+https://cae-np-rtp.cisco.com,swdlsvc-dev-int-rtp,f757b856-9ce7-11e8-aff3-fa163e463fb4,82568797-a5a1-4bbc-a474-9147b6cd1700,Cisco Software Central,spark-role,system:serviceaccount:swdlsvc-dev-int-rtp:default,,14 Days 5 Hours 39 Mins
+https://cae-np-rtp.cisco.com,validation,0ec3a65c-306a-11e9-a281-fa163e177b2b,None,None,admin,system:admin,,6 Days 9 Hours 43 Mins
+https://cae-np-rtp.cisco.com,validation-project,67eb722d-2676-11e9-b35f-fa163e463fb4,None,None,admin,system:admin,,19 Days 1 Hours 39 Mins
+https://cae-np-rtp.cisco.com,yattari-p3-demo,f3967e7b-5d3c-11e8-a994-fa163e177b2b,None,None,admin,yattari,,275 Days 3 Hours 31 Mins
+https://cae-np-rcdn.cisco.com,appd-agent,76c1b910-739b-11e8-8d0a-fa163ed61dec,None,None,admin,system:admin,,246 Days 16 Hours 20 Mins
+https://cae-np-rcdn.cisco.com,cae-monitoring,e7c61d9a-a9c3-11e8-9fbd-fa163ed61dec,None,None,admin,system:admin,,177 Days 18 Hours 14 Mins
+https://cae-np-rcdn.cisco.com,cae-serve-static,9c58ecf6-6113-11e8-86f8-fa163e2176a9,None,None,admin,system:serviceaccount:cae-serve-static:admin,,270 Days 6 Hours 18 Mins
+https://cae-np-rcdn.cisco.com,kafka-1,f9785b46-2b70-11e9-a9df-fa163e4a4d22,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,admin,developer,,6 Days 18 Hours 8 Mins
+https://cae-np-rcdn.cisco.com,kafka-1,f9785b46-2b70-11e9-a9df-fa163e4a4d22,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,strimzi-entity-operator,system:serviceaccount:kafka-1:my-cluster-entity-operator,,0 Days 8 Hours 24 Mins
+https://cae-np-rcdn.cisco.com,kube-public,9d0ba4c1-610f-11e8-878d-fa163ed61dec,None,None,system:controller:bootstrap-signer,system:serviceaccount:kube-system:bootstrap-signer,,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,kube-system,9d0ad0d0-610f-11e8-878d-fa163ed61dec,None,None,system:controller:bootstrap-signer,system:serviceaccount:kube-system:bootstrap-signer,,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,kube-system,9d0ad0d0-610f-11e8-878d-fa163ed61dec,None,None,system:controller:cloud-provider,system:serviceaccount:kube-system:cloud-provider,,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,kube-system,9d0ad0d0-610f-11e8-878d-fa163ed61dec,None,None,system::leader-locking-kube-scheduler,system:serviceaccount:kube-system:kube-scheduler,,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,kube-system,9d0ad0d0-610f-11e8-878d-fa163ed61dec,None,None,system:controller:token-cleaner,system:serviceaccount:kube-system:token-cleaner,,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,kube-system,9d0ad0d0-610f-11e8-878d-fa163ed61dec,None,None,system::leader-locking-kube-controller-manager,system:serviceaccount:kube-system:kube-controller-manager,,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,logging,d1ebd136-6111-11e8-accd-fa163ed61dec,None,None,prometheus-metrics-viewer,system:serviceaccount:openshift-metrics:prometheus,,270 Days 6 Hours 28 Mins
+https://cae-np-rcdn.cisco.com,management-infra,0333d051-6111-11e8-aac3-fa163e2176a9,None,None,admin,management-admin,,270 Days 6 Hours 37 Mins
+https://cae-np-rcdn.cisco.com,management-infra,0333d051-6111-11e8-aac3-fa163e2176a9,None,None,admin,system:serviceaccount:management-infra:management-admin,,270 Days 6 Hours 37 Mins
+https://cae-np-rcdn.cisco.com,openshift,9d98f911-610f-11e8-940a-fa163e4a4d22,None,None,shared-resource-viewer,None,system:authenticated,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,openshift-node,a083b8af-610f-11e8-9a48-fa163e2176a9,None,None,system:node-config-reader,None,system:nodes,270 Days 6 Hours 47 Mins
+https://cae-np-rcdn.cisco.com,project-rabbit,9e594500-a11d-11e8-bdf6-fa163e4a4d22,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,rabbit-rabbitmq-ha,system:serviceaccount:project-rabbit:rabbit-rabbitmq-ha,,183 Days 9 Hours 28 Mins
+https://cae-np-rcdn.cisco.com,project-tiller,49e057b9-8515-11e8-89eb-fa163ed61dec,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,tiller,system:serviceaccount:project-tiller:tiller,,224 Days 10 Hours 20 Mins
+https://cae-np-rcdn.cisco.com,stresstest0,8fa5fe13-69db-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 2 Hours 7 Mins
+https://cae-np-rcdn.cisco.com,stresstest1,8f82562e-69db-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 2 Hours 7 Mins
+https://cae-np-rcdn.cisco.com,stresstest2,8f94784b-69db-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 2 Hours 7 Mins
+https://cae-np-rcdn.cisco.com,stresstest3,8f9ad3f3-69db-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 2 Hours 7 Mins
+https://cae-np-rcdn.cisco.com,stresstest4,8fb090da-69db-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 2 Hours 7 Mins
+https://cae-np-rcdn.cisco.com,stresstest5,f270c5ed-69c6-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 4 Hours 35 Mins
+https://cae-np-rcdn.cisco.com,stresstest6,f25b3fb6-69c6-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 4 Hours 35 Mins
+https://cae-np-rcdn.cisco.com,stresstest7,f245bf9d-69c6-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 4 Hours 35 Mins
+https://cae-np-rcdn.cisco.com,stresstest8,f1f7f48e-69c6-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 4 Hours 35 Mins
+https://cae-np-rcdn.cisco.com,stresstest9,f23eb2dd-69c6-11e8-937f-fa163ed61dec,None,None,admin,skotaru,,259 Days 4 Hours 35 Mins
+https://cae-np-rcdn.cisco.com,strimzi,dab8e83c-2b70-11e9-a9df-fa163e4a4d22,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,strimzi-topic-operator,system:serviceaccount:strimzi:strimzi-cluster-operator,,6 Days 17 Hours 49 Mins
+https://cae-np-rcdn.cisco.com,strimzi,dab8e83c-2b70-11e9-a9df-fa163e4a4d22,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,strimzi-entity-operator,system:serviceaccount:strimzi:strimzi-cluster-operator,,6 Days 17 Hours 49 Mins
+https://cae-np-rcdn.cisco.com,strimzi,dab8e83c-2b70-11e9-a9df-fa163e4a4d22,28c6b230-4c18-4bc9-8d99-2e6fcff86874,Kafka,strimzi-cluster-operator-namespaced,system:serviceaccount:strimzi:strimzi-cluster-operator,,2 Days 10 Hours 53 Mins
+https://cae-np-rcdn.cisco.com,upgrades-app-test,45e060e3-342c-11e9-9ccf-fa163e2176a9,None,None,admin,system:openshift-master,,1 Days 15 Hours 1 Mins
+https://cae-np-rcdn.cisco.com,validation,39ef9015-34b8-11e9-8dcc-fa163ed61dec,None,None,admin,system:admin,,0 Days 22 Hours 19 Mins
+https://cae-np-rcdn.cisco.com,validation-project,6e5b95a2-34b1-11e9-9d4a-fa163e2176a9,None,None,admin,system:admin,,0 Days 23 Hours 8 Mins
+https://cae-np-alln.cisco.com,appd-agent,29b41800-739a-11e8-9e82-fa163e3e558c,None,None,admin,system:admin,,246 Days 16 Hours 31 Mins
+https://cae-np-alln.cisco.com,cae-monitoring,cb592de1-a9be-11e8-b710-fa163e3e558c,None,None,admin,system:admin,,177 Days 18 Hours 53 Mins
+https://cae-np-alln.cisco.com,cae-serve-static,d9cbef87-5682-11e8-9865-fa163e47c7a2,None,None,admin,system:serviceaccount:cae-serve-static:admin,,283 Days 17 Hours 1 Mins
+https://cae-np-alln.cisco.com,henry-playground,7148f45d-5a10-11e8-9ed5-fa163e9babb3,None,None,admin,poyang,,279 Days 4 Hours 30 Mins
+https://cae-np-alln.cisco.com,kube-public,eb8aa70d-5680-11e8-86d5-fa163e3e558c,None,None,system:controller:bootstrap-signer,system:serviceaccount:kube-system:bootstrap-signer,,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,kube-system,eb8999be-5680-11e8-86d5-fa163e3e558c,None,None,system:controller:bootstrap-signer,system:serviceaccount:kube-system:bootstrap-signer,,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,kube-system,eb8999be-5680-11e8-86d5-fa163e3e558c,None,None,system:controller:cloud-provider,system:serviceaccount:kube-system:cloud-provider,,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,kube-system,eb8999be-5680-11e8-86d5-fa163e3e558c,None,None,system::leader-locking-kube-scheduler,system:serviceaccount:kube-system:kube-scheduler,,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,kube-system,eb8999be-5680-11e8-86d5-fa163e3e558c,None,None,system:controller:token-cleaner,system:serviceaccount:kube-system:token-cleaner,,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,kube-system,eb8999be-5680-11e8-86d5-fa163e3e558c,None,None,system::leader-locking-kube-controller-manager,system:serviceaccount:kube-system:kube-controller-manager,,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,logging,e395e856-5681-11e8-93d4-fa163e9babb3,None,None,prometheus-metrics-viewer,system:serviceaccount:openshift-metrics:prometheus,,283 Days 17 Hours 5 Mins
+https://cae-np-alln.cisco.com,management-infra,10c75a33-5681-11e8-b721-fa163e3e558c,None,None,admin,management-admin,,283 Days 17 Hours 14 Mins
+https://cae-np-alln.cisco.com,management-infra,10c75a33-5681-11e8-b721-fa163e3e558c,None,None,admin,system:serviceaccount:management-infra:management-admin,,283 Days 17 Hours 14 Mins
+https://cae-np-alln.cisco.com,openshift,ec06f881-5680-11e8-86d5-fa163e3e558c,None,None,shared-resource-viewer,None,system:authenticated,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,openshift-node,eeb54b90-5680-11e8-8408-fa163e9babb3,None,None,system:node-config-reader,None,system:nodes,283 Days 17 Hours 15 Mins
+https://cae-np-alln.cisco.com,testmk,032d3365-5928-11e8-9fc4-fa163e47c7a2,None,None,admin,mukeshk2,,280 Days 8 Hours 14 Mins
+https://cae-np-alln.cisco.com,validation-project,36ab0882-23c2-11e9-aff4-fa163e9babb3,None,None,admin,skotaru,,22 Days 12 Hours 22 Mins

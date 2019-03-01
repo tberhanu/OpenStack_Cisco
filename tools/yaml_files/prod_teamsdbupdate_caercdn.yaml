@@ -1,0 +1,59 @@
+apiVersion: "v1"
+kind: "PersistentVolumeClaim"
+metadata:
+  name: "prodteamdbupdatecaercdn"
+spec:
+  storageClassName: "standard"
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "1Gi"
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "prodteamdbupdatecaercdn"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: "prodteamdbupdatecaercdn"
+  template:
+    metadata:
+      labels:
+        name: "prodteamdbupdatecaercdn"
+    spec:
+      containers:
+        -
+          name: "prodteamdbupdatecaercdn"
+          image: "containers.cisco.com/csb-cnt-dev/teamsdbupdate:teamupdateprodcaercdn"
+
+
+          volumeMounts:
+            - name: "storage"
+              mountPath: "/opt/app-root/src/logs"
+
+          imagePullPolicy: "Always"
+
+          securityContext:
+            capabilities: {}
+            privileged: false
+      volumes:
+        -
+          name: "storage"
+          persistentVolumeClaim:
+           claimName: "prodteamdbupdatecaercdn"
+
+      restartPolicy: "Always"
+      dnsPolicy: "ClusterFirst"
+  Triggers:
+    -
+      type: "ConfigChange"
+  strategy:
+    type: "RollingUpdate"
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 420
