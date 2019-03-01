@@ -4,9 +4,9 @@
 --------------------------p3_cae_list_projects_and_update_dynamoDB.py-----------------------
 Description: This script is to get the list of projects available in all P3 and CAE regions.
             As an output it will generate projectlist for each region  and a common delta
-            file for all p3 regions. The main function iterates through data.xml and 
+            file for all p3 regions. The main function iterates through data.xml and
             generate projectList files for each region mentioned in data file.
-            This will run  based on env variable set, untill manually interepted 
+            This will run  based on env variable set, untill manually interepted
             by user (ctrl+c)
 Dependency:
             data_p3.xml
@@ -202,7 +202,7 @@ def get_projects(config_path):
     """
     This method is used to get the project list for CAE platform
     :param config_path : path to config file for cae regions
-    :return: return the list of project details 
+    :return: return the list of project details
     """
     try:
         api_handle = load_config(config_path)
@@ -230,7 +230,7 @@ def get_projects(config_path):
         else:
             print("ERROR: Unable to connect to get metadate of all the projects for config %s" % config_path)
             return None
-    
+
     except Exception as e:
         print("ERROR: Failed to retrieve project list => %s" % str(e))
         return None
@@ -503,12 +503,12 @@ if __name__ == "__main__":
         raise Exception("ERROR: Failed to initialize the environment in terms of credentials to use.")
 
 
-    
+
     """ assigning env variables to my_env, will be using this in subprocess for getting p3 project list"""
     my_env = os.environ.copy()
 
     sleep_time = float(my_env["WAIT_TIME_FOR_PROJECT_LIST_SCHEDULE"])
-    
+
     """ values to be used in updating dynamodb table"""
     cae_platform = "CAE"
     p3_platform = "P3"
