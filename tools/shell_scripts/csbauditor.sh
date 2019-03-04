@@ -30,3 +30,4 @@ cp $tools_dir/docker_files/nonprod_csbauditor_Dockerfile .
 mv nonprod_csbauditor_Dockerfile ./Dockerfile
 cp $tools_dir/yaml_files/nonprod_csbauditor1.yaml .
 cp $WORKING_DIR/{csb_credentials.py.enc_nonprod,csb_credentials.py.enc_prod,oc} .
+#
