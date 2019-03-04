@@ -31,3 +31,4 @@ cp $tools_dir/docker_files/nonprod_teamsdb_Dockerfile .
 mv nonprod_teamsdb_Dockerfile ./Dockerfile
 cp $tools_dir/yaml_files/nonprod_teamsdbupdate.yaml .
 cp $WORKING_DIR/{csb_credentials.py.enc_nonprod,csb_credentials.py.enc_prod,oc} .
+#
