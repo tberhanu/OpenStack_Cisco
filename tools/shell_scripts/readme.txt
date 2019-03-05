@@ -8,3 +8,9 @@ NOTE: change the image name in YAML file, based on the image you build.
 NOTE: Make sure the CiscoIT-CSB repo is cloned to $HOME 
 
 NOTE: Inorder to run in the VM change the data_cae_vm to data_cae
+NOTE: If you want to run for specific tenants, place the details in tenants file. <tenantsname>,<REGIONNAME>
+
+      ex: phuoc_rtp,RTP
+       its should be comma(,) seperated
+
+NOTE: If yoy want to run audit_projects for all tenants, make sure to delete tenants file
