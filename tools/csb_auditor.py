@@ -37,17 +37,18 @@ import boto3
 import botocore
 import datetime
 import git
+import importlib
 import multiprocessing
 import os
 import re
 import shutil
 import struct
+import sys
 import time
 
 from Crypto.Cipher import AES
 from prod_env_variables import prod_env_variables
 from nonprod_env_variables import nonprod_env_variables
-from importlib import import_module
 
 
 def decrypt_file(in_filename):
@@ -293,7 +294,7 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
         audit_tc_script = tc.replace("-", "_").lower()
         script_file = os.environ["AUDIT_SCRIPTS_DIR"] + "/" + audit_tc_script + ".py"
         if os.path.isfile(script_file):
-            tc_script = import_module("." + audit_tc_script, scripts_mod_path)
+            tc_script = importlib.import_module("." + audit_tc_script, scripts_mod_path)
             try:
                 results[audit_tc_script], summary_report = tc_script.main(url, team_name, scan_id, team_id)
                 if results[audit_tc_script] is None:
@@ -353,7 +354,7 @@ def set_credentials_env(e_type):
 
     if decrypt_file(cred_file):
         print("INFO: Successfully decrypted Credential file")
-        cred_file_handle = import_module("csb_credentials")
+        cred_file_handle = importlib.import_module("csb_credentials")
         for var, val in cred_file_handle.csb_credentials.items():
             os.environ[var] = val
         return True
@@ -383,9 +384,9 @@ def main(env_type):
         """ Clone Git Repo for the audit test-scripts """
         if clone_git_repo():
             """ Generate Kube config file for cluster listed in landscape_of_execution.py """
-            lib_mod_path = os.environ["CLONED_REPO_DIR"].split("/")[-1] + "." + "library"
             if os.path.isfile(os.environ["LIBRARY_DIR"] + "/cae_lib.py"):
-                cae_lib_handle = import_module(".cae_lib", lib_mod_path)
+                sys.path.append(os.environ["LIBRARY_DIR"])
+                cae_lib_handle = importlib.import_module("cae_lib")
                 if cae_lib_handle.generate_kube_config_file():
                     print("INFO: Successfully generated the required Kube Config file for "
                           "each cluster listed in landscape_of_execution.py")
