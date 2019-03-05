@@ -286,15 +286,13 @@ def audit_project(team_id, team_name, test_id, url, scan_id, receipt_handle):
     results = dict()
     del_flag = True
 
-    """ Building module path audit_scripts dir """
-    scripts_mod_path = os.environ["CLONED_REPO_DIR"].split("/")[-1] + "." + "audit_scripts"
-
     for tc in audit_test_list:
         """ Translating TC name to fetch the respective audit script name """
         audit_tc_script = tc.replace("-", "_").lower()
         script_file = os.environ["AUDIT_SCRIPTS_DIR"] + "/" + audit_tc_script + ".py"
         if os.path.isfile(script_file):
-            tc_script = importlib.import_module("." + audit_tc_script, scripts_mod_path)
+            sys.path.append(os.environ["AUDIT_SCRIPTS_DIR"])
+            tc_script = importlib.import_module(audit_tc_script)
             try:
                 results[audit_tc_script], summary_report = tc_script.main(url, team_name, scan_id, team_id)
                 if results[audit_tc_script] is None:
