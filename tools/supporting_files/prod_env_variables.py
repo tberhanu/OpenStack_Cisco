@@ -32,7 +32,7 @@ prod_env_variables = {
     "LOGS_DIR": os.path.expanduser("~") + "/logs",
     "CSB_CNT_REPO": "https://wwwin-github.cisco.com/CiscoIT-CSB/CiscoIT-CSB",
     "GIT_BRANCH_TO_USE": "csb_dev",
-    "RELEASE_TAG_TO_USE": "MVP_0.1.1",
+    "RELEASE_TAG_TO_USE": "MVP_0.1.2",
 
     "OS_INTERFACE": "public",
     "OS_IDENTITY_API_VERSION": "3",
